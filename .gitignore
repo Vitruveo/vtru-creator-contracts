@@ -14,4 +14,3 @@ node_modules
 /coverage.json
 
  .DS_Store
- .openzeppelin
