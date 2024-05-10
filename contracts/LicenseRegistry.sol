@@ -33,10 +33,21 @@ contract LicenseRegistry is
 
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _licenseInstanceId;
+    CountersUpgradeable.Counter public _licenseTypeId;
 
     event UsdVtruExchangeRateChanged(uint256 centsPerVtru);
     event LicenseIssued(uint indexed assetId, uint indexed licenseId, uint indexed licenseInstanceId, address licensee);
 
+
+    struct LicenseTypeInfo {
+        uint256 id;
+        string name;
+        string info;
+        bool isMintable;
+        bool isElastic;
+        bool isActive;
+        address issuer;
+    }
 
     struct GlobalInfo {
         uint256 usdVtruExchangeRate;
@@ -44,6 +55,7 @@ contract LicenseRegistry is
         address assetRegistryContract;
         address creatorVaultFactoryContract;
         address studioAccount;
+        mapping(uint => LicenseTypeInfo) licenseTypes;
         mapping(uint => LicenseInstance) licenseInstances;
         mapping(address => uint[]) licenseInstancesByOwner;
     }
@@ -56,7 +68,33 @@ contract LicenseRegistry is
         __AccessControl_init();
         __UUPSUpgradeable_init();
 
+        registerLicenseType("NFT-ART-1", "NFT", true, true);
+        registerLicenseType("STREAM-ART-1", "Stream", false, false);
+        registerLicenseType("REMIX-ART-1", "Remix", false, false);
+        registerLicenseType("PRINT-ART-1", "Print", false, false);
+
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
+    function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  {
+
+        _licenseTypeId.increment();
+        global.licenseTypes[_licenseTypeId.current()] = LicenseTypeInfo(
+                                                                            _licenseTypeId.current(), 
+                                                                            name, 
+                                                                            info,
+                                                                            isMintable, 
+                                                                            isElastic,
+                                                                            true,   // isActive
+                                                                            msg.sender // issuer
+                                                                        );
+    }
+
+    function changeLicenseType(uint licenseTypeId, string memory name, string memory info, bool active) public onlyRole(DEFAULT_ADMIN_ROLE) {
+
+        global.licenseTypes[licenseTypeId].name = name;
+        global.licenseTypes[licenseTypeId].info = info;
+        global.licenseTypes[licenseTypeId].isActive = active;
     }
 
     function getLicenseInstance(uint id) public view  returns (LicenseInstance memory)
@@ -98,9 +136,9 @@ contract LicenseRegistry is
 
     function issueLicenseUsingCredits(uint256 assetId, uint256 licenseId, uint64 quantity) public {
         
-        (uint tokens, uint usdCredit, uint otherCredit) = ICollectorCredit(global.collectorCreditContract).getAvailableCredit(msg.sender);
+        (, uint usdCredit,) = ICollectorCredit(global.collectorCreditContract).getAvailableCredit(msg.sender);
         
-        uint64 priceUsd = IAssetRegistry(global.assetRegistryContract).getAssetAvailability(assetId, licenseId);
+       (uint64 available, uint64 priceUsd) = getAssetAvailability(assetId, licenseId);
         uint64 totalUsd = priceUsd * quantity;
         require(usdCredit >= totalUsd, "Insufficient credit");
 
@@ -115,6 +153,23 @@ contract LicenseRegistry is
 
     function getAvailableCredit(address account) public view returns(uint tokens, uint usdCredit, uint otherCredit) {
         return ICollectorCredit(global.collectorCreditContract).getAvailableCredit(account);
+    }
+
+    function getAssetAvailability(uint assetId, uint licenseId) public view returns(uint64, uint64) {
+        ICreatorData.LicenseInfo memory licenseInfo = IAssetRegistry(global.assetRegistryContract).getAssetLicense(assetId, licenseId);
+        LicenseTypeInfo memory licenseTypeInfo = global.licenseTypes[licenseInfo.licenseTypeId];
+        return getLicenseAvailability(licenseInfo, licenseTypeInfo);
+    } 
+
+    function getLicenseAvailability(ICreatorData.LicenseInfo memory licenseInfo, LicenseTypeInfo memory licenseTypeInfo) internal pure returns(uint64, uint64) {
+
+        require(licenseInfo.licenseTypeId > 0, "License not found");
+        require(licenseInfo.available > 0, "No editions available");
+        require(licenseTypeInfo.isActive, "License Type not active");
+
+        uint64 priceUsd = licenseInfo.editionPriceUsd;
+
+        return(licenseInfo.available, priceUsd);
     }
 
     function setUsdVtruExchangeRate(uint256 centsPerVtru) public onlyRole(DEFAULT_ADMIN_ROLE) {

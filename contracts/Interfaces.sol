@@ -66,17 +66,7 @@ abstract contract ICreatorData {
         address vault;
         uint256 split;
     }
-
-    struct LicenseTypeInfo {
-        uint256 id;
-        string name;
-        string info;
-        bool isMintable;
-        bool isElastic;
-        bool isActive;
-        address issuer;
-    }
-
+    
     struct LicenseInfo {
         uint256 id;
         uint256 licenseTypeId;
@@ -129,5 +119,5 @@ abstract contract ICreatorData {
 }
 
 interface IAssetRegistry {
-    function getAssetAvailability(uint assetId, uint licenseId) external view returns(uint64);
+    function getAssetLicense(uint assetId, uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
 }

@@ -32,30 +32,27 @@ contract AssetRegistry is
 
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _assetId;
-    CountersUpgradeable.Counter public _licenseTypeId;
     CountersUpgradeable.Counter public _licenseId;
 
     using UnorderedKeySetLib for UnorderedKeySetLib.Set;
     UnorderedKeySetLib.Set private assetList;
 
     struct GlobalInfo {
-        uint256 assetsConsigned;
-        uint256 premiumFee;
-        uint256 creatorCreditsRequired;
+        uint assetsConsigned;
+        uint premiumFee;
+        uint creatorCreditsRequired;
         string assetBaseUri;
-        mapping(uint256 => LicenseTypeInfo) licenseTypes;
-        mapping(uint256 => AssetInfo) assets;
-        mapping(uint256 => LicenseInfo) licenses;
+        mapping(uint => AssetInfo) assets;
+        mapping(uint => LicenseInfo) licenses;
     }
 
     GlobalInfo public global;
 
-    event AssetConsigned(uint256 indexed assetId, address indexed creatorVault, uint[] licenses);
-    event CollaboratorAdded(uint256 indexed assetId, address indexed collaboratorVault);
-    event LicenseAdded(uint256 indexed assetId, uint256 licenseId, uint256 licenseTypeId);
-   // event EditorChanged(uint256 indexed assetId, address indexed editor);
-    event AssetStatusChanged(uint256 indexed assetId, Status indexed status);
-    //event LicenseAvailabilityChanged(uint256 indexed assetId, uint256 licenseId, uint64 available);
+    event AssetConsigned(uint indexed assetId, address indexed creatorVault, uint[] licenses);
+    event CollaboratorAdded(uint indexed assetId, address indexed collaboratorVault);
+    event LicenseAdded(uint indexed assetId, uint licenseId, uint licenseTypeId);
+    event AssetChanged(uint indexed assetId, Status indexed status, address indexed editor);
+    //event LicenseAvailabilityChanged(uint indexed assetId, uint licenseId, uint64 available);
 
     function initialize() public initializer {
 
@@ -66,11 +63,6 @@ contract AssetRegistry is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
         _grantRole(STUDIO_ROLE, 0x88Eb3738dc7B13773F570458cbC932521431FeA7);
-
-        registerLicenseType("NFT-ART-1", "NFT", true, true);
-        registerLicenseType("STREAM-ART-1", "Stream", false, false);
-        registerLicenseType("REMIX-ART-1", "Remix", false, false);
-        registerLicenseType("PRINT-ART-1", "Print", false, false);
 
         global.premiumFee = 10 * DECIMALS;
         global.creatorCreditsRequired = 1;
@@ -89,7 +81,7 @@ contract AssetRegistry is
                             string[] memory media
                         ) public payable whenNotPaused {
 
-        require(isContract(creator.vault), "Creator Vault does not exist");
+        require(isContract(creator.vault), "Vault does not exist");
         ICreatorVault(creator.vault).useCreatorCredits(global.creatorCreditsRequired);
 
         _assetId.increment();
@@ -127,7 +119,7 @@ contract AssetRegistry is
         emit AssetConsigned(_assetId.current(), asset.creator.vault, global.assets[_assetId.current()].licenses);
     }
 
-    function addAssetCollaborator(uint256 assetId, CreatorInfo calldata collaborator) public onlyEditor(assetId) whenNotPaused {
+    function addAssetCollaborator(uint assetId, CreatorInfo calldata collaborator) public onlyEditor(assetId) whenNotPaused {
         // Don't use require because consign() does allow empty collaborator params
         if (collaborator.vault != address(0)) {
             require(isContract(collaborator.vault), "Collaborator Vault does not exist");
@@ -136,9 +128,9 @@ contract AssetRegistry is
         }
     }
 
-    function addAssetLicense(uint256 assetId, LicenseInfo memory license) public onlyEditor(assetId) whenNotPaused {
+    function addAssetLicense(uint assetId, LicenseInfo memory license) public onlyEditor(assetId) whenNotPaused {
         // Don't use require because consign() does allow empty licenseTypeId params
-        if (license.licenseTypeId > 0 && global.licenseTypes[license.licenseTypeId].isActive) {
+        if (license.licenseTypeId > 0) {
             _licenseId.increment();
             license.id = _licenseId.current();
             global.licenses[_licenseId.current()] = license;
@@ -148,7 +140,7 @@ contract AssetRegistry is
         }
     }
 
-    function getAssetLicenses(uint256 assetId) public view  onlyActiveAsset(assetId) returns(LicenseInfo[] memory) {
+    function getAssetLicenses(uint assetId) public view onlyActiveAsset(assetId) returns(LicenseInfo[] memory) {
         LicenseInfo[] memory licenses = new LicenseInfo[](global.assets[assetId].licenses.length);
         for(uint a=0; a<global.assets[assetId].licenses.length; a++) {
             licenses[a] = global.licenses[a];
@@ -156,70 +148,36 @@ contract AssetRegistry is
         return licenses;
     }
 
-    function getAssetAvailability(uint assetId, uint licenseId) public view onlyActiveAsset(assetId) returns(uint64, uint64) {
-
-        LicenseInfo memory licenseInfo = global.licenses[licenseId];
-        require(licenseInfo.licenseTypeId > 0, "License not found");
-        require(licenseInfo.available > 0, "No editions available");
-
-        LicenseTypeInfo memory licenseTypeInfo = global.licenseTypes[licenseInfo.licenseTypeId];
-        require(licenseTypeInfo.isActive, "License Type not active");
-
-        uint64 priceUsd = licenseInfo.editionPriceUsd;
-
-        return(licenseInfo.available, priceUsd);
+    function getAssetLicense(uint assetId, uint licenseId) public view onlyActiveAsset(assetId) returns(LicenseInfo memory) {
+        return (global.licenses[licenseId]);
     }
 
-    function changeAssetStatus(uint256 assetId, Status status) public whenNotPaused {
+    function changeAsset(uint assetId, Status status, address editor) public whenNotPaused {
         if (status == Status.BLOCKED || global.assets[assetId].status == Status.BLOCKED) { // Only Studio can set or change from Blocked
             require(hasRole(STUDIO_ROLE, msg.sender), UNAUTHORIZED_USER);
         } else {
             require(msg.sender == global.assets[assetId].editor, UNAUTHORIZED_USER);
         }
+        require(editor != global.assets[assetId].editor && editor != address(0), "Invalid editor address");
+
         global.assets[assetId].status = status;
-        emit AssetStatusChanged(assetId, status);
+        global.assets[assetId].editor = editor;
+
+        emit AssetChanged(assetId, status, editor);
     }
 
-    // function changeAssetEditor(uint256 assetId, address editor) public  onlyActiveAsset(assetId) onlyEditor(assetId) whenNotPaused {
-    //     require(editor != global.assets[assetId].editor && editor != address(0), "Invalid editor address");
-
-    //     global.assets[assetId].editor = editor;
-    //     emit EditorChanged(assetId, editor);
-    // }
-
-    function upgradeAsset(uint256 assetId) public payable  onlyActiveAsset(assetId) whenNotPaused {
+    function upgradeAsset(uint assetId) public payable  onlyActiveAsset(assetId) whenNotPaused {
         require(!global.assets[assetId].isPremium, "Asset is already premium");
         require(msg.value == global.premiumFee, "Insufficient funds");
 
         global.assets[assetId].isPremium = true;
     }
 
-    function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  {
-
-        _licenseTypeId.increment();
-        global.licenseTypes[_licenseTypeId.current()] = LicenseTypeInfo(
-                                                                            _licenseTypeId.current(), 
-                                                                            name, 
-                                                                            info,
-                                                                            isMintable, 
-                                                                            isElastic,
-                                                                            true,   // isActive
-                                                                            msg.sender // issuer
-                                                                        );
-    }
-
-    function changeLicenseType(uint256 licenseTypeId, string memory name, string memory info, bool active) public onlyRole(DEFAULT_ADMIN_ROLE) {
-
-        global.licenseTypes[licenseTypeId].name = name;
-        global.licenseTypes[licenseTypeId].info = info;
-        global.licenseTypes[licenseTypeId].isActive = active;
-    }
-
-    function changeAssetPremiumFee(uint256 fee) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
+    function changeAssetPremiumFee(uint fee) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
         global.premiumFee = fee;
     }
 
-    function changeCreatorCreditsRequired(uint256 credits) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
+    function changeCreatorCreditsRequired(uint credits) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
         global.creatorCreditsRequired = credits;
     }
 
@@ -233,7 +191,7 @@ contract AssetRegistry is
             size := extcodesize(account) 
         } 
         return size > 0; 
-    } 
+    }  
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
@@ -266,7 +224,7 @@ contract AssetRegistry is
         return super.supportsInterface(interfaceId);
     }
 
-    function getAssetBatch(uint256 start, uint256 count) public view returns(AssetInfo[] memory) {
+    function getAssetBatch(uint start, uint count) public view returns(AssetInfo[] memory) {
         AssetInfo[] memory result = new AssetInfo[](count);
 
         for(uint i=start; i<start+count; i++) {
