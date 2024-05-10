@@ -36,7 +36,7 @@ contract LicenseRegistry is
     CountersUpgradeable.Counter public _licenseTypeId;
 
     event UsdVtruExchangeRateChanged(uint256 centsPerVtru);
-    event LicenseIssued(uint indexed assetId, uint indexed licenseId, uint indexed licenseInstanceId, address licensee);
+    event LicenseIssued(string indexed assetKey, uint indexed licenseId, uint indexed licenseInstanceId, address licensee);
 
 
     struct LicenseTypeInfo {
@@ -68,12 +68,13 @@ contract LicenseRegistry is
         __AccessControl_init();
         __UUPSUpgradeable_init();
 
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+
         registerLicenseType("NFT-ART-1", "NFT", true, true);
         registerLicenseType("STREAM-ART-1", "Stream", false, false);
         registerLicenseType("REMIX-ART-1", "Remix", false, false);
         registerLicenseType("PRINT-ART-1", "Print", false, false);
 
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  {
@@ -134,38 +135,59 @@ contract LicenseRegistry is
     //     }
     // }
 
-    function issueLicenseUsingCredits(uint256 assetId, uint256 licenseId, uint64 quantity) public {
+    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseId, uint64 quantity) public {
         
+        // 1) Get buyer credits
         (, uint usdCredit,) = ICollectorCredit(global.collectorCreditContract).getAvailableCredit(msg.sender);
-        
-       (uint64 available, uint64 priceUsd) = getAssetAvailability(assetId, licenseId);
+
+        // 2) Check if asset license is available and get price
+        (uint64 available, uint64 priceUsd) = getAssetAvailability(assetKey, licenseId);
         uint64 totalUsd = priceUsd * quantity;
+
+        // 3) Check if buyer has enough credits
         require(usdCredit >= totalUsd, "Insufficient credit");
 
-        
+        // 4) Update the license available amount
+        IAssetRegistry(global.assetRegistryContract).consumeLicense(licenseId, quantity);
+
+        // 5) Generate a license instance
         _licenseInstanceId.increment();
         global.licenseInstancesByOwner[msg.sender].push(_licenseInstanceId.current());
 
-        //Minting
+        // License instance properties
 
-        emit LicenseIssued(assetId, licenseId, _licenseInstanceId.current(), msg.sender);    
+        // 6) Mint asset
+       
+       // if Mintable then mint NFTs
+
+
+        // 7) Credit Creator vault
+
+
+        // 8) Emit event regarding license instance
+        emit LicenseIssued(assetKey, licenseId, _licenseInstanceId.current(), msg.sender);    
     }
 
     function getAvailableCredit(address account) public view returns(uint tokens, uint usdCredit, uint otherCredit) {
         return ICollectorCredit(global.collectorCreditContract).getAvailableCredit(account);
     }
 
-    function getAssetAvailability(uint assetId, uint licenseId) public view returns(uint64, uint64) {
-        ICreatorData.LicenseInfo memory licenseInfo = IAssetRegistry(global.assetRegistryContract).getAssetLicense(assetId, licenseId);
+    function getAsset(string calldata assetKey) public view returns(ICreatorData.AssetInfo memory) {
+        return IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
+    }
+
+    function getAssetAvailability(string calldata assetKey, uint licenseId) public view returns(uint64, uint64) {
+        ICreatorData.LicenseInfo memory licenseInfo = IAssetRegistry(global.assetRegistryContract).getAssetLicense(assetKey, licenseId);
         LicenseTypeInfo memory licenseTypeInfo = global.licenseTypes[licenseInfo.licenseTypeId];
         return getLicenseAvailability(licenseInfo, licenseTypeInfo);
     } 
 
     function getLicenseAvailability(ICreatorData.LicenseInfo memory licenseInfo, LicenseTypeInfo memory licenseTypeInfo) internal pure returns(uint64, uint64) {
 
-        require(licenseInfo.licenseTypeId > 0, "License not found");
-        require(licenseInfo.available > 0, "No editions available");
+        require(licenseInfo.licenseTypeId > 0, "License Type not found");
+        require(licenseTypeInfo.isMintable, "Only mintable licenses currently supported");
         require(licenseTypeInfo.isActive, "License Type not active");
+        require(licenseInfo.available > 0, "No editions available");
 
         uint64 priceUsd = licenseInfo.editionPriceUsd;
 

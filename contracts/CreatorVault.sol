@@ -19,6 +19,7 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/Base64Upgradeable.sol";
 import "./Interfaces.sol";
 
 contract CreatorVault is
@@ -38,10 +39,10 @@ contract CreatorVault is
         address[] wallets;
         address licenseRegistry;
     }
-    
+
     GlobalData public global;
 
-    mapping(uint => string) private tokenUris;
+    mapping(uint => bytes32) private tokens; // tokenId => assetId
 
     function initialize(
                             string calldata vaultName,
@@ -109,17 +110,9 @@ contract CreatorVault is
         global.creatorCredits += credits;
     }
 
-    function tokenURI(uint tokenId) override public view returns (string memory){
-
-        return "";
-        // LicenseNFT memory creditNFT = global.licenseNFTs[tokenId];    
-        // require(creditNFT.classId > 0, "Token ID does not exist");
-
-        // LicenseNFTClass memory creditNFTClass = global.LicenseNFTClasses[creditNFT.classId];
-
-	    // string memory json = Base64Upgradeable.encode(bytes(string(abi.encodePacked('{"name": "', creditNFTClass.name, '", "description": "Vitruveo Collector Credit NFT", "image": "', global.classImageURI, creditNFTClass.name, '.png"}'))));
-	
-        // return string(abi.encodePacked('data:application/json;base64,', json));
+    function tokenURI(uint tokenId) override public view returns (string memory){                   
+        ICreatorData.AssetInfo memory assetInfo = ILicenseRegistry(global.licenseRegistry).getAssetByKey(tokens[tokenId]);
+        return assetInfo.header.tokenUri;
     }
 
     function isVaultWallet(address wallet) public view returns(bool) {

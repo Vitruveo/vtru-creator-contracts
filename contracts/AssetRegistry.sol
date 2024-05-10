@@ -19,7 +19,7 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "./UnorderedKeySet.sol";
+import "./UnorderedBytesKeySet.sol";
 import "./Interfaces.sol";
 
 contract AssetRegistry is
@@ -31,28 +31,27 @@ contract AssetRegistry is
 {
 
     using CountersUpgradeable for CountersUpgradeable.Counter;
-    CountersUpgradeable.Counter public _assetId;
     CountersUpgradeable.Counter public _licenseId;
 
-    using UnorderedKeySetLib for UnorderedKeySetLib.Set;
-    UnorderedKeySetLib.Set private assetList;
+    using UnorderedBytesKeySetLib for UnorderedBytesKeySetLib.Set;
+    UnorderedBytesKeySetLib.Set private assetList;
 
     struct GlobalInfo {
         uint assetsConsigned;
         uint premiumFee;
         uint creatorCreditsRequired;
         string assetBaseUri;
-        mapping(uint => AssetInfo) assets;
+        mapping(bytes32 => AssetInfo) assets;
         mapping(uint => LicenseInfo) licenses;
     }
 
     GlobalInfo public global;
 
-    event AssetConsigned(uint indexed assetId, address indexed creatorVault, uint[] licenses);
-    event CollaboratorAdded(uint indexed assetId, address indexed collaboratorVault);
-    event LicenseAdded(uint indexed assetId, uint licenseId, uint licenseTypeId);
-    event AssetChanged(uint indexed assetId, Status indexed status, address indexed editor);
-    //event LicenseAvailabilityChanged(uint indexed assetId, uint licenseId, uint64 available);
+    event AssetConsigned(string indexed assetKey, address indexed creatorVault, uint[] licenses);
+    event CollaboratorAdded(string indexed assetKey, address indexed collaboratorVault);
+    event LicenseAdded(string indexed assetKey, uint licenseId, uint licenseTypeId);
+    event AssetChanged(string indexed assetKey, Status indexed status, address indexed editor);
+    //event LicenseAvailabilityChanged(bytes32 indexed assetKey, uint licenseId, uint64 available);
 
     function initialize() public initializer {
 
@@ -69,6 +68,7 @@ contract AssetRegistry is
     }
 
     function consign(
+                            string calldata assetKey,
                             HeaderInfo calldata header, 
                             CreatorInfo calldata creator,
                             CreatorInfo calldata collaborator1,
@@ -84,8 +84,8 @@ contract AssetRegistry is
         require(isContract(creator.vault), "Vault does not exist");
         ICreatorVault(creator.vault).useCreatorCredits(global.creatorCreditsRequired);
 
-        _assetId.increment();
-        AssetInfo storage asset = global.assets[_assetId.current()];
+        bytes32 key = stringToBytes(assetKey);
+        AssetInfo storage asset = global.assets[key];
         asset.header = header;
         asset.media = media;
         asset.creator = creator;
@@ -104,73 +104,76 @@ contract AssetRegistry is
             asset.isPremium = true;   
         }
 
-        addAssetCollaborator(_assetId.current(), collaborator1);
-        addAssetCollaborator(_assetId.current(), collaborator2);
-        addAssetCollaborator(_assetId.current(), collaborator3);
+        addAssetCollaborator(assetKey, collaborator1);
+        addAssetCollaborator(assetKey, collaborator2);
+        addAssetCollaborator(assetKey, collaborator3);
 
-        addAssetLicense(_assetId.current(), license1);
-        addAssetLicense(_assetId.current(), license2);
-        addAssetLicense(_assetId.current(), license3);
-        addAssetLicense(_assetId.current(), license4);
+        addAssetLicense(assetKey, license1);
+        addAssetLicense(assetKey, license2);
+        addAssetLicense(assetKey, license3);
+        addAssetLicense(assetKey, license4);
 
-        assetList.insert(_assetId.current());
+        assetList.insert(key);
         global.assetsConsigned++;
 
-        emit AssetConsigned(_assetId.current(), asset.creator.vault, global.assets[_assetId.current()].licenses);
+        emit AssetConsigned(assetKey, asset.creator.vault, global.assets[key].licenses);
     }
 
-    function addAssetCollaborator(uint assetId, CreatorInfo calldata collaborator) public onlyEditor(assetId) whenNotPaused {
+    function addAssetCollaborator(string calldata assetKey, CreatorInfo calldata collaborator) public onlyEditor(assetKey) whenNotPaused {
         // Don't use require because consign() does allow empty collaborator params
         if (collaborator.vault != address(0)) {
             require(isContract(collaborator.vault), "Collaborator Vault does not exist");
-            global.assets[assetId].collaborators.push(collaborator);
-            emit CollaboratorAdded(assetId, collaborator.vault);
+            global.assets[stringToBytes(assetKey)].collaborators.push(collaborator);
+            emit CollaboratorAdded(assetKey, collaborator.vault);
         }
     }
 
-    function addAssetLicense(uint assetId, LicenseInfo memory license) public onlyEditor(assetId) whenNotPaused {
+    function addAssetLicense(string calldata assetKey, LicenseInfo memory license) public onlyEditor(assetKey) whenNotPaused {
         // Don't use require because consign() does allow empty licenseTypeId params
         if (license.licenseTypeId > 0) {
             _licenseId.increment();
             license.id = _licenseId.current();
             global.licenses[_licenseId.current()] = license;
-            global.assets[assetId].licenses.push(_licenseId.current());
+            global.assets[stringToBytes(assetKey)].licenses.push(_licenseId.current());
 
-            emit LicenseAdded(assetId, _licenseId.current(), license.licenseTypeId);
+            emit LicenseAdded(assetKey, _licenseId.current(), license.licenseTypeId);
         }
     }
 
-    function getAssetLicenses(uint assetId) public view onlyActiveAsset(assetId) returns(LicenseInfo[] memory) {
-        LicenseInfo[] memory licenses = new LicenseInfo[](global.assets[assetId].licenses.length);
-        for(uint a=0; a<global.assets[assetId].licenses.length; a++) {
+    function getAssetLicenses(string calldata assetKey) public view onlyActiveAsset(assetKey) returns(LicenseInfo[] memory) {
+        bytes32 key = stringToBytes(assetKey);
+        LicenseInfo[] memory licenses = new LicenseInfo[](global.assets[key].licenses.length);
+        for(uint a=0; a<global.assets[key].licenses.length; a++) {
             licenses[a] = global.licenses[a];
         }
         return licenses;
     }
 
-    function getAssetLicense(uint assetId, uint licenseId) public view onlyActiveAsset(assetId) returns(LicenseInfo memory) {
+    function getAssetLicense(string calldata assetKey, uint licenseId) public view onlyActiveAsset(assetKey) returns(LicenseInfo memory) {
         return (global.licenses[licenseId]);
     }
 
-    function changeAsset(uint assetId, Status status, address editor) public whenNotPaused {
-        if (status == Status.BLOCKED || global.assets[assetId].status == Status.BLOCKED) { // Only Studio can set or change from Blocked
+    function changeAsset(string calldata assetKey, Status status, address editor) public whenNotPaused {
+        bytes32 key = stringToBytes(assetKey);
+        if (status == Status.BLOCKED || global.assets[key].status == Status.BLOCKED) { // Only Studio can set or change from Blocked
             require(hasRole(STUDIO_ROLE, msg.sender), UNAUTHORIZED_USER);
         } else {
-            require(msg.sender == global.assets[assetId].editor, UNAUTHORIZED_USER);
+            require(msg.sender == global.assets[key].editor, UNAUTHORIZED_USER);
         }
-        require(editor != global.assets[assetId].editor && editor != address(0), "Invalid editor address");
+        require(editor != global.assets[key].editor && editor != address(0), "Invalid editor address");
 
-        global.assets[assetId].status = status;
-        global.assets[assetId].editor = editor;
+        global.assets[key].status = status;
+        global.assets[key].editor = editor;
 
-        emit AssetChanged(assetId, status, editor);
+        emit AssetChanged(assetKey, status, editor);
     }
 
-    function upgradeAsset(uint assetId) public payable  onlyActiveAsset(assetId) whenNotPaused {
-        require(!global.assets[assetId].isPremium, "Asset is already premium");
+    function upgradeAsset(string calldata assetKey) public payable  onlyActiveAsset(assetKey) whenNotPaused {
+        bytes32 key = stringToBytes(assetKey);
+        require(!global.assets[key].isPremium, "Asset is already premium");
         require(msg.value == global.premiumFee, "Insufficient funds");
 
-        global.assets[assetId].isPremium = true;
+        global.assets[key].isPremium = true;
     }
 
     function changeAssetPremiumFee(uint fee) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
@@ -181,8 +184,12 @@ contract AssetRegistry is
         global.creatorCreditsRequired = credits;
     }
 
-    function changeAssetBaseUri(string memory uri) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
-        global.assetBaseUri = uri;
+    function changeAssetTokenUri(string calldata assetKey, string memory uri) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
+        global.assets[stringToBytes(assetKey)].header.tokenUri = uri;
+    }
+
+    function stringToBytes(string calldata input) public pure returns(bytes32) {
+        return(keccak256(bytes(input)));
     }
 
     function isContract(address account) public view returns (bool) { 
@@ -224,7 +231,7 @@ contract AssetRegistry is
         return super.supportsInterface(interfaceId);
     }
 
-    function getAssetBatch(uint start, uint count) public view returns(AssetInfo[] memory) {
+    function getAssetBatch(uint256 start, uint256 count) public view returns(AssetInfo[] memory) {
         AssetInfo[] memory result = new AssetInfo[](count);
 
         for(uint i=start; i<start+count; i++) {
@@ -237,27 +244,39 @@ contract AssetRegistry is
         return assetList.count();
     }
 
-    function isAsset(uint key) public view returns(bool) {
-        return assetList.exists(key);
+    function isAssetByKey(string calldata assetKey) public view returns(bool) {
+        return isAsset(assetKey);
     }
 
-    function getAsset(uint key) public view returns(AssetInfo memory) {
-        require(assetList.exists(key), "Can't get a holder that doesn't exist.");
+    function isAsset(string calldata assetKey) public view returns(bool) {
+        return assetList.exists(stringToBytes(assetKey));
+    }
+
+    function getAsset(string calldata assetKey) public view returns(AssetInfo memory) {
+        return getAssetByKey(stringToBytes(assetKey));
+    }
+
+    function getAssetByKey(bytes32 key) public view returns(AssetInfo memory) {
+        require(assetList.exists(key), "Can't get a Asset that doesn't exist.");
         return(global.assets[key]);
     }
 
     function getAssetAtIndex(uint index) public view returns(AssetInfo memory) {
-        uint key = assetList.keyAtIndex(index);
+        bytes32 key = assetList.keyAtIndex(index);
         return global.assets[key];
     }
+    
+    function getKeyAtIndex(uint index) public view returns(bytes32) {
+        return assetList.keyAtIndex(index);
+    }
 
-    modifier onlyEditor(uint assetId) {
-        require(msg.sender == global.assets[assetId].editor, UNAUTHORIZED_USER);
+    modifier onlyEditor(string calldata assetKey) {
+        require(msg.sender == global.assets[stringToBytes(assetKey)].editor, UNAUTHORIZED_USER);
         _;
     }
 
-    modifier onlyActiveAsset(uint assetId) {
-        AssetInfo memory assetInfo = global.assets[assetId];
+    modifier onlyActiveAsset(string calldata assetKey) {
+        AssetInfo memory assetInfo = global.assets[stringToBytes(assetKey)];
         require(assetInfo.status == Status.ACTIVE, "Asset not active");
         _;
     }

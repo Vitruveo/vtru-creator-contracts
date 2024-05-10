@@ -1,7 +1,7 @@
 const { ethers, upgrades } = require("hardhat");
 
 // npx hardhat run --network testnet scripts/licenses/deploy.js
-// npx hardhat verify --contract contracts/LicenseRegistry.sol:LicenseRegistry --network testnet 0xC6BCaada8ee54B19a715E24e439CCa89aD18fD13
+// npx hardhat verify --contract contracts/LicenseRegistry.sol:LicenseRegistry --network testnet 0x428aE945EdF609420E0ACc52298d2da8485E6dd4
 // npx hardhat verify --contract contracts/LicenseRegistry.sol:LicenseRegistry --network mainnet 0x7eF4199309B0C80227e439Af25A4C1bb1caB61dB
 
 async function main() {

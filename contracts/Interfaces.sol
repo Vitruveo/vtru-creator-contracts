@@ -20,13 +20,14 @@ interface ILicenseRegistry {
     function getCollectorCreditContract() external view returns(address); 
     function getUsdVtruExchangeRate() external view returns(uint);
     function getStudioAccount() external view returns(address);
+    function getAssetByKey(bytes32 key) external view returns(ICreatorData.AssetInfo memory);
 }
 
 interface ICreatorVault {
     function getCreatorCredits() external view returns(uint);
     function useCreatorCredits(uint) external;
     function isVaultWallet(address) external returns(bool);
-    function mint(uint assetId) external returns(uint);
+    function mint(string calldata assetKey) external returns(uint);
 }
 
 interface ICreatorVaultFactory {
@@ -45,15 +46,15 @@ abstract contract ICreatorData {
     bytes32 public constant STUDIO_ROLE = bytes32(uint(0x01));
     bytes32 public constant KEEPER_ROLE = bytes32(uint(0x02));
     bytes32 public constant UPGRADER_ROLE = bytes32(uint(0x03));
+    bytes32 public constant LICENSOR_ROLE = bytes32(uint(0x04));
 
     struct AssetInfo {
-        uint256 id;
+        bytes32 key;
         HeaderInfo header;
         CreatorInfo creator; 
         CreatorInfo[] collaborators; 
         uint[] licenses;
         string[] media;
-        string assetCid;
         Status status;
         Source originator;
         address editor;
@@ -66,7 +67,7 @@ abstract contract ICreatorData {
         address vault;
         uint256 split;
     }
-    
+
     struct LicenseInfo {
         uint256 id;
         uint256 licenseTypeId;
@@ -80,18 +81,15 @@ abstract contract ICreatorData {
     }
 
     struct HeaderInfo {
-        uint256 refId;
-        string xRefId;
         string title;
         string description;
         uint256 metadataRefId;
         string metadataXRefId;
-        string assetCid;
-        string previewCid;
+        string tokenUri;
     }
 
     struct LicenseInstance {
-        uint assetId;
+        bytes32 assetKey;
         uint licenseId;
         uint licenseFee;
         uint amountPaid;
@@ -119,5 +117,7 @@ abstract contract ICreatorData {
 }
 
 interface IAssetRegistry {
-    function getAssetLicense(uint assetId, uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
+    function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
+    function getAssetLicense(string calldata assetKey, uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
+    function consumeLicense(uint licenseId, uint64 quantity) external;
 }
