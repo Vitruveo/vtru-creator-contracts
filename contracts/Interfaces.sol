@@ -117,6 +117,7 @@ abstract contract ICreatorData {
 }
 
 interface IAssetRegistry {
+    function isAsset(string calldata assetKey) external view returns(bool);
     function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
     function getAssetLicense(string calldata assetKey, uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
     function consumeLicense(uint licenseId, uint64 quantity) external;

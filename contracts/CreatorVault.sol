@@ -42,7 +42,7 @@ contract CreatorVault is
 
     GlobalData public global;
 
-    mapping(uint => bytes32) private tokens; // tokenId => assetId
+    mapping(uint => bytes32) private tokens; // tokenId => assetKey
 
     function initialize(
                             string calldata vaultName,
@@ -71,16 +71,14 @@ contract CreatorVault is
     }
 
 
-    function addVaultWallet(address wallet) public {
+    function addVaultWallet(address wallet) public onlyVaultAdmin() {
         require(!isVaultWallet((wallet)), "Wallet already added in Vault");
-        require(hasRole(KEEPER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount(), UNAUTHORIZED_USER);
         global.wallets.push(wallet);
         _grantRole(KEEPER_ROLE, wallet);
     }
 
-    function removeVaultWallet(address wallet) public {
+    function removeVaultWallet(address wallet) public onlyVaultAdmin() {
         require(isVaultWallet((wallet)), "Wallet not in Vault");
-        require(hasRole(KEEPER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount(), UNAUTHORIZED_USER);
         _revokeRole(KEEPER_ROLE, wallet);
         for(uint w=0;w<global.wallets.length;w++) {
             if (global.wallets[w] == wallet) {
@@ -106,7 +104,7 @@ contract CreatorVault is
         global.creatorCredits -= credits;
     }
 
-    function addCreatorCredit(uint credits) public onlyRole(STUDIO_ROLE) {
+    function addCreatorCredits(uint credits) public onlyRole(STUDIO_ROLE) {
         global.creatorCredits += credits;
     }
 
@@ -125,16 +123,18 @@ contract CreatorVault is
         return false;
     }
 
+    // Claim is used by any Vault wallet to transfer funds from Vault to wallet
+    // Available claim balance is Vault contract balance
+    function claim() external onlyVaultWallet() {
+        require(payable(msg.sender).send(address(this).balance));
+    }
+
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _pause();
     }
 
     function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
-    }
-
-    function claimVTRU() external onlyVaultWallet() {
-        require(payable(msg.sender).send(address(this).balance));
     }
 
     receive() external payable {
@@ -153,6 +153,11 @@ contract CreatorVault is
 
     modifier onlyVaultWallet() {
         require(isVaultWallet(msg.sender), ICreatorData.UNAUTHORIZED_USER);
+        _;
+    }
+
+    modifier onlyVaultAdmin() {
+        require(hasRole(KEEPER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount(), UNAUTHORIZED_USER);
         _;
     }
 }

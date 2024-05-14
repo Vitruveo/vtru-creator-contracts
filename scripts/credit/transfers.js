@@ -2,8 +2,8 @@ const { ethers } = require("hardhat");
 const hre = require("hardhat");
 require('dotenv').config();
 
-/// npx hardhat run --network testnet scripts/collector/transfers.js 
-/// npx hardhat run --network mainnet scripts/collector/transfers.js 
+/// npx hardhat run --network testnet scripts/credit/transfers.js 
+/// npx hardhat run --network mainnet scripts/credit/transfers.js 
 
 
 async function sleep(millis) {
@@ -28,7 +28,7 @@ async function sleep(millis) {
         events.forEach((e) => {
             if (e.topics[1] != '0x0000000000000000000000000000000000000000000000000000000000000000' &&
                 e.topics[2] != '0x0000000000000000000000000000000000000000000000000000000000000000') {
-                transfers.push(e);
+                transfers.push({ token: e.args[2], from: e.args[0], to: e.args[1]});
             }
         })
 

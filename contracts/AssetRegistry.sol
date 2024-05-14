@@ -40,7 +40,6 @@ contract AssetRegistry is
         uint assetsConsigned;
         uint premiumFee;
         uint creatorCreditsRequired;
-        string assetBaseUri;
         mapping(bytes32 => AssetInfo) assets;
         mapping(uint => LicenseInfo) licenses;
     }
@@ -84,7 +83,7 @@ contract AssetRegistry is
         require(isContract(creator.vault), "Vault does not exist");
         ICreatorVault(creator.vault).useCreatorCredits(global.creatorCreditsRequired);
 
-        bytes32 key = stringToBytes(assetKey);
+        bytes32 key = hash(assetKey);
         AssetInfo storage asset = global.assets[key];
         asset.header = header;
         asset.media = media;
@@ -123,7 +122,7 @@ contract AssetRegistry is
         // Don't use require because consign() does allow empty collaborator params
         if (collaborator.vault != address(0)) {
             require(isContract(collaborator.vault), "Collaborator Vault does not exist");
-            global.assets[stringToBytes(assetKey)].collaborators.push(collaborator);
+            global.assets[hash(assetKey)].collaborators.push(collaborator);
             emit CollaboratorAdded(assetKey, collaborator.vault);
         }
     }
@@ -134,14 +133,14 @@ contract AssetRegistry is
             _licenseId.increment();
             license.id = _licenseId.current();
             global.licenses[_licenseId.current()] = license;
-            global.assets[stringToBytes(assetKey)].licenses.push(_licenseId.current());
+            global.assets[hash(assetKey)].licenses.push(_licenseId.current());
 
             emit LicenseAdded(assetKey, _licenseId.current(), license.licenseTypeId);
         }
     }
 
     function getAssetLicenses(string calldata assetKey) public view onlyActiveAsset(assetKey) returns(LicenseInfo[] memory) {
-        bytes32 key = stringToBytes(assetKey);
+        bytes32 key = hash(assetKey);
         LicenseInfo[] memory licenses = new LicenseInfo[](global.assets[key].licenses.length);
         for(uint a=0; a<global.assets[key].licenses.length; a++) {
             licenses[a] = global.licenses[a];
@@ -154,7 +153,7 @@ contract AssetRegistry is
     }
 
     function changeAsset(string calldata assetKey, Status status, address editor) public whenNotPaused {
-        bytes32 key = stringToBytes(assetKey);
+        bytes32 key = hash(assetKey);
         if (status == Status.BLOCKED || global.assets[key].status == Status.BLOCKED) { // Only Studio can set or change from Blocked
             require(hasRole(STUDIO_ROLE, msg.sender), UNAUTHORIZED_USER);
         } else {
@@ -169,7 +168,7 @@ contract AssetRegistry is
     }
 
     function upgradeAsset(string calldata assetKey) public payable  onlyActiveAsset(assetKey) whenNotPaused {
-        bytes32 key = stringToBytes(assetKey);
+        bytes32 key = hash(assetKey);
         require(!global.assets[key].isPremium, "Asset is already premium");
         require(msg.value == global.premiumFee, "Insufficient funds");
 
@@ -185,10 +184,10 @@ contract AssetRegistry is
     }
 
     function changeAssetTokenUri(string calldata assetKey, string memory uri) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
-        global.assets[stringToBytes(assetKey)].header.tokenUri = uri;
+        global.assets[hash(assetKey)].header.tokenUri = uri;
     }
 
-    function stringToBytes(string calldata input) public pure returns(bytes32) {
+    function hash(string calldata input) public pure returns(bytes32) {
         return(keccak256(bytes(input)));
     }
 
@@ -249,15 +248,15 @@ contract AssetRegistry is
     }
 
     function isAsset(string calldata assetKey) public view returns(bool) {
-        return assetList.exists(stringToBytes(assetKey));
+        return assetList.exists(hash(assetKey));
     }
 
     function getAsset(string calldata assetKey) public view returns(AssetInfo memory) {
-        return getAssetByKey(stringToBytes(assetKey));
+        return getAssetByKey(hash(assetKey));
     }
 
     function getAssetByKey(bytes32 key) public view returns(AssetInfo memory) {
-        require(assetList.exists(key), "Can't get a Asset that doesn't exist.");
+        require(assetList.exists(key), "Can't get an Asset that doesn't exist.");
         return(global.assets[key]);
     }
 
@@ -271,12 +270,12 @@ contract AssetRegistry is
     }
 
     modifier onlyEditor(string calldata assetKey) {
-        require(msg.sender == global.assets[stringToBytes(assetKey)].editor, UNAUTHORIZED_USER);
+        require(msg.sender == global.assets[hash(assetKey)].editor, UNAUTHORIZED_USER);
         _;
     }
 
     modifier onlyActiveAsset(string calldata assetKey) {
-        AssetInfo memory assetInfo = global.assets[stringToBytes(assetKey)];
+        AssetInfo memory assetInfo = global.assets[hash(assetKey)];
         require(assetInfo.status == Status.ACTIVE, "Asset not active");
         _;
     }

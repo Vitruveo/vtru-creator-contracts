@@ -20,7 +20,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/Base64Upgradeable.sol";
-import "./UnorderedKeySet.sol";
 import "./Interfaces.sol";
 
 contract LicenseRegistry is
@@ -103,38 +102,6 @@ contract LicenseRegistry is
         return global.licenseInstances[id];
     }
 
-    // function buyLicense(
-    //     uint assetId,
-    //     uint licenseId,
-    //     uint64 quantity
-    // ) public payable whenNotPaused {
-
-    //     _licenseNFTId.increment();
-        
-    //     global.licenseNFTs[_licenseNFTId.current()] = LicenseNFT(
-    //                                                     assetId,
-    //                                                     licenseId,
-    //                                                     0,  // licenseFee
-    //                                                     msg.value,// amountPaid
-    //                                                     msg.sender, // licensee
-    //                                                     quantity, // licenseQuantity
-    //                                                     0,  // platformBasisPoints
-    //                                                     0,  // curatorBasisPoints
-    //                                                     0,  // sellerBasisPoints
-    //                                                     0  // creatorRoyaltyBasisPoints
-    //                                                   );
-    //     global.licenseNFTLookup.push(_licenseNFTId.current());
-    //     global.licenseNFTsByOwner[msg.sender].push(_licenseNFTId.current());
-
-    //     for(uint i=0;i<quantity;i++) {
-    //         _tokenId.increment();
-
-    //         _mint(msg.sender, _tokenId.current());
-
-    //        // emit CollectorCreditGranted(newLicenseNFT.id, account, newLicenseNFT.isUSD, newLicenseNFT.value);
-    //     }
-    // }
-
     function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseId, uint64 quantity) public {
         
         // 1) Get buyer credits
@@ -156,7 +123,7 @@ contract LicenseRegistry is
 
         // License instance properties
 
-        // 6) Mint asset
+        // 6) Mint assets
        
        // if Mintable then mint NFTs
 
@@ -173,11 +140,14 @@ contract LicenseRegistry is
     }
 
     function getAsset(string calldata assetKey) public view returns(ICreatorData.AssetInfo memory) {
+        require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         return IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
     }
 
     function getAssetAvailability(string calldata assetKey, uint licenseId) public view returns(uint64, uint64) {
+        require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.LicenseInfo memory licenseInfo = IAssetRegistry(global.assetRegistryContract).getAssetLicense(assetKey, licenseId);
+        require(licenseInfo.licenseTypeId > 0, "Asset or License not found");
         LicenseTypeInfo memory licenseTypeInfo = global.licenseTypes[licenseInfo.licenseTypeId];
         return getLicenseAvailability(licenseInfo, licenseTypeInfo);
     } 
@@ -202,15 +172,6 @@ contract LicenseRegistry is
     function getUsdVtruExchangeRate() public view returns(uint) {
         require(global.usdVtruExchangeRate > 0, "Exchange rate not set");
         return(global.usdVtruExchangeRate);
-    }
-
-    function setStudioAccount(address account) public  onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(account != address(0), "Invalid Studio account address");
-        global.studioAccount = account;
-    }
-
-    function getStudioAccount() public view returns(address) {
-        return(global.studioAccount);
     }
 
     function setCollectorCreditContract(address account) public  onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -238,6 +199,16 @@ contract LicenseRegistry is
 
     function getCreatorVaultFactoryContract() public view returns(address) {
         return(global.creatorVaultFactoryContract);
+    }
+
+    // Studio account is required for Creator Vault
+    function setStudioAccount(address account) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(account != address(0), "Invalid Studio account address");
+        global.studioAccount = account;
+    }
+
+    function getStudioAccount() public view returns(address) {
+        return(global.studioAccount);
     }
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
