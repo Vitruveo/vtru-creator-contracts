@@ -9,7 +9,7 @@ const fse = require("fs-extra");
 
 async function main() {
     const isMainNet = hre.network.name == 'mainnet';
-
+    const studioAccount = isMainNet ? '0xe48de38701116b127e688701fc7752bd5032e3eb' : '0x88Eb3738dc7B13773F570458cbC932521431FeA7';
     const AssetRegistry = await ethers.getContractFactory("AssetRegistry");
     const assetRegistry = await upgrades.deployProxy(AssetRegistry, { initializer: 'initialize' });
     await assetRegistry.waitForDeployment();
@@ -37,7 +37,9 @@ async function main() {
     const creatorVaultFactoryAbi = CreatorVaultFactory.interface.formatJson();
     console.log("\nCreatorVaultFactory deployed to:", creatorVaultFactoryAddress);
 
-    await licenseRegistry.setStudioAccount('0x88Eb3738dc7B13773F570458cbC932521431FeA7');
+
+    await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
+    await licenseRegistry.setStudioAccount(studioAccount);
     await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
     await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);
     await licenseRegistry.setCollectorCreditContract(isMainNet ? '0x5c7421fcCA16C685cEC5aaFf745a9a6BDf75Ba06' : '0x2921f3c02f4c6b1BbD35c5B8deA666F78A9D5919');
@@ -64,7 +66,18 @@ async function main() {
             abi: JSON.parse(creatorVaultFactoryAbi)
         }
     }
-    fse.writeJSONSync(path.resolve(__dirname, '..', 'vault-config.json'), vaultConfig, { spaces: 2 });
+    const jsonPath = path.resolve(__dirname, '..', 'vault-config.json');
+    if (fse.existsSync(jsonPath)) {
+        const existing = fse.readJSONSync(jsonPath);
+        if (isMainNet) {
+            // Copy over testnet values
+            vaultConfig.assetRegisty.testnet = existing.assetRegistry.testnet;
+            vaultConfig.licenseRegisty.testnet = existing.licenseRegisty.testnet;
+            vaultConfig.creatorVault.testnet = existing.creatorVault.testnet;
+            vaultConfig.creatorVaultFactory.testnet = existing.creatorVaultFactory.testnet;
+        }
+    }
+    fse.writeJSONSync(jsonPath, vaultConfig, { spaces: 2 });
     console.log(`\nConfig written to ${path.resolve(__dirname, '..', 'vault-config.json')}\n`);
 }
 
