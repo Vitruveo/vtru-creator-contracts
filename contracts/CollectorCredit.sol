@@ -74,10 +74,10 @@ contract CollectorCredit is
     }
     
     GlobalData public global;
-    uint256 public totalRedeemedCents;
+    uint256 public usdRedeemed;
 
     event CollectorCreditGranted(uint256 indexed tokenId, address indexed account, bool isUSD, uint256 value);
-    event CollectorCreditRedeemed(address indexed account, uint64 amountCents, uint256 licenseInstanceId, uint256 indexed redeemedTokens, uint64 redeemedCents);
+    event CollectorCreditRedeemed(address indexed account, uint64 amountCents, uint256 licenseInstanceId, uint64 redeemedCents);
 
     function initialize() public initializer {
         __ERC721_init("Vitruveo Collector Credit", "VCOLC");
@@ -132,7 +132,6 @@ contract CollectorCredit is
 
     function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents) onlyRole(REEDEEMER_ROLE) public whenNotPaused returns(uint64 redeemedCents) {
 
-        uint256 redeemedTokens;
         for(uint f=0; f<global.CreditNFTsByOwner[account].length; f++) {
             uint tokenId = global.CreditNFTsByOwner[account][f];
             CreditNFT memory creditNFT = global.CreditNFTs[tokenId];
@@ -142,7 +141,6 @@ contract CollectorCredit is
                 delete global.CreditNFTs[tokenId];
                 global.TotalNFTsByClass[creditNFT.classId]--;
                 _burn(tokenId);      
-                redeemedTokens++;       
             }
             if (redeemedCents >= amountCents) {
                 break;
@@ -150,9 +148,8 @@ contract CollectorCredit is
         }
 
         require(redeemedCents >= amountCents, "Failed to redeem credits");
-        totalRedeemedCents += redeemedCents;  
 
-        emit CollectorCreditRedeemed(account, amountCents, licenseInstanceId, redeemedTokens, redeemedCents);
+        emit CollectorCreditRedeemed(account, amountCents, licenseInstanceId, redeemedCents);
     }
 
 

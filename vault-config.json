@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0xABA06E4A2Eb17C686Fc67C81d26701D9b82e3a41",
+    "testnet": "0x7EAFEcf047e83f7e55ccc587B9AE468b86201eae",
     "mainnet": "",
     "abi": [
       {
@@ -23,28 +23,6 @@
       {
         "type": "event",
         "anonymous": false,
-        "name": "AssetChanged",
-        "inputs": [
-          {
-            "type": "string",
-            "name": "assetKey",
-            "indexed": true
-          },
-          {
-            "type": "uint8",
-            "name": "status",
-            "indexed": true
-          },
-          {
-            "type": "address",
-            "name": "editor",
-            "indexed": true
-          }
-        ]
-      },
-      {
-        "type": "event",
-        "anonymous": false,
         "name": "AssetConsigned",
         "inputs": [
           {
@@ -60,6 +38,23 @@
           {
             "type": "uint256[]",
             "name": "licenses"
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "AssetStatusChanged",
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey",
+            "indexed": true
+          },
+          {
+            "type": "uint8",
+            "name": "status",
+            "indexed": true
           }
         ]
       },
@@ -475,7 +470,20 @@
       },
       {
         "type": "function",
-        "name": "changeAsset",
+        "name": "changeAssetPremiumFee",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "fee"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "changeAssetStatus",
         "constant": false,
         "payable": false,
         "inputs": [
@@ -486,23 +494,6 @@
           {
             "type": "uint8",
             "name": "status"
-          },
-          {
-            "type": "address",
-            "name": "editor"
-          }
-        ],
-        "outputs": []
-      },
-      {
-        "type": "function",
-        "name": "changeAssetPremiumFee",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "fee"
           }
         ],
         "outputs": []
@@ -571,6 +562,10 @@
               {
                 "type": "string",
                 "name": "tokenUri"
+              },
+              {
+                "type": "uint8",
+                "name": "status"
               }
             ]
           },
@@ -881,6 +876,10 @@
                   {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "uint8",
+                    "name": "status"
                   }
                 ]
               },
@@ -1000,6 +999,10 @@
                   {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "uint8",
+                    "name": "status"
                   }
                 ]
               },
@@ -1123,6 +1126,10 @@
                   {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "uint8",
+                    "name": "status"
                   }
                 ]
               },
@@ -1242,6 +1249,10 @@
                   {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "uint8",
+                    "name": "status"
                   }
                 ]
               },
@@ -1748,7 +1759,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x3A907A803E9FA58d2f1061F7b006c441ea9dd35c",
+    "testnet": "0x96d4FC948f6A209D53580d5888710C6467c120A8",
     "mainnet": "",
     "abi": [
       {
@@ -2066,6 +2077,23 @@
       },
       {
         "type": "function",
+        "name": "changeAssetStatus",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "uint8",
+            "name": "status"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "changeLicenseType",
         "constant": false,
         "payable": false,
@@ -2133,6 +2161,10 @@
                   {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "uint8",
+                    "name": "status"
                   }
                 ]
               },
@@ -2973,7 +3005,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0x64ecB2e9B1466C1277FA1f5222FAF402F97B927a",
+    "testnet": "0xBF300Af66e994Cf2f3123464d22A2184a73a9A7F",
     "mainnet": "",
     "abi": [
       {
@@ -3907,7 +3939,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x49ef867a1E9A71992003d89822414d6eddE2D810",
+    "testnet": "0x7eA2E62810e9d867D682fF78D52B1d0A9B82F870",
     "mainnet": "",
     "abi": [
       {

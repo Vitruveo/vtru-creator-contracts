@@ -1,8 +1,8 @@
 const { ethers } = require("hardhat");
 
 // npx hardhat run --network testnet scripts/factory/deploy.js 
-// npx hardhat verify --contract contracts/CreatorVaultFactory.sol:CreatorVaultFactory --network testnet --constructor-args scripts/factory/arguments.js 0x49ef867a1E9A71992003d89822414d6eddE2D810
-// npx hardhat verify --contract contracts/CreatorVault.sol:CreatorVault --network testnet 0x64ecB2e9B1466C1277FA1f5222FAF402F97B927a
+// npx hardhat verify --contract contracts/CreatorVaultFactory.sol:CreatorVaultFactory --network testnet --constructor-args scripts/factory/arguments.js 0x7eA2E62810e9d867D682fF78D52B1d0A9B82F870
+// npx hardhat verify --contract contracts/CreatorVault.sol:CreatorVault --network testnet 0xBF300Af66e994Cf2f3123464d22A2184a73a9A7F
 
 
 async function main() {

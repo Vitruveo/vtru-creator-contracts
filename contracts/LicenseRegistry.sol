@@ -76,7 +76,7 @@ contract LicenseRegistry is
 
     }
 
-    function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  {
+    function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  whenNotPaused {
 
         _licenseTypeId.increment();
         global.licenseTypes[_licenseTypeId.current()] = LicenseTypeInfo(
@@ -90,14 +90,14 @@ contract LicenseRegistry is
                                                                         );
     }
 
-    function changeLicenseType(uint licenseTypeId, string memory name, string memory info, bool active) public onlyRole(DEFAULT_ADMIN_ROLE) {
+    function changeLicenseType(uint licenseTypeId, string memory name, string memory info, bool active) public onlyRole(DEFAULT_ADMIN_ROLE)  whenNotPaused{
 
         global.licenseTypes[licenseTypeId].name = name;
         global.licenseTypes[licenseTypeId].info = info;
         global.licenseTypes[licenseTypeId].isActive = active;
     }
 
-    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public {
+    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public  whenNotPaused {
         require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
 
@@ -150,6 +150,9 @@ contract LicenseRegistry is
         emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), msg.sender, licenseInstanceInfo.tokenId);    
     }
 
+    function changeAssetStatus(string calldata assetKey, Status status) public whenNotPaused {
+        return IAssetRegistry(global.assetRegistryContract).changeAssetStatus(assetKey, status);
+    }
 
     function getAsset(string calldata assetKey) public view returns(ICreatorData.AssetInfo memory) {
         return IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);

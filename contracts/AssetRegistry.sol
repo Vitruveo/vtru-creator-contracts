@@ -49,7 +49,7 @@ contract AssetRegistry is
     event AssetConsigned(string indexed assetKey, address indexed creatorVault, uint[] licenses);
     event CollaboratorAdded(string indexed assetKey, address indexed collaboratorVault);
     event LicenseAdded(string indexed assetKey, uint licenseId, uint licenseTypeId);
-    event AssetChanged(string indexed assetKey, Status indexed status, address indexed editor);
+    event AssetStatusChanged(string indexed assetKey, Status indexed status);
     event LicenseAcquired(address indexed licensee, uint indexed licenseId, uint64 quantity);
 
     function initialize() public initializer {
@@ -157,19 +157,19 @@ contract AssetRegistry is
         emit LicenseAcquired(licensee, licenseId, quantity);      
     }
 
-    function changeAsset(string calldata assetKey, Status status, address editor) public whenNotPaused {
+    function changeAssetStatus(string calldata assetKey, ICreatorData.Status status) public whenNotPaused {
         bytes32 key = hash(assetKey);
         if (status == Status.BLOCKED || global.assets[key].status == Status.BLOCKED) { // Only Studio can set or change from Blocked
-            require(hasRole(STUDIO_ROLE, msg.sender), UNAUTHORIZED_USER);
+            require(hasRole(STUDIO_ROLE, msg.sender) || hasRole(LICENSOR_ROLE, msg.sender), UNAUTHORIZED_USER);
         } else {
-            require(msg.sender == global.assets[key].editor, UNAUTHORIZED_USER);
+            require(hasRole(STUDIO_ROLE, msg.sender) || hasRole(LICENSOR_ROLE, msg.sender) || msg.sender == global.assets[key].editor, UNAUTHORIZED_USER);
         }
-        require(editor != global.assets[key].editor && editor != address(0), "Invalid editor address");
+        //require(editor != global.assets[key].editor && editor != address(0), "Invalid editor address");
 
-        global.assets[key].status = status;
-        global.assets[key].editor = editor;
+        global.assets[key].header.status = status;
+        //global.assets[key].editor = editor;
 
-        emit AssetChanged(assetKey, status, editor);
+        emit AssetStatusChanged(assetKey, status);
     }
 
     function upgradeAsset(string calldata assetKey) public payable  onlyActiveAsset(assetKey) whenNotPaused {
@@ -274,7 +274,7 @@ contract AssetRegistry is
 
     modifier onlyActiveAsset(string calldata assetKey) {
         AssetInfo memory assetInfo = global.assets[hash(assetKey)];
-        require(assetInfo.status == Status.ACTIVE, "Asset not active");
+        require(assetInfo.header.status == Status.ACTIVE, "Asset not active");
         _;
     }
 }

@@ -101,6 +101,7 @@ abstract contract ICreatorData {
         uint256 metadataRefId;
         string metadataXRefId;
         string tokenUri;
+        Status status;
     }
 
     enum Status {
@@ -125,4 +126,5 @@ interface IAssetRegistry {
     function getAssetLicense(uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
     function getAssetLicenses(string calldata assetKey) external view returns(ICreatorData.LicenseInfo[] memory); 
     function acquireLicense(uint licenseId, uint64 quantity, address licensee) external;
+    function changeAssetStatus(string calldata assetKey, ICreatorData.Status status) external;
 }
