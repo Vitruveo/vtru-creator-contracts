@@ -32,7 +32,11 @@ contract CreatorVault is
    
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _tokenId;
-    CountersUpgradeable.Counter public _licenseNFTId;
+
+    struct TokenInfo {
+        string assetKey;
+        uint licenseInstanceId;
+    }
 
     struct GlobalData {
         uint creatorCredits;
@@ -42,7 +46,7 @@ contract CreatorVault is
 
     GlobalData public global;
 
-    mapping(uint => bytes32) private tokens; // tokenId => assetKey
+    mapping(uint => TokenInfo) private tokens; // tokenId => assetKey
 
     function initialize(
                             string calldata vaultName,
@@ -109,8 +113,17 @@ contract CreatorVault is
     }
 
     function tokenURI(uint tokenId) override public view returns (string memory){                   
-        ICreatorData.AssetInfo memory assetInfo = ILicenseRegistry(global.licenseRegistry).getAssetByKey(tokens[tokenId]);
+        ICreatorData.AssetInfo memory assetInfo = ILicenseRegistry(global.licenseRegistry).getAsset(tokens[tokenId].assetKey);
         return assetInfo.header.tokenUri;
+    }
+
+    function licensedMint(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) public returns(uint) {
+        require(msg.sender == global.licenseRegistry, ICreatorData.UNAUTHORIZED_USER);
+
+        _tokenId.increment();
+        _mint(licensee, _tokenId.current());
+        tokens[_tokenId.current()] = TokenInfo(licenseInstance.assetKey, licenseInstance.id);        
+        return _tokenId.current();
     }
 
     function isVaultWallet(address wallet) public view returns(bool) {

@@ -50,7 +50,7 @@ contract AssetRegistry is
     event CollaboratorAdded(string indexed assetKey, address indexed collaboratorVault);
     event LicenseAdded(string indexed assetKey, uint licenseId, uint licenseTypeId);
     event AssetChanged(string indexed assetKey, Status indexed status, address indexed editor);
-    //event LicenseAvailabilityChanged(bytes32 indexed assetKey, uint licenseId, uint64 available);
+    event LicenseAcquired(address indexed licensee, uint indexed licenseId, uint64 quantity);
 
     function initialize() public initializer {
 
@@ -60,7 +60,6 @@ contract AssetRegistry is
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
-        _grantRole(STUDIO_ROLE, 0x88Eb3738dc7B13773F570458cbC932521431FeA7);
 
         global.premiumFee = 10 * DECIMALS;
         global.creatorCreditsRequired = 1;
@@ -139,17 +138,23 @@ contract AssetRegistry is
         }
     }
 
-    function getAssetLicenses(string calldata assetKey) public view onlyActiveAsset(assetKey) returns(LicenseInfo[] memory) {
+    function getAssetLicense(uint licenseId) public view returns(LicenseInfo memory) {
+        return (global.licenses[licenseId]);
+    }
+
+    function getAssetLicenses(string calldata assetKey) public view onlyActiveAsset(assetKey) returns(LicenseInfo[] memory licenses) {
         bytes32 key = hash(assetKey);
-        LicenseInfo[] memory licenses = new LicenseInfo[](global.assets[key].licenses.length);
+        licenses = new LicenseInfo[](global.assets[key].licenses.length);
         for(uint a=0; a<global.assets[key].licenses.length; a++) {
             licenses[a] = global.licenses[a];
         }
-        return licenses;
     }
 
-    function getAssetLicense(string calldata assetKey, uint licenseId) public view onlyActiveAsset(assetKey) returns(LicenseInfo memory) {
-        return (global.licenses[licenseId]);
+    function acquireLicense(uint licenseId, uint64 quantity, address licensee) public onlyRole(LICENSOR_ROLE) whenNotPaused {
+        require(global.licenses[licenseId].available >= quantity, "Insufficient license availability");
+        global.licenses[licenseId].available -= quantity;
+        global.licenses[licenseId].licensees.push(licensee);  
+        emit LicenseAcquired(licensee, licenseId, quantity);      
     }
 
     function changeAsset(string calldata assetKey, Status status, address editor) public whenNotPaused {
@@ -243,16 +248,13 @@ contract AssetRegistry is
         return assetList.count();
     }
 
-    function isAssetByKey(string calldata assetKey) public view returns(bool) {
-        return isAsset(assetKey);
-    }
-
     function isAsset(string calldata assetKey) public view returns(bool) {
         return assetList.exists(hash(assetKey));
     }
 
     function getAsset(string calldata assetKey) public view returns(AssetInfo memory) {
-        return getAssetByKey(hash(assetKey));
+        bytes32 key = hash(assetKey);
+        return getAssetByKey(key);
     }
 
     function getAssetByKey(bytes32 key) public view returns(AssetInfo memory) {
@@ -263,10 +265,6 @@ contract AssetRegistry is
     function getAssetAtIndex(uint index) public view returns(AssetInfo memory) {
         bytes32 key = assetList.keyAtIndex(index);
         return global.assets[key];
-    }
-    
-    function getKeyAtIndex(uint index) public view returns(bytes32) {
-        return assetList.keyAtIndex(index);
     }
 
     modifier onlyEditor(string calldata assetKey) {

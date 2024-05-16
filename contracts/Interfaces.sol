@@ -20,14 +20,14 @@ interface ILicenseRegistry {
     function getCollectorCreditContract() external view returns(address); 
     function getUsdVtruExchangeRate() external view returns(uint);
     function getStudioAccount() external view returns(address);
-    function getAssetByKey(bytes32 key) external view returns(ICreatorData.AssetInfo memory);
+    function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
 }
 
 interface ICreatorVault {
     function getCreatorCredits() external view returns(uint);
     function useCreatorCredits(uint) external;
     function isVaultWallet(address) external returns(bool);
-    function mint(string calldata assetKey) external returns(uint);
+    function licensedMint(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) external returns(uint);
 }
 
 interface ICreatorVaultFactory {
@@ -35,8 +35,8 @@ interface ICreatorVaultFactory {
 }
 
 interface ICollectorCredit {
-    function getAvailableCredit(address account) external view returns(uint tokens, uint usdCredit, uint otherCredit);
-    function redeem(address account, uint256 licenseInstanceId, uint64 amount) external;
+    function getAvailableCredits(address account) external view returns(uint tokens, uint creditCents, uint creditOther);
+    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents) external returns(uint64 redeemedCents);
 }
 
 abstract contract ICreatorData {
@@ -72,13 +72,28 @@ abstract contract ICreatorData {
         uint256 id;
         uint256 licenseTypeId;
         uint64 editions; 
-        uint64 editionPriceUsd;
+        uint64 editionCents;
         uint64 discountEditions;
         uint64 discountBasisPoints;
         uint64 discountMaxBasisPoints;
         uint64 available;
         address[] licensees;
     }
+
+    struct LicenseInstanceInfo {
+        uint256 id;
+        string assetKey;
+        uint licenseId;
+        uint tokenId;
+        uint licenseFeeCents;
+        uint amountPaidCents;
+        address licensee;
+        uint64 licenseQuantity;
+        uint16 platformBasisPoints;
+        uint16 curatorBasisPoints;
+        uint16 sellerBasisPoints;
+        uint16 creatorRoyaltyBasisPoints;
+    } 
 
     struct HeaderInfo {
         string title;
@@ -87,19 +102,6 @@ abstract contract ICreatorData {
         string metadataXRefId;
         string tokenUri;
     }
-
-    struct LicenseInstance {
-        bytes32 assetKey;
-        uint licenseId;
-        uint licenseFee;
-        uint amountPaid;
-        address licensee;
-        uint64 licenseQuantity;
-        uint16 platformBasisPoints;
-        uint16 curatorBasisPoints;
-        uint16 sellerBasisPoints;
-        uint16 creatorRoyaltyBasisPoints;
-    } 
 
     enum Status {
         DRAFT,
@@ -119,6 +121,8 @@ abstract contract ICreatorData {
 interface IAssetRegistry {
     function isAsset(string calldata assetKey) external view returns(bool);
     function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
-    function getAssetLicense(string calldata assetKey, uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
-    function consumeLicense(uint licenseId, uint64 quantity) external;
+    function getAssetByKey(bytes32 key) external view returns(ICreatorData.AssetInfo memory);
+    function getAssetLicense(uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
+    function getAssetLicenses(string calldata assetKey) external view returns(ICreatorData.LicenseInfo[] memory); 
+    function acquireLicense(uint licenseId, uint64 quantity, address licensee) external;
 }

@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0xa47328ED0E2293a0359CCcF8219f1367dDAF8552",
+    "testnet": "0xABA06E4A2Eb17C686Fc67C81d26701D9b82e3a41",
     "mainnet": "",
     "abi": [
       {
@@ -100,6 +100,28 @@
           {
             "type": "uint8",
             "name": "version",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "LicenseAcquired",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "licensee",
+            "indexed": true
+          },
+          {
+            "type": "uint256",
+            "name": "licenseId",
+            "indexed": true
+          },
+          {
+            "type": "uint64",
+            "name": "quantity",
             "indexed": false
           }
         ]
@@ -342,6 +364,27 @@
       },
       {
         "type": "function",
+        "name": "acquireLicense",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "licenseId"
+          },
+          {
+            "type": "uint64",
+            "name": "quantity"
+          },
+          {
+            "type": "address",
+            "name": "licensee"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "addAssetCollaborator",
         "constant": false,
         "payable": false,
@@ -403,7 +446,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -637,7 +680,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -679,7 +722,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -721,7 +764,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -763,7 +806,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -1296,10 +1339,6 @@
         "payable": false,
         "inputs": [
           {
-            "type": "string",
-            "name": "assetKey"
-          },
-          {
             "type": "uint256",
             "name": "licenseId"
           }
@@ -1323,7 +1362,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -1364,7 +1403,7 @@
         "outputs": [
           {
             "type": "tuple[]",
-            "name": "",
+            "name": "licenses",
             "components": [
               {
                 "type": "uint256",
@@ -1380,7 +1419,7 @@
               },
               {
                 "type": "uint64",
-                "name": "editionPriceUsd"
+                "name": "editionCents"
               },
               {
                 "type": "uint64",
@@ -1403,25 +1442,6 @@
                 "name": "licensees"
               }
             ]
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "getKeyAtIndex",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "index"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "bytes32",
-            "name": ""
           }
         ]
       },
@@ -1536,25 +1556,6 @@
       {
         "type": "function",
         "name": "isAsset",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "string",
-            "name": "assetKey"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "bool",
-            "name": ""
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "isAssetByKey",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
@@ -1747,7 +1748,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x6638C5a164f786920bC0E53072B552bBC8962E43",
+    "testnet": "0x3A907A803E9FA58d2f1061F7b006c441ea9dd35c",
     "mainnet": "",
     "abi": [
       {
@@ -1814,6 +1815,11 @@
           {
             "type": "address",
             "name": "licensee",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
             "indexed": false
           }
         ]
@@ -2204,15 +2210,11 @@
       },
       {
         "type": "function",
-        "name": "getAssetAvailability",
+        "name": "getAssetLicense",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
         "inputs": [
-          {
-            "type": "string",
-            "name": "assetKey"
-          },
           {
             "type": "uint256",
             "name": "licenseId"
@@ -2220,12 +2222,103 @@
         ],
         "outputs": [
           {
-            "type": "uint64",
-            "name": ""
-          },
+            "type": "tuple",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseTypeId"
+              },
+              {
+                "type": "uint64",
+                "name": "editions"
+              },
+              {
+                "type": "uint64",
+                "name": "editionCents"
+              },
+              {
+                "type": "uint64",
+                "name": "discountEditions"
+              },
+              {
+                "type": "uint64",
+                "name": "discountBasisPoints"
+              },
+              {
+                "type": "uint64",
+                "name": "discountMaxBasisPoints"
+              },
+              {
+                "type": "uint64",
+                "name": "available"
+              },
+              {
+                "type": "address[]",
+                "name": "licensees"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getAssetLicenses",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
           {
-            "type": "uint64",
-            "name": ""
+            "type": "string",
+            "name": "assetKey"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseTypeId"
+              },
+              {
+                "type": "uint64",
+                "name": "editions"
+              },
+              {
+                "type": "uint64",
+                "name": "editionCents"
+              },
+              {
+                "type": "uint64",
+                "name": "discountEditions"
+              },
+              {
+                "type": "uint64",
+                "name": "discountBasisPoints"
+              },
+              {
+                "type": "uint64",
+                "name": "discountMaxBasisPoints"
+              },
+              {
+                "type": "uint64",
+                "name": "available"
+              },
+              {
+                "type": "address[]",
+                "name": "licensees"
+              }
+            ]
           }
         ]
       },
@@ -2245,7 +2338,7 @@
       },
       {
         "type": "function",
-        "name": "getAvailableCredit",
+        "name": "getAvailableCredits",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
@@ -2262,11 +2355,76 @@
           },
           {
             "type": "uint256",
-            "name": "usdCredit"
+            "name": "creditCents"
           },
           {
             "type": "uint256",
-            "name": "otherCredit"
+            "name": "creditOther"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getAvailableLicense",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "uint256",
+            "name": "licenseTypeId"
+          },
+          {
+            "type": "uint64",
+            "name": "quantity"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseTypeId"
+              },
+              {
+                "type": "uint64",
+                "name": "editions"
+              },
+              {
+                "type": "uint64",
+                "name": "editionCents"
+              },
+              {
+                "type": "uint64",
+                "name": "discountEditions"
+              },
+              {
+                "type": "uint64",
+                "name": "discountBasisPoints"
+              },
+              {
+                "type": "uint64",
+                "name": "discountMaxBasisPoints"
+              },
+              {
+                "type": "uint64",
+                "name": "available"
+              },
+              {
+                "type": "address[]",
+                "name": "licensees"
+              }
+            ]
           }
         ]
       },
@@ -2307,7 +2465,7 @@
         "inputs": [
           {
             "type": "uint256",
-            "name": "id"
+            "name": "licenseInstanceId"
           }
         ],
         "outputs": [
@@ -2316,7 +2474,11 @@
             "name": "",
             "components": [
               {
-                "type": "bytes32",
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "string",
                 "name": "assetKey"
               },
               {
@@ -2325,11 +2487,84 @@
               },
               {
                 "type": "uint256",
-                "name": "licenseFee"
+                "name": "tokenId"
               },
               {
                 "type": "uint256",
-                "name": "amountPaid"
+                "name": "licenseFeeCents"
+              },
+              {
+                "type": "uint256",
+                "name": "amountPaidCents"
+              },
+              {
+                "type": "address",
+                "name": "licensee"
+              },
+              {
+                "type": "uint64",
+                "name": "licenseQuantity"
+              },
+              {
+                "type": "uint16",
+                "name": "platformBasisPoints"
+              },
+              {
+                "type": "uint16",
+                "name": "curatorBasisPoints"
+              },
+              {
+                "type": "uint16",
+                "name": "sellerBasisPoints"
+              },
+              {
+                "type": "uint16",
+                "name": "creatorRoyaltyBasisPoints"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getLicenseInstancesByOwner",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "string",
+                "name": "assetKey"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseId"
+              },
+              {
+                "type": "uint256",
+                "name": "tokenId"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseFeeCents"
+              },
+              {
+                "type": "uint256",
+                "name": "amountPaidCents"
               },
               {
                 "type": "address",
@@ -2496,7 +2731,7 @@
           },
           {
             "type": "uint256",
-            "name": "licenseId"
+            "name": "licenseTypeId"
           },
           {
             "type": "uint64",
@@ -2738,7 +2973,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xB8B691a47BC0Cff87272DC2060Ae96798c810d23",
+    "testnet": "0x64ecB2e9B1466C1277FA1f5222FAF402F97B927a",
     "mainnet": "",
     "abi": [
       {
@@ -3009,20 +3244,6 @@
       },
       {
         "type": "function",
-        "name": "_licenseNFTId",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
-        "outputs": [
-          {
-            "type": "uint256",
-            "name": "_value"
-          }
-        ]
-      },
-      {
-        "type": "function",
         "name": "_tokenId",
         "constant": true,
         "stateMutability": "view",
@@ -3274,6 +3495,78 @@
         "outputs": [
           {
             "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "licensedMint",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "tuple",
+            "name": "licenseInstance",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "string",
+                "name": "assetKey"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseId"
+              },
+              {
+                "type": "uint256",
+                "name": "tokenId"
+              },
+              {
+                "type": "uint256",
+                "name": "licenseFeeCents"
+              },
+              {
+                "type": "uint256",
+                "name": "amountPaidCents"
+              },
+              {
+                "type": "address",
+                "name": "licensee"
+              },
+              {
+                "type": "uint64",
+                "name": "licenseQuantity"
+              },
+              {
+                "type": "uint16",
+                "name": "platformBasisPoints"
+              },
+              {
+                "type": "uint16",
+                "name": "curatorBasisPoints"
+              },
+              {
+                "type": "uint16",
+                "name": "sellerBasisPoints"
+              },
+              {
+                "type": "uint16",
+                "name": "creatorRoyaltyBasisPoints"
+              }
+            ]
+          },
+          {
+            "type": "address",
+            "name": "licensee"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256",
             "name": ""
           }
         ]
@@ -3614,7 +3907,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x6bc8DbdC3754812b245667e7E309D7EC979087Ed",
+    "testnet": "0x49ef867a1E9A71992003d89822414d6eddE2D810",
     "mainnet": "",
     "abi": [
       {

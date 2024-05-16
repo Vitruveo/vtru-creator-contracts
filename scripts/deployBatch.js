@@ -4,7 +4,7 @@ const path = require("path");
 const fse = require("fs-extra");
 
 // npx hardhat run --network testnet scripts/deployBatch.js
-// npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet 0x6f7b4bEA245d1Dd07ff9662A753a6ad41dc0d197
+// npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet 0xABA06E4A2Eb17C686Fc67C81d26701D9b82e3a41
 // npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network mainnet 0x7eF4199309B0C80227e439Af25A4C1bb1caB61dB
 
 async function main() {
@@ -39,6 +39,7 @@ async function main() {
 
 
     await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
+    await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000004', licenseRegistryAddress);
     await licenseRegistry.setStudioAccount(studioAccount);
     await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
     await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);

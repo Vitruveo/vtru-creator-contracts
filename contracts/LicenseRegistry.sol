@@ -35,7 +35,7 @@ contract LicenseRegistry is
     CountersUpgradeable.Counter public _licenseTypeId;
 
     event UsdVtruExchangeRateChanged(uint256 centsPerVtru);
-    event LicenseIssued(string indexed assetKey, uint indexed licenseId, uint indexed licenseInstanceId, address licensee);
+    event LicenseIssued(string indexed assetKey, uint indexed licenseId, uint indexed licenseInstanceId, address licensee, uint256 tokenId);
 
 
     struct LicenseTypeInfo {
@@ -55,7 +55,7 @@ contract LicenseRegistry is
         address creatorVaultFactoryContract;
         address studioAccount;
         mapping(uint => LicenseTypeInfo) licenseTypes;
-        mapping(uint => LicenseInstance) licenseInstances;
+        mapping(uint => LicenseInstanceInfo) licenseInstances;
         mapping(address => uint[]) licenseInstancesByOwner;
     }
 
@@ -97,72 +97,103 @@ contract LicenseRegistry is
         global.licenseTypes[licenseTypeId].isActive = active;
     }
 
-    function getLicenseInstance(uint id) public view  returns (LicenseInstance memory)
-    {
-        return global.licenseInstances[id];
-    }
+    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public {
+        require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
+        ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
 
-    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseId, uint64 quantity) public {
-        
         // 1) Get buyer credits
-        (, uint usdCredit,) = ICollectorCredit(global.collectorCreditContract).getAvailableCredit(msg.sender);
+        (, uint creditCents,) = ICollectorCredit(global.collectorCreditContract).getAvailableCredits(msg.sender);
 
         // 2) Check if asset license is available and get price
-        (uint64 available, uint64 priceUsd) = getAssetAvailability(assetKey, licenseId);
-        uint64 totalUsd = priceUsd * quantity;
+        ICreatorData.LicenseInfo memory licenseInfo = getAvailableLicense(assetKey, licenseTypeId, quantity);
+        uint64 totalCents = licenseInfo.editionCents * quantity;
 
         // 3) Check if buyer has enough credits
-        require(usdCredit >= totalUsd, "Insufficient credit");
+        require(creditCents >= totalCents, "Insufficient credit");
 
         // 4) Update the license available amount
-        IAssetRegistry(global.assetRegistryContract).consumeLicense(licenseId, quantity);
+        IAssetRegistry(global.assetRegistryContract).acquireLicense(licenseInfo.id, quantity, msg.sender);
 
         // 5) Generate a license instance
         _licenseInstanceId.increment();
         global.licenseInstancesByOwner[msg.sender].push(_licenseInstanceId.current());
+        ICreatorData.LicenseInstanceInfo storage licenseInstanceInfo = global.licenseInstances[_licenseInstanceId.current()];
+        licenseInstanceInfo.id = _licenseInstanceId.current();
+        licenseInstanceInfo.assetKey = assetKey;
+        licenseInstanceInfo.licenseId = licenseInfo.id;
+        licenseInstanceInfo.licenseFeeCents = totalCents;
+        // licenseInstanceInfo.licensee;
+        // licenseInstanceInfo.licenseQuantity;
+        // licenseInstanceInfo.platformBasisPoints;
+        // licenseInstanceInfo.curatorBasisPoints;
+        // licenseInstanceInfo.sellerBasisPoints;
+        // licenseInstanceInfo.creatorRoyaltyBasisPoints;
+
+        // 6) Redeem credits
+        licenseInstanceInfo.amountPaidCents = ICollectorCredit(global.collectorCreditContract).redeemUsd(msg.sender, _licenseInstanceId.current(), totalCents);
+
+        // 7) Credit Creator vault
+        uint256 vtruToTransfer = licenseInstanceInfo.amountPaidCents / global.usdVtruExchangeRate;
+        require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
+        require(payable(asset.creator.vault).send(vtruToTransfer));
 
         // License instance properties
 
-        // 6) Mint assets
+        // 8) Mint assets
+        if (global.licenseTypes[licenseTypeId].isMintable) {
+            licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, msg.sender);
+        }
        
-       // if Mintable then mint NFTs
+        // 9) Credit fee splitter contract
 
-
-        // 7) Credit Creator vault
-
-
-        // 8) Emit event regarding license instance
-        emit LicenseIssued(assetKey, licenseId, _licenseInstanceId.current(), msg.sender);    
+        // 10) Emit event regarding license instance
+        emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), msg.sender, licenseInstanceInfo.tokenId);    
     }
 
-    function getAvailableCredit(address account) public view returns(uint tokens, uint usdCredit, uint otherCredit) {
-        return ICollectorCredit(global.collectorCreditContract).getAvailableCredit(account);
-    }
 
     function getAsset(string calldata assetKey) public view returns(ICreatorData.AssetInfo memory) {
-        require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         return IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
     }
 
-    function getAssetAvailability(string calldata assetKey, uint licenseId) public view returns(uint64, uint64) {
-        require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
-        ICreatorData.LicenseInfo memory licenseInfo = IAssetRegistry(global.assetRegistryContract).getAssetLicense(assetKey, licenseId);
-        require(licenseInfo.licenseTypeId > 0, "Asset or License not found");
-        LicenseTypeInfo memory licenseTypeInfo = global.licenseTypes[licenseInfo.licenseTypeId];
-        return getLicenseAvailability(licenseInfo, licenseTypeInfo);
-    } 
-
-    function getLicenseAvailability(ICreatorData.LicenseInfo memory licenseInfo, LicenseTypeInfo memory licenseTypeInfo) internal pure returns(uint64, uint64) {
-
-        require(licenseInfo.licenseTypeId > 0, "License Type not found");
-        require(licenseTypeInfo.isMintable, "Only mintable licenses currently supported");
-        require(licenseTypeInfo.isActive, "License Type not active");
-        require(licenseInfo.available > 0, "No editions available");
-
-        uint64 priceUsd = licenseInfo.editionPriceUsd;
-
-        return(licenseInfo.available, priceUsd);
+    function getAssetLicense(uint licenseId) public view returns(ICreatorData.LicenseInfo memory) {
+        IAssetRegistry(global.assetRegistryContract).getAssetLicense(licenseId);
     }
+
+    function getAssetLicenses(string calldata assetKey) public view returns(ICreatorData.LicenseInfo[] memory) {
+        IAssetRegistry(global.assetRegistryContract).getAssetLicenses(assetKey);
+    }
+
+    function getLicenseInstance(uint licenseInstanceId) public view returns(ICreatorData.LicenseInstanceInfo memory) {
+        return global.licenseInstances[licenseInstanceId];
+    }
+
+    function getLicenseInstancesByOwner(address account) public view returns(ICreatorData.LicenseInstanceInfo[] memory) {
+
+        uint[] memory ownedLicenseInstances = global.licenseInstancesByOwner[account];
+        LicenseInstanceInfo[] memory licenseInstances = new LicenseInstanceInfo[](ownedLicenseInstances.length);
+        for(uint i=0;i<ownedLicenseInstances.length;i++) {
+            licenseInstances[i] = getLicenseInstance(ownedLicenseInstances[i]);
+        }
+        return licenseInstances;
+    }
+
+    function getAvailableCredits(address account) public view returns(uint tokens, uint creditCents, uint creditOther) {
+        return ICollectorCredit(global.collectorCreditContract).getAvailableCredits(account);
+    }
+
+    function getAvailableLicense(string calldata assetKey, uint licenseTypeId, uint64 quantity) public view returns(LicenseInfo memory) {
+        require(licenseTypeId > 0, "License Type not found");
+        require(global.licenseTypes[licenseTypeId].isActive, "License Type not active");
+        require(global.licenseTypes[licenseTypeId].isMintable, "Only mintable licenses currently supported");
+
+        ICreatorData.LicenseInfo[] memory licenses = IAssetRegistry(global.assetRegistryContract).getAssetLicenses(assetKey);
+        for(uint i=0;i<licenses.length;i++) {
+            if (licenses[i].licenseTypeId == licenseTypeId) {
+                require(licenses[i].available >= quantity, "Insufficient editions available");
+                return(licenses[i]);
+            }
+        }
+    } 
 
     function setUsdVtruExchangeRate(uint256 centsPerVtru) public onlyRole(DEFAULT_ADMIN_ROLE) {
         global.usdVtruExchangeRate = centsPerVtru;

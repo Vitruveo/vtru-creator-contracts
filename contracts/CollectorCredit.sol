@@ -74,10 +74,10 @@ contract CollectorCredit is
     }
     
     GlobalData public global;
-    uint256 public usdRedeemed;
+    uint256 public totalRedeemedCents;
 
     event CollectorCreditGranted(uint256 indexed tokenId, address indexed account, bool isUSD, uint256 value);
-    event CollectorCreditRedeemed(address indexed account, uint256 licenseInstanceId, uint256 indexed redeemedTokens, uint64 amount);
+    event CollectorCreditRedeemed(address indexed account, uint64 amountCents, uint256 licenseInstanceId, uint256 indexed redeemedTokens, uint64 redeemedCents);
 
     function initialize() public initializer {
         __ERC721_init("Vitruveo Collector Credit", "VCOLC");
@@ -130,30 +130,29 @@ contract CollectorCredit is
         }
     }
 
-    function redeem(address account, uint256 licenseInstanceId, uint64 amount) onlyRole(REEDEEMER_ROLE) public whenNotPaused {
+    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents) onlyRole(REEDEEMER_ROLE) public whenNotPaused returns(uint64 redeemedCents) {
 
-        uint64 debited = 0;
         uint256 redeemedTokens;
         for(uint f=0; f<global.CreditNFTsByOwner[account].length; f++) {
             uint tokenId = global.CreditNFTsByOwner[account][f];
             CreditNFT memory creditNFT = global.CreditNFTs[tokenId];
             if (creditNFT.activeBlock <= block.number && creditNFT.isUSD) {
-                debited += uint64(creditNFT.value);
+                redeemedCents += uint64(creditNFT.value) * 100;
                 removeTokenFromOwner(tokenId, account);
                 delete global.CreditNFTs[tokenId];
                 global.TotalNFTsByClass[creditNFT.classId]--;
                 _burn(tokenId);      
                 redeemedTokens++;       
             }
-            if (debited >= amount) {
+            if (redeemedCents >= amountCents) {
                 break;
             }
         }
 
-        require(debited >= amount, "Failed to redeem credits");
-        usdRedeemed += amount;  
+        require(redeemedCents >= amountCents, "Failed to redeem credits");
+        totalRedeemedCents += redeemedCents;  
 
-        emit CollectorCreditRedeemed(account, licenseInstanceId, redeemedTokens, debited);
+        emit CollectorCreditRedeemed(account, amountCents, licenseInstanceId, redeemedTokens, redeemedCents);
     }
 
 
@@ -193,15 +192,15 @@ contract CollectorCredit is
         return creditNFTs;
     }
 
-    function getAvailableCredit(address account) public view returns(uint tokens, uint usdCredit, uint otherCredit) {
+    function getAvailableCredits(address account) public view returns(uint tokens, uint creditCents, uint creditOther) {
 
         CreditNFT[] memory creditNFTs = getActiveAccountTokens(account);
         for(uint256 n=0;n<creditNFTs.length;n++) {
             tokens++;
             if (creditNFTs[n].isUSD) {
-                usdCredit += creditNFTs[n].value;
+                creditCents += creditNFTs[n].value * 100;
             } else {
-                otherCredit +=  creditNFTs[n].value;
+                creditOther +=  creditNFTs[n].value;
             }
         }     
     }
