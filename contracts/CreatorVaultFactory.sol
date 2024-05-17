@@ -19,18 +19,18 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./CreatorVaultBeacon.sol";
 import "./CreatorVault.sol";
-import "./UnorderedBytesKeySet.sol";
+import "./UnorderedStringKeySet.sol";
 
 contract CreatorVaultFactory is Ownable {
-    using UnorderedBytesKeySetLib for UnorderedBytesKeySetLib.Set;
-    UnorderedBytesKeySetLib.Set private vaultList;
+    using UnorderedStringKeySetLib for UnorderedStringKeySetLib.Set;
+    UnorderedStringKeySetLib.Set private vaultList;
 
     address public licenseRegistryContract;
-    mapping(bytes32 => address) private vaults;
+    mapping(string => address) private vaults;
     mapping(address => address) private vaultWallets;
     CreatorVaultBeacon immutable beacon;
 
-    event VaultCreated(string indexed vaultKey, address indexed vault, bytes32 internalKey);
+    event VaultCreated(string indexed vaultKey, address indexed vault);
 
     constructor(address initTarget, address licenseRegistry) {
         beacon = new CreatorVaultBeacon(initTarget);
@@ -38,9 +38,8 @@ contract CreatorVaultFactory is Ownable {
     }
 
     function createVault(string calldata vaultKey, string calldata vaultName, string calldata vaultSymbol, address[] memory wallets) public {
-        bytes32 key = keccak256(bytes(vaultKey));
         require(licenseRegistryContract != address(0), "License Registry contract address not set");
-        require(vaults[key] == address(0), "Vault already exists");
+        require(vaults[vaultKey] == address(0), "Vault already exists");
 
         for(uint i=0; i<wallets.length; i++) {
             require(vaultWallets[wallets[i]] == address(0), "Wallet already belongs to another Vault");            
@@ -50,14 +49,14 @@ contract CreatorVaultFactory is Ownable {
             address(beacon),
             abi.encodeWithSelector(CreatorVault(payable(address(0))).initialize.selector, vaultName, vaultSymbol, wallets)
         );
-        vaults[key] = address(vault);
-        vaultList.insert(key);
+        vaults[vaultKey] = address(vault);
+        vaultList.insert(vaultKey);
 
         for(uint i=0; i<wallets.length; i++) {
             vaultWallets[wallets[i]] = address(vault);           
         }
 
-        emit VaultCreated(vaultKey, address(vault), key);
+        emit VaultCreated(vaultKey, address(vault));
     }
 
     function setLicenseRegistryContract(address account) public onlyOwner {
@@ -104,31 +103,21 @@ contract CreatorVaultFactory is Ownable {
         return vaultList.count();
     }
 
-    function isVaultByKey(string memory vaultKey) public view returns(bool) {
-        bytes32 key = keccak256(bytes(vaultKey));
-        return isVault(key);
+    function isVault(string memory vaultKey) public view returns(bool) {
+        return vaultList.exists(vaultKey);
     }
 
-    function isVault(bytes32 key) public view returns(bool) {
-        return vaultList.exists(key);
-    }
-
-    function getVaultByKey(string memory vaultKey) public view returns(address) {
-        bytes32 key = keccak256(bytes(vaultKey));
-        return getVault(key);
-    }
-
-    function getVault(bytes32 key) public view returns(address) {
-        require(vaultList.exists(key), "Can't get a Vault that doesn't exist.");
-        return(vaults[key]);
+    function getVault(string memory vaultKey) public view returns(address) {
+        require(vaultList.exists(vaultKey), "Can't get a Vault that doesn't exist.");
+        return(vaults[vaultKey]);
     }
 
     function getVaultAtIndex(uint index) public view returns(address) {
-        bytes32 key = vaultList.keyAtIndex(index);
-        return vaults[key];
+        string memory vaultKey = vaultList.keyAtIndex(index);
+        return vaults[vaultKey];
     }
     
-    function getKeyAtIndex(uint index) public view returns(bytes32) {
+    function getKeyAtIndex(uint index) public view returns(string memory) {
         return vaultList.keyAtIndex(index);
     }
 }

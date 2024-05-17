@@ -49,7 +49,7 @@ abstract contract ICreatorData {
     bytes32 public constant LICENSOR_ROLE = bytes32(uint(0x04));
 
     struct AssetInfo {
-        bytes32 key;
+        string key;
         HeaderInfo header;
         CreatorInfo creator; 
         CreatorInfo[] collaborators; 
@@ -59,6 +59,14 @@ abstract contract ICreatorData {
         Source originator;
         address editor;
         bool isPremium;
+    }
+    struct HeaderInfo {
+        string title;
+        string description;
+        uint256 metadataRefId;
+        string metadataXRefId;
+        string tokenUri;
+        Status status;
     }
 
     struct CreatorInfo {
@@ -95,14 +103,6 @@ abstract contract ICreatorData {
         uint16 creatorRoyaltyBasisPoints;
     } 
 
-    struct HeaderInfo {
-        string title;
-        string description;
-        uint256 metadataRefId;
-        string metadataXRefId;
-        string tokenUri;
-        Status status;
-    }
 
     enum Status {
         DRAFT,
@@ -122,7 +122,6 @@ abstract contract ICreatorData {
 interface IAssetRegistry {
     function isAsset(string calldata assetKey) external view returns(bool);
     function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
-    function getAssetByKey(bytes32 key) external view returns(ICreatorData.AssetInfo memory);
     function getAssetLicense(uint licenseId) external view returns(ICreatorData.LicenseInfo memory);
     function getAssetLicenses(string calldata assetKey) external view returns(ICreatorData.LicenseInfo[] memory); 
     function acquireLicense(uint licenseId, uint64 quantity, address licensee) external;

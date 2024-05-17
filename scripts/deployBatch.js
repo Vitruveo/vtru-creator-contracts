@@ -2,6 +2,7 @@ const { ethers, upgrades } = require("hardhat");
 const hre = require("hardhat");
 const path = require("path");
 const fse = require("fs-extra");
+const subProcess = require('child_process')
 
 // npx hardhat run --network testnet scripts/deployBatch.js
 // npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet 0xABA06E4A2Eb17C686Fc67C81d26701D9b82e3a41
@@ -67,7 +68,18 @@ async function main() {
             abi: JSON.parse(creatorVaultFactoryAbi)
         }
     }
+
+
+    const arguments = `module.exports = [
+        "${creatorVaultAddress}", // CreatorVault
+        "${licenseRegistryAddress}"  // LicenseRegistry
+    ]`;
+    const argPath = path.resolve(__dirname, 'factory', 'arguments.js');
+    fse.writeFileSync(argPath, arguments);
+    console.log(`\nArguments file written to ${argPath}\n`);
+
     const jsonPath = path.resolve(__dirname, '..', 'vault-config.json');
+
     if (fse.existsSync(jsonPath)) {
         const existing = fse.readJSONSync(jsonPath);
         if (isMainNet) {
@@ -79,7 +91,29 @@ async function main() {
         }
     }
     fse.writeJSONSync(jsonPath, vaultConfig, { spaces: 2 });
-    console.log(`\nConfig written to ${path.resolve(__dirname, '..', 'vault-config.json')}\n`);
+
+    console.log(`\nConfig written to ${jsonPath}\n`);
+
+    subProcess.exec(`npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet ${assetRegistryAddress}`, (err, stdout, stderr) => {
+        console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+        console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+    });
+
+    subProcess.exec(`npx hardhat verify --contract contracts/CreatorVaultFactory.sol:CreatorVaultFactory --network testnet --constructor-args scripts/factory/arguments.js ${creatorVaultFactoryAddress}`, (err, stdout, stderr) => {
+        console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+        console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+    });
+
+    subProcess.exec(`npx hardhat verify --contract contracts/LicenseRegistry.sol:LicenseRegistry --network testnet ${licenseRegistryAddress}`, (err, stdout, stderr) => {
+        console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+        console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+    });
+
+    subProcess.exec(`npx hardhat verify --contract contracts/CreatorVault.sol:CreatorVault --network testnet ${creatorVaultAddress}`, (err, stdout, stderr) => {
+        console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+        console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+    });
+
 }
 
 main().catch((error) => {

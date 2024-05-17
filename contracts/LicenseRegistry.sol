@@ -159,11 +159,11 @@ contract LicenseRegistry is
     }
 
     function getAssetLicense(uint licenseId) public view returns(ICreatorData.LicenseInfo memory) {
-        IAssetRegistry(global.assetRegistryContract).getAssetLicense(licenseId);
+        return IAssetRegistry(global.assetRegistryContract).getAssetLicense(licenseId);
     }
 
     function getAssetLicenses(string calldata assetKey) public view returns(ICreatorData.LicenseInfo[] memory) {
-        IAssetRegistry(global.assetRegistryContract).getAssetLicenses(assetKey);
+        return IAssetRegistry(global.assetRegistryContract).getAssetLicenses(assetKey);
     }
 
     function getLicenseInstance(uint licenseInstanceId) public view returns(ICreatorData.LicenseInstanceInfo memory) {

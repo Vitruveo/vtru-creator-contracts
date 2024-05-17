@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0x7EAFEcf047e83f7e55ccc587B9AE468b86201eae",
+    "testnet": "0xc60c3433bB8c91A8C69B6246aE002DD7b9fef603",
     "mainnet": "",
     "abi": [
       {
@@ -637,28 +637,6 @@
           },
           {
             "type": "tuple",
-            "name": "collaborator3",
-            "components": [
-              {
-                "type": "uint256",
-                "name": "refId"
-              },
-              {
-                "type": "string",
-                "name": "xRefId"
-              },
-              {
-                "type": "address",
-                "name": "vault"
-              },
-              {
-                "type": "uint256",
-                "name": "split"
-              }
-            ]
-          },
-          {
-            "type": "tuple",
             "name": "license1",
             "components": [
               {
@@ -850,7 +828,7 @@
             "name": "",
             "components": [
               {
-                "type": "bytes32",
+                "type": "string",
                 "name": "key"
               },
               {
@@ -973,7 +951,7 @@
             "name": "",
             "components": [
               {
-                "type": "bytes32",
+                "type": "string",
                 "name": "key"
               },
               {
@@ -1100,130 +1078,7 @@
             "name": "",
             "components": [
               {
-                "type": "bytes32",
-                "name": "key"
-              },
-              {
-                "type": "tuple",
-                "name": "header",
-                "components": [
-                  {
-                    "type": "string",
-                    "name": "title"
-                  },
-                  {
-                    "type": "string",
-                    "name": "description"
-                  },
-                  {
-                    "type": "uint256",
-                    "name": "metadataRefId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "metadataXRefId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "tokenUri"
-                  },
-                  {
-                    "type": "uint8",
-                    "name": "status"
-                  }
-                ]
-              },
-              {
-                "type": "tuple",
-                "name": "creator",
-                "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
-                  {
-                    "type": "address",
-                    "name": "vault"
-                  },
-                  {
-                    "type": "uint256",
-                    "name": "split"
-                  }
-                ]
-              },
-              {
-                "type": "tuple[]",
-                "name": "collaborators",
-                "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
-                  {
-                    "type": "address",
-                    "name": "vault"
-                  },
-                  {
-                    "type": "uint256",
-                    "name": "split"
-                  }
-                ]
-              },
-              {
-                "type": "uint256[]",
-                "name": "licenses"
-              },
-              {
-                "type": "string[]",
-                "name": "media"
-              },
-              {
-                "type": "uint8",
-                "name": "status"
-              },
-              {
-                "type": "uint8",
-                "name": "originator"
-              },
-              {
-                "type": "address",
-                "name": "editor"
-              },
-              {
-                "type": "bool",
-                "name": "isPremium"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "getAssetByKey",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "bytes32",
-            "name": "key"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "tuple",
-            "name": "",
-            "components": [
-              {
-                "type": "bytes32",
+                "type": "string",
                 "name": "key"
               },
               {
@@ -1539,25 +1394,6 @@
       },
       {
         "type": "function",
-        "name": "hash",
-        "constant": true,
-        "stateMutability": "pure",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "string",
-            "name": "input"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "bytes32",
-            "name": ""
-          }
-        ]
-      },
-      {
-        "type": "function",
         "name": "initialize",
         "constant": false,
         "payable": false,
@@ -1759,7 +1595,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x96d4FC948f6A209D53580d5888710C6467c120A8",
+    "testnet": "0x9984A8395b306F8ad0157c4118ADCf94aE3a4d6c",
     "mainnet": "",
     "abi": [
       {
@@ -2135,7 +1971,7 @@
             "name": "",
             "components": [
               {
-                "type": "bytes32",
+                "type": "string",
                 "name": "key"
               },
               {
@@ -3005,7 +2841,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xBF300Af66e994Cf2f3123464d22A2184a73a9A7F",
+    "testnet": "0x4B45B18344c364dAB84cE2ccB04072aEea938AA2",
     "mainnet": "",
     "abi": [
       {
@@ -3939,7 +3775,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x7eA2E62810e9d867D682fF78D52B1d0A9B82F870",
+    "testnet": "0x8339346a3E7d6aE26229e45666c3B4A986e6C06a",
     "mainnet": "",
     "abi": [
       {
@@ -3988,11 +3824,6 @@
             "type": "address",
             "name": "vault",
             "indexed": true
-          },
-          {
-            "type": "bytes32",
-            "name": "internalKey",
-            "indexed": false
           }
         ]
       },
@@ -4063,7 +3894,7 @@
         ],
         "outputs": [
           {
-            "type": "bytes32",
+            "type": "string",
             "name": ""
           }
         ]
@@ -4090,8 +3921,8 @@
         "payable": false,
         "inputs": [
           {
-            "type": "bytes32",
-            "name": "key"
+            "type": "string",
+            "name": "vaultKey"
           }
         ],
         "outputs": [
@@ -4139,25 +3970,6 @@
         "outputs": [
           {
             "type": "address[]",
-            "name": ""
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "getVaultByKey",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "string",
-            "name": "vaultKey"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "address",
             "name": ""
           }
         ]
@@ -4221,25 +4033,6 @@
       {
         "type": "function",
         "name": "isVault",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "bytes32",
-            "name": "key"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "bool",
-            "name": ""
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "isVaultByKey",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
