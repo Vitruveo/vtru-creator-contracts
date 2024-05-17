@@ -109,7 +109,7 @@ contract LicenseRegistry is
         uint64 totalCents = licenseInfo.editionCents * quantity;
 
         // 3) Check if buyer has enough credits
-        require(creditCents >= totalCents, "Insufficient credit");
+        require(creditCents >= uint(totalCents), "Insufficient credit");
 
         // 4) Update the license available amount
         IAssetRegistry(global.assetRegistryContract).acquireLicense(licenseInfo.id, quantity, msg.sender);

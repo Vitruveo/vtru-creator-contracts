@@ -128,104 +128,107 @@ const auxiliaryMedia = {
         encode({ "purpose": "preview", "mimeType": "image/jpeg", "bytes": 888888, "width": 2000, "height": 5000, "cid": "abababababababababababa"}),
     ]
 
-    try {
+    // try {
 
-        let nonce = await signer.getNonce(); 
+    //     let nonce = await signer.getNonce(); 
 
-        // Create vaults
-        let vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);
-        try {
-            await creatorVaultFactory.createVault(
-                vaultKey, // KEY
-                `${creator.username}'s Vault`, // NAME
-                creator.username, // SYMBOL
-                [ethers.Wallet.createRandom().address, ethers.Wallet.createRandom().address],
-                { nonce }
-            );
-        } catch(e) {
-            console.log("\n\nError creating creator vault. Probably because it already exists");
-        }     
+    //     // Create vaults
+    //     let vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);
+    //     try {
+    //         await creatorVaultFactory.createVault(
+    //             vaultKey, // KEY
+    //             `${creator.username}'s Vault`, // NAME
+    //             creator.username, // SYMBOL
+    //             [ethers.Wallet.createRandom().address, ethers.Wallet.createRandom().address],
+    //             { nonce }
+    //         );
+    //     } catch(e) {
+    //         console.log("\n\nError creating creator vault. Probably because it already exists");
+    //     }     
         
-       // while (creator.vault.length == 0) {
-            await sleep(5000); // Allow time for the previous transaction to complete;
-            creator.vault = await creatorVaultFactory.getVault(vaultKey);
-            console.log('\n\nCreator Vault', creator.vault);
-      //
+    //    // while (creator.vault.length == 0) {
+    //         await sleep(5000); // Allow time for the previous transaction to complete;
+    //         creator.vault = await creatorVaultFactory.getVault(vaultKey);
+    //         console.log('\n\nCreator Vault', creator.vault);
+    //   //
 
 
-        nonce = await signer.getNonce(); 
+    //     nonce = await signer.getNonce(); 
 
-        // Create vaults
-        vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);;
-        try {
-            await creatorVaultFactory.createVault(
-                vaultKey,
-                `${collaborators[0].username}'s Vault`, 
-                collaborators[0].username, 
-                [ethers.Wallet.createRandom().address],
-                { nonce }
-            );
-        } catch(e) {
-            console.log("\n\nError creating coolaborator vault. Probably because it already exists");
-        }              
+    //     // Create vaults
+    //     vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);;
+    //     try {
+    //         await creatorVaultFactory.createVault(
+    //             vaultKey,
+    //             `${collaborators[0].username}'s Vault`, 
+    //             collaborators[0].username, 
+    //             [ethers.Wallet.createRandom().address],
+    //             { nonce }
+    //         );
+    //     } catch(e) {
+    //         console.log("\n\nError creating coolaborator vault. Probably because it already exists");
+    //     }              
 
-        await sleep(6000); // Allow time for the previous transaction to complete;                              
-        collaborators[0].vault = await creatorVaultFactory.getVault(vaultKey);
-        console.log('\n\nCollaborators[0] Vault', collaborators[0].vault);
+    //     await sleep(6000); // Allow time for the previous transaction to complete;                              
+    //     collaborators[0].vault = await creatorVaultFactory.getVault(vaultKey);
+    //     console.log('\n\nCollaborators[0] Vault', collaborators[0].vault);
 
-        nonce = await signer.getNonce(); 
+    //     nonce = await signer.getNonce(); 
 
-        // IMPORTANT: We need to implement a nonce service so that each contract call uses
-        //            the next sequential nonce number. A transaction will only be processed
-        //            if the nonce value of a pending transaction is exactly the last nonce
-        //            plus 1. 
-        //            This will help: https://github.com/MetaMask/nonce-tracker
-        //
+    //     // IMPORTANT: We need to implement a nonce service so that each contract call uses
+    //     //            the next sequential nonce number. A transaction will only be processed
+    //     //            if the nonce value of a pending transaction is exactly the last nonce
+    //     //            plus 1. 
+    //     //            This will help: https://github.com/MetaMask/nonce-tracker
+    //     //
 
-        try {
-            const assetKey = "ZBCD1234";
-            const receipt1 = await assetRegistryContract.consign(
-                                                                    assetKey,
-                                                                    header,
-                                                                    creator,
-                                                                    collaborators[0],
-                                                                    collaborators[1],
-                                                                    licenses[0],
-                                                                    licenses[1],
-                                                                    licenses[2],
-                                                                    licenses[3],
-                                                                    media,
-                                                                    { nonce } 
-                                                                );
-        } catch(e) {
-            console.log(e);
-        }
-        //console.log(receipt1);
-        await sleep(6000); // Allow time for the previous transaction to complete;
+    //     try {
+    //         const assetKey = "X223456ab";
+    //         const receipt1 = await assetRegistryContract.consign(
+    //                                                                 assetKey,
+    //                                                                 header,
+    //                                                                 creator,
+    //                                                                 collaborators[0],
+    //                                                                 collaborators[1],
+    //                                                                 licenses[0],
+    //                                                                 licenses[1],
+    //                                                                 licenses[2],
+    //                                                                 licenses[3],
+    //                                                                 media,
+    //                                                                 { nonce } 
+    //                                                             );
+    //     } catch(e) {
+    //         console.log(e);
+    //     }
+    //     //console.log(receipt1);
+    //     await sleep(6000); // Allow time for the previous transaction to complete;
 
-        let assetId = -1;
-        let hexAssetId = '';
-        // Get the event that was logged 
-        const assetLog = assetRegistryContract.filters.AssetConsigned(null, creator.vault, null);    
-        console.log(assetLog)    
-        // if (assetLog) {
-        //   const events = await assetRegistryContract.queryFilter(assetLog);
-        //   const latest = events[events.length - 1];
-        //   assetId = Number(latest.topics[1]);
-        //   hexAssetId = latest.topics[1];
+    //     let assetId = -1;
+    //     let hexAssetId = '';
+    //     // Get the event that was logged 
+    //     const assetLog = assetRegistryContract.filters.AssetConsigned(null, creator.vault, null);    
+    //     console.log(assetLog)    
+    //     // if (assetLog) {
+    //     //   const events = await assetRegistryContract.queryFilter(assetLog);
+    //     //   const latest = events[events.length - 1];
+    //     //   assetId = Number(latest.topics[1]);
+    //     //   hexAssetId = latest.topics[1];
           
-        //   const report = {
-        //     view: `${explorer}/tx/${latest.transactionHash}`,
-        //     tx: latest.transactionHash,
-        //     assetId
-        //   }
-        //   console.log(report)
-        // }
+    //     //   const report = {
+    //     //     view: `${explorer}/tx/${latest.transactionHash}`,
+    //     //     tx: latest.transactionHash,
+    //     //     assetId
+    //     //   }
+    //     //   console.log(report)
+    //     // }
 
-    } catch(e) {
-        console.log(e);
-    }
+    // } catch(e) {
+    //     console.log(e);
+    // }
 
+
+    const userVault = new Contract('0x0FF6c4Cb16993CefD40b250683eDacA29FFe74C5', config.creatorVault.abi, signer);
+    await userVault.addCreatorCredits(10);
 
     async function sleep(millis) {
         return new Promise(resolve => setTimeout(resolve, millis));

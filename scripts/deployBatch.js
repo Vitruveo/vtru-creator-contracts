@@ -39,6 +39,7 @@ async function main() {
     console.log("\nCreatorVaultFactory deployed to:", creatorVaultFactoryAddress);
 
 
+    //await creatorVault.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
     await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
     await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000004', licenseRegistryAddress);
     await licenseRegistry.setStudioAccount(studioAccount);
