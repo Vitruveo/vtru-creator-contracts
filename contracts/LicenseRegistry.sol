@@ -97,6 +97,21 @@ contract LicenseRegistry is
         global.licenseTypes[licenseTypeId].isActive = active;
     }
 
+
+    function issueLicenseDebug(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public  whenNotPaused returns(uint64, uint) {
+        require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
+        ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
+
+        // 1) Get buyer credits
+        (, uint creditCents,) = ICollectorCredit(global.collectorCreditContract).getAvailableCredits(msg.sender);
+
+        // 2) Check if asset license is available and get price
+        ICreatorData.LicenseInfo memory licenseInfo = getAvailableLicense(assetKey, licenseTypeId, quantity);
+        uint64 totalCents = licenseInfo.editionCents * quantity;
+
+        return(totalCents, creditCents);
+    }
+
     function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public  whenNotPaused {
         require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);

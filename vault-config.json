@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0xC232f169beACD13342D4581D79fAebc90DdFedc8",
+    "testnet": "0x378A82F2ee6AeF2E3dE25AFf2F873a8E6e137B99",
     "mainnet": "",
     "abi": [
       {
@@ -1595,7 +1595,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x4A49c2D0eA76f85b416f6683867a3acdF13fF28A",
+    "testnet": "0x17146243e22183D8554dC334b85dece1dbC0b63a",
     "mainnet": "",
     "abi": [
       {
@@ -2589,6 +2589,36 @@
       },
       {
         "type": "function",
+        "name": "issueLicenseDebug",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "uint256",
+            "name": "licenseTypeId"
+          },
+          {
+            "type": "uint64",
+            "name": "quantity"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint64",
+            "name": ""
+          },
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "issueLicenseUsingCredits",
         "constant": false,
         "payable": false,
@@ -2841,7 +2871,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xa84A68B148F2b5f28C9dE3A51E3645eB3b3110C8",
+    "testnet": "0x82ecC3869809D8Cab16F9d24464eaB9a4B7245C6",
     "mainnet": "",
     "abi": [
       {
@@ -3775,7 +3805,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0xadCd67D4169870Ed72b22aA0e2ec2432672561fe",
+    "testnet": "0x9Ab0a55F16EFe77ADA077820B1E81317B22415f4",
     "mainnet": "",
     "abi": [
       {
