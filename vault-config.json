@@ -1,10 +1,10 @@
 {
-  "assetRegistry": {
+  "assetRegistry": { 
     "testnet": "0xc62C1A563E454Da9fD0B7D49e5BA62E5a2bB1114",
     "mainnet": "",
     "abi": [
       {
-        "type": "event",
+        "type": "event", 
         "anonymous": false,
         "name": "AdminChanged",
         "inputs": [
