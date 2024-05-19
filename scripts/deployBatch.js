@@ -11,12 +11,20 @@ const subProcess = require('child_process')
 async function main() {
     const isMainNet = hre.network.name == 'mainnet';
     const studioAccount = isMainNet ? '0xe48de38701116b127e688701fc7752bd5032e3eb' : '0x88Eb3738dc7B13773F570458cbC932521431FeA7';
+
     const AssetRegistry = await ethers.getContractFactory("AssetRegistry");
     const assetRegistry = await upgrades.deployProxy(AssetRegistry, { initializer: 'initialize' });
     await assetRegistry.waitForDeployment();
     const assetRegistryAddress = await assetRegistry.getAddress();
     const assetRegistryAbi = AssetRegistry.interface.formatJson();
     console.log("\nAssetRegistry deployed to:", assetRegistryAddress);
+
+    const MediaRegistry = await ethers.getContractFactory("MediaRegistry");
+    const mediaRegistry = await upgrades.deployProxy(MediaRegistry, { initializer: 'initialize' });
+    await mediaRegistry.waitForDeployment();
+    const mediaRegistryAddress = await mediaRegistry.getAddress();
+    const mediaRegistryAbi = MediaRegistry.interface.formatJson();
+    console.log("\nMediaRegistry deployed to:", mediaRegistryAddress);
 
     const LicenseRegistry = await ethers.getContractFactory("LicenseRegistry");
     const licenseRegistry = await upgrades.deployProxy(LicenseRegistry, { initializer: 'initialize' });
@@ -38,10 +46,22 @@ async function main() {
     const creatorVaultFactoryAbi = CreatorVaultFactory.interface.formatJson();
     console.log("\nCreatorVaultFactory deployed to:", creatorVaultFactoryAddress);
 
+/*
+
+    Collector Credit:
+    redeemUSD requires REEDEMER_ROLE => grant to LicenseRegistry
+    updateTransfers requires DEFAULT_ADMIN_ROLE 
+    authorizeUprade requires UPGRADER_ROLE
+
+
+
+
+*/
 
     //await creatorVault.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
-    await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
-    await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000004', licenseRegistryAddress);
+    await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount); // STUDIO_ROLE
+    await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000005', licenseRegistryAddress); // LICENSOR_ROLE
+    await mediaRegistry.setAssetRegistryContract(assetRegistryAddress);
     await licenseRegistry.setStudioAccount(studioAccount);
     await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
     await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);
@@ -52,6 +72,11 @@ async function main() {
             testnet: !isMainNet ? assetRegistryAddress : '',
             mainnet: isMainNet ? assetRegistryAddress : '',
             abi: JSON.parse(assetRegistryAbi)
+        },
+        mediaRegistry: {
+            testnet: !isMainNet ? mediaRegistryAddress : '',
+            mainnet: isMainNet ? mediaRegistryAddress : '',
+            abi: JSON.parse(mediaRegistryAbi)
         },
         licenseRegistry: {
             testnet: !isMainNet ? licenseRegistryAddress : '',
@@ -86,6 +111,7 @@ async function main() {
         if (isMainNet) {
             // Copy over testnet values
             vaultConfig.assetRegisty.testnet = existing.assetRegistry.testnet;
+            vaultConfig.mediaRegisty.testnet = existing.mediaRegisty.testnet;
             vaultConfig.licenseRegisty.testnet = existing.licenseRegisty.testnet;
             vaultConfig.creatorVault.testnet = existing.creatorVault.testnet;
             vaultConfig.creatorVaultFactory.testnet = existing.creatorVaultFactory.testnet;
@@ -96,6 +122,11 @@ async function main() {
     console.log(`\nConfig written to ${jsonPath}\n`);
 
     subProcess.exec(`npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet ${assetRegistryAddress}`, (err, stdout, stderr) => {
+        console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
+        console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
+    });
+
+    subProcess.exec(`npx hardhat verify --contract contracts/MediaRegistry.sol:MediaRegistry --network testnet ${mediaRegistryAddress}`, (err, stdout, stderr) => {
         console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
         console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
     });

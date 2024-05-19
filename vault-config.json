@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0x378A82F2ee6AeF2E3dE25AFf2F873a8E6e137B99",
+    "testnet": "0xc62C1A563E454Da9fD0B7D49e5BA62E5a2bB1114",
     "mainnet": "",
     "abi": [
       {
@@ -290,6 +290,20 @@
       {
         "type": "function",
         "name": "LICENSOR_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "REEDEEMER_ROLE",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
@@ -802,10 +816,6 @@
                 "name": "licensees"
               }
             ]
-          },
-          {
-            "type": "string[]",
-            "name": "media"
           }
         ],
         "outputs": []
@@ -908,10 +918,6 @@
               {
                 "type": "uint256[]",
                 "name": "licenses"
-              },
-              {
-                "type": "string[]",
-                "name": "media"
               },
               {
                 "type": "uint8",
@@ -1031,10 +1037,6 @@
               {
                 "type": "uint256[]",
                 "name": "licenses"
-              },
-              {
-                "type": "string[]",
-                "name": "media"
               },
               {
                 "type": "uint8",
@@ -1158,10 +1160,6 @@
               {
                 "type": "uint256[]",
                 "name": "licenses"
-              },
-              {
-                "type": "string[]",
-                "name": "media"
               },
               {
                 "type": "uint8",
@@ -1594,8 +1592,641 @@
       }
     ]
   },
+  "mediaRegistry": {
+    "testnet": "0x7F6bA408DD68Bb2Af9D7162e38EA8a48b964Ef55",
+    "mainnet": "",
+    "abi": [
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "AdminChanged",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "previousAdmin",
+            "indexed": false
+          },
+          {
+            "type": "address",
+            "name": "newAdmin",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "BeaconUpgraded",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "beacon",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Initialized",
+        "inputs": [
+          {
+            "type": "uint8",
+            "name": "version",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Paused",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "RoleAdminChanged",
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role",
+            "indexed": true
+          },
+          {
+            "type": "bytes32",
+            "name": "previousAdminRole",
+            "indexed": true
+          },
+          {
+            "type": "bytes32",
+            "name": "newAdminRole",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "RoleGranted",
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "sender",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "RoleRevoked",
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "sender",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Unpaused",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Upgraded",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "implementation",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "DECIMALS",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "DEFAULT_ADMIN_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "KEEPER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "LICENSOR_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "REEDEEMER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "STUDIO_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "UNAUTHORIZED_USER",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "UPGRADER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "addMedia",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "string",
+            "name": "mediaType"
+          },
+          {
+            "type": "string",
+            "name": "media"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "addMediaBatch",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "string[]",
+            "name": "mediaType"
+          },
+          {
+            "type": "string[]",
+            "name": "media"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "getAssetRegistryContract",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "address",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getMedia",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "",
+            "components": [
+              {
+                "type": "string",
+                "name": "mediaType"
+              },
+              {
+                "type": "string",
+                "name": "media"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getMediaByType",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "string",
+            "name": "mediaType"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getRoleAdmin",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "global",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "address",
+            "name": "assetRegistryContract"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "grantRole",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "hasRole",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "initialize",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "pause",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "paused",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "proxiableUUID",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "recoverVTRU",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "removeMedia",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "removeMediaByType",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "string",
+            "name": "mediaType"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "renounceRole",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "revokeRole",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "setAssetRegistryContract",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "supportsInterface",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes4",
+            "name": "interfaceId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "unpause",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "upgradeTo",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "newImplementation"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "upgradeToAndCall",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "newImplementation"
+          },
+          {
+            "type": "bytes",
+            "name": "data"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "receive",
+        "stateMutability": "payable"
+      }
+    ]
+  },
   "licenseRegistry": {
-    "testnet": "0x17146243e22183D8554dC334b85dece1dbC0b63a",
+    "testnet": "0x8a3294c8e714092BCB51A1CCECD96109977cd828",
     "mainnet": "",
     "abi": [
       {
@@ -1843,6 +2474,20 @@
       },
       {
         "type": "function",
+        "name": "REEDEEMER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "STUDIO_ROLE",
         "constant": true,
         "stateMutability": "view",
@@ -2051,10 +2696,6 @@
               {
                 "type": "uint256[]",
                 "name": "licenses"
-              },
-              {
-                "type": "string[]",
-                "name": "media"
               },
               {
                 "type": "uint8",
@@ -2589,36 +3230,6 @@
       },
       {
         "type": "function",
-        "name": "issueLicenseDebug",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "string",
-            "name": "assetKey"
-          },
-          {
-            "type": "uint256",
-            "name": "licenseTypeId"
-          },
-          {
-            "type": "uint64",
-            "name": "quantity"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "uint64",
-            "name": ""
-          },
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ]
-      },
-      {
-        "type": "function",
         "name": "issueLicenseUsingCredits",
         "constant": false,
         "payable": false,
@@ -2871,7 +3482,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0x82ecC3869809D8Cab16F9d24464eaB9a4B7245C6",
+    "testnet": "0x9827a6f266e95d9CF51415D4DF2e9aa80afA14A2",
     "mainnet": "",
     "abi": [
       {
@@ -3087,6 +3698,20 @@
       {
         "type": "function",
         "name": "LICENSOR_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "REEDEEMER_ROLE",
         "constant": true,
         "stateMutability": "view",
         "payable": false,
@@ -3805,7 +4430,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x9Ab0a55F16EFe77ADA077820B1E81317B22415f4",
+    "testnet": "0xa99807718F73F4F8AFb16F38a85e4feDa03578D6",
     "mainnet": "",
     "abi": [
       {

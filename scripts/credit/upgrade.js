@@ -2,7 +2,7 @@ const { ethers, upgrades } = require("hardhat");
 const hre = require("hardhat");
 
 // npx hardhat run --network testnet scripts/credit/upgrade.js 
-// npx hardhat verify --contract contracts/CollectorCredit.sol:CollectorCredit --network testnet 0x2921f3c02f4c6b1bbd35c5b8dea666f78a9d5919
+// npx hardhat verify --contract contracts/CollectorCredit.sol:CollectorCredit --network testnet 0x2921f3c02f4c6b1BbD35c5B8deA666F78A9D5919
 
 async function main() {
   const network = hre.network.name.toLowerCase(); 

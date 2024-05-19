@@ -43,10 +43,12 @@ abstract contract ICreatorData {
     
     string public constant UNAUTHORIZED_USER = "Unauthorized user";
     uint public constant DECIMALS = 10 ** 18;
+
     bytes32 public constant STUDIO_ROLE = bytes32(uint(0x01));
-    bytes32 public constant KEEPER_ROLE = bytes32(uint(0x02));
-    bytes32 public constant UPGRADER_ROLE = bytes32(uint(0x03));
-    bytes32 public constant LICENSOR_ROLE = bytes32(uint(0x04));
+    bytes32 public constant UPGRADER_ROLE = bytes32(uint(0x02));
+    bytes32 public constant REEDEEMER_ROLE = bytes32(uint256(0x03));
+    bytes32 public constant KEEPER_ROLE = bytes32(uint(0x04));
+    bytes32 public constant LICENSOR_ROLE = bytes32(uint(0x05));
 
     struct AssetInfo {
         string key;
@@ -54,7 +56,6 @@ abstract contract ICreatorData {
         CreatorInfo creator; 
         CreatorInfo[] collaborators; 
         uint[] licenses;
-        string[] media;
         Status status;
         Source originator;
         address editor;
@@ -74,6 +75,11 @@ abstract contract ICreatorData {
         string xRefId;
         address vault;
         uint256 split;
+    }
+
+    struct MediaInfo {
+        string mediaType;
+        string media;
     }
 
     struct LicenseInfo {

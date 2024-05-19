@@ -74,8 +74,7 @@ contract AssetRegistry is
                             LicenseInfo calldata license1,
                             LicenseInfo calldata license2,
                             LicenseInfo calldata license3,
-                            LicenseInfo calldata license4,
-                            string[] memory media
+                            LicenseInfo calldata license4
                         ) public payable whenNotPaused {
 
         require(isContract(creator.vault), "Vault does not exist");
@@ -84,7 +83,6 @@ contract AssetRegistry is
         AssetInfo storage asset = global.assets[assetKey];
         asset.key = assetKey;
         asset.header = header;
-        asset.media = media;
         asset.creator = creator;
         asset.editor = msg.sender;
 
