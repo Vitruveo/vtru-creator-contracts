@@ -114,7 +114,7 @@ contract CreatorVault is
 
     function tokenURI(uint tokenId) override public view returns (string memory){                   
         ICreatorData.AssetInfo memory assetInfo = ILicenseRegistry(global.licenseRegistry).getAsset(tokens[tokenId].assetKey);
-        return assetInfo.header.tokenUri;
+        return assetInfo.core.tokenUri;
     }
 
     function licensedMint(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) public returns(uint) {

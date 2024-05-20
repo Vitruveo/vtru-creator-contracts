@@ -52,7 +52,7 @@ abstract contract ICreatorData {
 
     struct AssetInfo {
         string key;
-        HeaderInfo header;
+        CoreInfo core;
         CreatorInfo creator; 
         CreatorInfo[] collaborators; 
         uint[] licenses;
@@ -61,18 +61,17 @@ abstract contract ICreatorData {
         address editor;
         bool isPremium;
     }
-    struct HeaderInfo {
+
+    struct CoreInfo {
         string title;
         string description;
-        uint256 metadataRefId;
-        string metadataXRefId;
         string tokenUri;
+        string[] mediaTypes; 
+        string[] mediaItems;
         Status status;
     }
 
     struct CreatorInfo {
-        uint256 refId;
-        string xRefId;
         address vault;
         uint256 split;
     }
@@ -91,6 +90,7 @@ abstract contract ICreatorData {
         uint64 discountBasisPoints;
         uint64 discountMaxBasisPoints;
         uint64 available;
+        string code;
         address[] licensees;
     }
 
@@ -123,6 +123,10 @@ abstract contract ICreatorData {
         SELF,
         OTHER
     }
+}
+
+interface IMediaRegistry {
+    function addMediaBatch(string calldata assetKey, string[] calldata mediaType, string[] calldata media) external;
 }
 
 interface IAssetRegistry {

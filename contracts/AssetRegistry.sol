@@ -40,6 +40,7 @@ contract AssetRegistry is
         uint assetsConsigned;
         uint premiumFee;
         uint creatorCreditsRequired;
+        address mediaRegistryContract;
         mapping(string => AssetInfo) assets;
         mapping(uint => LicenseInfo) licenses;
     }
@@ -67,7 +68,7 @@ contract AssetRegistry is
 
     function consign(
                             string calldata assetKey,
-                            HeaderInfo calldata header, 
+                            CoreInfo calldata core, 
                             CreatorInfo calldata creator,
                             CreatorInfo calldata collaborator1,
                             CreatorInfo calldata collaborator2,
@@ -75,16 +76,19 @@ contract AssetRegistry is
                             LicenseInfo calldata license2,
                             LicenseInfo calldata license3,
                             LicenseInfo calldata license4
-                        ) public payable whenNotPaused {
+                    ) public payable whenNotPaused {
 
+        require(core.mediaTypes.length > 0, "Media missing");
         require(isContract(creator.vault), "Vault does not exist");
         ICreatorVault(creator.vault).useCreatorCredits(global.creatorCreditsRequired);
 
         AssetInfo storage asset = global.assets[assetKey];
         asset.key = assetKey;
-        asset.header = header;
+        asset.core = core;
         asset.creator = creator;
         asset.editor = msg.sender;
+
+        IMediaRegistry(global.mediaRegistryContract).addMediaBatch(assetKey, core.mediaTypes, core.mediaItems);
 
         asset.originator = Source.OTHER;
         if (hasRole(STUDIO_ROLE, msg.sender)) {
@@ -160,7 +164,7 @@ contract AssetRegistry is
         }
         //require(editor != global.assets[key].editor && editor != address(0), "Invalid editor address");
 
-        global.assets[assetKey].header.status = status;
+        global.assets[assetKey].core.status = status;
         //global.assets[key].editor = editor;
 
         emit AssetStatusChanged(assetKey, status);
@@ -181,8 +185,17 @@ contract AssetRegistry is
         global.creatorCreditsRequired = credits;
     }
 
+    function setMediaRegistryContract(address account) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(account != address(0), "Invalid Media Registry Contract address");
+        global.mediaRegistryContract = account;
+    }
+
+    function getMediaRegistryContract() public view returns(address) {
+        return(global.mediaRegistryContract);
+    }
+
     function changeAssetTokenUri(string calldata assetKey, string memory uri) public onlyRole(DEFAULT_ADMIN_ROLE) whenNotPaused {
-        global.assets[assetKey].header.tokenUri = uri;
+        global.assets[assetKey].core.tokenUri = uri;
     }
 
     function isContract(address account) public view returns (bool) { 
@@ -258,7 +271,7 @@ contract AssetRegistry is
 
     modifier onlyActiveAsset(string calldata assetKey) {
         AssetInfo memory assetInfo = global.assets[assetKey];
-        require(assetInfo.header.status == Status.ACTIVE, "Asset not active");
+        require(assetInfo.core.status == Status.ACTIVE, "Asset not active");
         _;
     }
 }
