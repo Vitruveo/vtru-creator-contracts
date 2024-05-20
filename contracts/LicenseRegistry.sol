@@ -154,13 +154,15 @@ contract LicenseRegistry is
         // 7) Credit Creator vault
         uint256 vtruToTransfer = licenseInstanceInfo.amountPaidCents / global.usdVtruExchangeRate;
         require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
-        require(payable(asset.creator.vault).send(vtruToTransfer));
+        (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
+        require(credited, "Asset payment failed");
 
         // License instance properties
 
         // 8) Mint assets
         if (global.licenseTypes[licenseTypeId].isMintable) {
             licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
+            require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
         }
        
         // 9) Credit fee splitter contract

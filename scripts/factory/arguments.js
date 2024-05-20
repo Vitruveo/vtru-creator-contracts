@@ -1,4 +1,4 @@
 module.exports = [
-        "0xdc69E4aD5D77e902183A0cc330De5Cae569060D4", // CreatorVault
-        "0xF3C7fAEdF841bF21EEeCF8b3874f5249DB96D0B3"  // LicenseRegistry
+        "0x1E75280D07559ee00AD2E6f0BD6f90a24E675BE6", // CreatorVault
+        "0xA8699a305F825Aac872A91845995D4945cbC17Ca"  // LicenseRegistry
     ]
