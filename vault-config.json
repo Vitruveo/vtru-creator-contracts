@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0x6627620e73f227Fc060B280B5902749ef16c9445",
+    "testnet": "0xc0aB384F1ed800d3024a941bB15Ead22e1700CE0",
     "mainnet": "",
     "abi": [
       {
@@ -1572,7 +1572,7 @@
     ]
   },
   "mediaRegistry": {
-    "testnet": "0x814A69611aA9e39d5035C0c0c39981762C77488C",
+    "testnet": "0xf70A0Dcfb1B43a2e03496D829aC066e19eA9ae76",
     "mainnet": "",
     "abi": [
       {
@@ -2205,7 +2205,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0xCb9eC7550A96CC871adda25f6192dD995955F990",
+    "testnet": "0x66C0f10C3A15c9EcDe395355db1f1dA9Ab29bf13",
     "mainnet": "",
     "abi": [
       {
@@ -3226,6 +3226,40 @@
       },
       {
         "type": "function",
+        "name": "issueLicenseUsingCreditsDebug",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "uint256",
+            "name": "licenseTypeId"
+          },
+          {
+            "type": "uint64",
+            "name": "quantity"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          },
+          {
+            "type": "uint256",
+            "name": ""
+          },
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "pause",
         "constant": false,
         "payable": false,
@@ -3457,7 +3491,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0x24bE651a25C4C8dD973104ddE6c9797A88C5a0DF",
+    "testnet": "0xC9bDc1795A9ea3E7ec0A798FEBcb5B6C593CD75D",
     "mainnet": "",
     "abi": [
       {
@@ -4405,7 +4439,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x325B3F0922Bb3b3bFbec590EF6F1A09e08BAA6d6",
+    "testnet": "0x60687bb84F9777881fbae9A67D7Facfb195EFF3D",
     "mainnet": "",
     "abi": [
       {
