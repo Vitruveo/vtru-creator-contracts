@@ -102,7 +102,11 @@ contract MediaRegistry is
     }
 
     modifier isEditor(string calldata assetKey) {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || IAssetRegistry(global.assetRegistryContract).getAsset(assetKey).editor == msg.sender, UNAUTHORIZED_USER);
+        require(
+        global.assetRegistryContract == msg.sender
+        || IAssetRegistry(global.assetRegistryContract).getAsset(assetKey).editor == msg.sender
+        || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) 
+        , UNAUTHORIZED_USER);
         _;
     }
 

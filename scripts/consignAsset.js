@@ -125,8 +125,8 @@ const assetMedia = {
         try {
             await creatorVaultFactory.createVault(
                 vaultKey, // KEY
-                `${creator.username}'s Vault`, // NAME
-                creator.username, // SYMBOL
+                `${vaultKey}'s Vault`, // NAME
+                vaultKey, // SYMBOL
                 [ethers.Wallet.createRandom().address, ethers.Wallet.createRandom().address],
                 { nonce }
             );
@@ -145,8 +145,8 @@ const assetMedia = {
         try {
             await creatorVaultFactory.createVault(
                 vaultKey,
-                `${collaborators[0].username}'s Vault`, 
-                collaborators[0].username, 
+                `${vaultKey}'s Vault`, 
+                vaultKey, 
                 [ethers.Wallet.createRandom().address],
                 { nonce }
             );
