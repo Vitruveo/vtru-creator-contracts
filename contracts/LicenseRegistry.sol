@@ -154,8 +154,8 @@ contract LicenseRegistry is
         // 7) Credit Creator vault
         uint256 vtruToTransfer = (licenseInstanceInfo.amountPaidCents * DECIMALS) / global.usdVtruExchangeRate;
         require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
-        (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
-        require(credited, "Asset payment failed");
+        // (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
+        // require(credited, "Asset payment failed");
 
         // License instance properties
 
