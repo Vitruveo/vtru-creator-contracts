@@ -161,8 +161,8 @@ contract LicenseRegistry is
 
         // 8) Mint assets
         if (global.licenseTypes[licenseTypeId].isMintable) {
-            licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
-            require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
+            // licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
+            // require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
         }
        
         // 9) Credit fee splitter contract
