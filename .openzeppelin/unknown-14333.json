@@ -420,6 +420,21 @@
       "address": "0xE8B86ECD61cedC02f5DA711b00619eE3f00490aC",
       "txHash": "0xb05aa67f05a25895cff41dcb6b3364db3958386a367fb2f92d03d89e5f26e47b",
       "kind": "uups"
+    },
+    {
+      "address": "0x97BB92609e2EF00F498b3cdB617249Ee6aE198FE",
+      "txHash": "0x8716756bcda33525e32210f91ed267d6a0ae9313f645cf977717cfc67436e980",
+      "kind": "uups"
+    },
+    {
+      "address": "0x0E0AA4c4C4a289D8206E7d4D54AbB645a45a90D9",
+      "txHash": "0x97600da74efd17c3d5d225929c617778ecbc388ec185dc0f6f14c0f43ea3773f",
+      "kind": "uups"
+    },
+    {
+      "address": "0x3B9255d3764aD7207b695c5B77Cc3a01C66e5A56",
+      "txHash": "0x8c58375a4f99cf428f4896d32e9fbc2d8962ba10eb20ecfd3494efbfa030b270",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -17611,6 +17626,397 @@
             "numberOfBytes": "256"
           },
           "t_struct(LicenseTypeInfo)3460_storage": {
+            "label": "struct LicenseRegistry.LicenseTypeInfo",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "info",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "isMintable",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "isElastic",
+                "type": "t_bool",
+                "offset": 1,
+                "slot": "3"
+              },
+              {
+                "label": "isActive",
+                "type": "t_bool",
+                "offset": 2,
+                "slot": "3"
+              },
+              {
+                "label": "issuer",
+                "type": "t_address",
+                "offset": 3,
+                "slot": "3"
+              }
+            ],
+            "numberOfBytes": "128"
+          },
+          "t_struct(RoleData)23_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        },
+        "namespaces": {}
+      }
+    },
+    "6de1c158283d51d39a495be8ce1bd73bf42a093a7dd92c4458d87dc2e551f94a": {
+      "address": "0x922BaEF4dcfe7EDC8766c1bd42b6CfD4972991B5",
+      "txHash": "0xdcc17f94b66b475706986417ff8919ac7ddb5e618e90b8c2535882e87f690d8b",
+      "layout": {
+        "solcVersion": "0.8.17",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:40"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)23_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:57"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:260"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:169"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:111"
+          },
+          {
+            "label": "_licenseInstanceId",
+            "offset": 0,
+            "slot": "301",
+            "type": "t_struct(Counter)1643_storage",
+            "contract": "LicenseRegistry",
+            "src": "contracts/LicenseRegistry.sol:52"
+          },
+          {
+            "label": "_licenseTypeId",
+            "offset": 0,
+            "slot": "302",
+            "type": "t_struct(Counter)1643_storage",
+            "contract": "LicenseRegistry",
+            "src": "contracts/LicenseRegistry.sol:53"
+          },
+          {
+            "label": "global",
+            "offset": 0,
+            "slot": "303",
+            "type": "t_struct(GlobalInfo)3488_storage",
+            "contract": "LicenseRegistry",
+            "src": "contracts/LicenseRegistry.sol:79"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)23_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(LicenseInstanceInfo)3323_storage)": {
+            "label": "mapping(uint256 => struct ICreatorData.LicenseInstanceInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(LicenseTypeInfo)3462_storage)": {
+            "label": "mapping(uint256 => struct LicenseRegistry.LicenseTypeInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Counter)1643_storage": {
+            "label": "struct CountersUpgradeable.Counter",
+            "members": [
+              {
+                "label": "_value",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(GlobalInfo)3488_storage": {
+            "label": "struct LicenseRegistry.GlobalInfo",
+            "members": [
+              {
+                "label": "usdVtruExchangeRate",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "collectorCreditContract",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "assetRegistryContract",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "creatorVaultFactoryContract",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "studioAccount",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "licenseTypes",
+                "type": "t_mapping(t_uint256,t_struct(LicenseTypeInfo)3462_storage)",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "licenseInstances",
+                "type": "t_mapping(t_uint256,t_struct(LicenseInstanceInfo)3323_storage)",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "licenseInstancesByOwner",
+                "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+                "offset": 0,
+                "slot": "7"
+              }
+            ],
+            "numberOfBytes": "256"
+          },
+          "t_struct(LicenseInstanceInfo)3323_storage": {
+            "label": "struct ICreatorData.LicenseInstanceInfo",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "assetKey",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "licenseId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "tokenId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "licenseFeeCents",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "amountPaidCents",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "licensee",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "licenseQuantity",
+                "type": "t_uint64",
+                "offset": 20,
+                "slot": "6"
+              },
+              {
+                "label": "platformBasisPoints",
+                "type": "t_uint16",
+                "offset": 28,
+                "slot": "6"
+              },
+              {
+                "label": "curatorBasisPoints",
+                "type": "t_uint16",
+                "offset": 30,
+                "slot": "6"
+              },
+              {
+                "label": "sellerBasisPoints",
+                "type": "t_uint16",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "creatorRoyaltyBasisPoints",
+                "type": "t_uint16",
+                "offset": 2,
+                "slot": "7"
+              }
+            ],
+            "numberOfBytes": "256"
+          },
+          "t_struct(LicenseTypeInfo)3462_storage": {
             "label": "struct LicenseRegistry.LicenseTypeInfo",
             "members": [
               {

@@ -36,7 +36,7 @@ contract LicenseRegistry is
 
     event UsdVtruExchangeRateChanged(uint256 centsPerVtru);
     event LicenseIssued(string indexed assetKey, uint indexed licenseId, uint indexed licenseInstanceId, address licensee, uint256 tokenId);
-    event LicenseDebug(uint amount);
+    event LicenseDebug(uint amount, address vault);
 
     struct LicenseTypeInfo {
         uint256 id;
@@ -137,24 +137,24 @@ contract LicenseRegistry is
         // 7) Credit Creator vault
 //        uint256 vtruToTransfer = (licenseInstanceInfo.amountPaidCents * DECIMALS) / global.usdVtruExchangeRate; 
         uint256 vtruToTransfer = 100000000000000000000; 
-        emit LicenseDebug(vtruToTransfer);
+        emit LicenseDebug(vtruToTransfer, asset.creator.vault);
 
-        require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
-        (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
-        require(credited, "Asset payment failed");
+        // require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
+        // (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
+        // require(credited, "Asset payment failed");
 
         // License instance properties
 
         // 8) Mint assets
-        if (global.licenseTypes[licenseTypeId].isMintable) {
-            licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
-            require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
-        }
+        // if (global.licenseTypes[licenseTypeId].isMintable) {
+        //     licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
+        //     require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
+        // }
        
         // 9) Credit fee splitter contract
 
         // 10) Emit event regarding license instance
-        emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), licensee, licenseInstanceInfo.tokenId);    
+        //emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), licensee, licenseInstanceInfo.tokenId);    
     }
 
 
