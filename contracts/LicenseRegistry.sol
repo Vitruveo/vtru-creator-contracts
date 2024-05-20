@@ -135,25 +135,28 @@ contract LicenseRegistry is
         licenseInstanceInfo.amountPaidCents = ICollectorCredit(global.collectorCreditContract).redeemUsd(licensee, _licenseInstanceId.current(), totalCents);
 
         // 7) Credit Creator vault
-        uint256 vtruToTransfer = (licenseInstanceInfo.amountPaidCents * DECIMALS) / global.usdVtruExchangeRate;
+//        uint256 vtruToTransfer = (licenseInstanceInfo.amountPaidCents * DECIMALS) / global.usdVtruExchangeRate; 
+        uint256 vtruToTransfer = 100000000000000000000; 
         emit LicenseDebug(vtruToTransfer);
-        //require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
-        // (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
-        // require(credited, "Asset payment failed");
+
+        require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
+        (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
+        require(credited, "Asset payment failed");
 
         // License instance properties
 
         // 8) Mint assets
-        // if (global.licenseTypes[licenseTypeId].isMintable) {
-        //     // licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
-        //     // require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
-        // }
+        if (global.licenseTypes[licenseTypeId].isMintable) {
+            licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
+            require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
+        }
        
         // 9) Credit fee splitter contract
 
         // 10) Emit event regarding license instance
-      //  emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), licensee, licenseInstanceInfo.tokenId);    
+        emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), licensee, licenseInstanceInfo.tokenId);    
     }
+
 
     function changeAssetStatus(string calldata assetKey, Status status) public whenNotPaused {
         return IAssetRegistry(global.assetRegistryContract).changeAssetStatus(assetKey, status);
