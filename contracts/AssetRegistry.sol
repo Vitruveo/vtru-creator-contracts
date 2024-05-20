@@ -80,6 +80,7 @@ contract AssetRegistry is
 
         require(core.mediaTypes.length > 0, "Media missing");
         require(isContract(creator.vault), "Vault does not exist");
+        // Check if vault is in factory
         ICreatorVault(creator.vault).useCreatorCredits(global.creatorCreditsRequired);
 
         AssetInfo storage asset = global.assets[assetKey];

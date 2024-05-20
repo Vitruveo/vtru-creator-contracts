@@ -84,6 +84,8 @@ async function main() {
     // TODO : Manually add redeemer role for LP on collector credit contract
    // await collectorCredit.grantRole(REEDEEMER_ROLE, licenseRegistryAddress);
 
+   // Add upgrader role for deployer to all contracts
+
     const vaultConfig = {
         assetRegistry: {
             testnet: !isMainNet ? assetRegistryAddress : '',
