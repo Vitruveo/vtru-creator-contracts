@@ -54,6 +54,7 @@ const licenses = [
                     discountBasisPoints: 0,
                     discountMaxBasisPoints: 0,
                     available: 1,
+                    code: '',
                     licensees: []
                 },
                 {
@@ -65,6 +66,7 @@ const licenses = [
                     discountBasisPoints: 0,
                     discountMaxBasisPoints: 0,
                     available: 0,
+                    code: '',
                     licensees: []
                 },
                 {
@@ -76,6 +78,7 @@ const licenses = [
                     discountBasisPoints: 0,
                     discountMaxBasisPoints: 0,
                     available: 10000,
+                    code: '',
                     licensees: []
                },
                {
@@ -87,6 +90,7 @@ const licenses = [
                     discountBasisPoints: 0,
                     discountMaxBasisPoints: 0,
                     available: 0,
+                    code: '',
                     licensees: []
                 }
 ];
@@ -125,8 +129,8 @@ const assetMedia = {
         try {
             await creatorVaultFactory.createVault(
                 vaultKey, // KEY
-                `${vaultKey}'s Vault`, // NAME
-                vaultKey, // SYMBOL
+                `X${vaultKey}'s Vault`, // NAME
+                `X${vaultKey}`, // SYMBOL
                 [ethers.Wallet.createRandom().address, ethers.Wallet.createRandom().address],
                 { nonce }
             );

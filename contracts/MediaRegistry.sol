@@ -45,16 +45,16 @@ contract MediaRegistry is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function addMedia(string calldata assetKey, string calldata mediaType, string calldata media) public isEditor(assetKey) whenNotPaused {
-        global.media[assetKey][mediaType] = media;
+    function addMedia(string calldata assetKey, string calldata mediaType, string calldata mediaItem) public isEditor(assetKey) whenNotPaused {
+        global.media[assetKey][mediaType] = mediaItem;
         global.mediaList[assetKey].push(mediaType);
     }
 
-    function addMediaBatch(string calldata assetKey, string[] calldata mediaType, string[] calldata media) public isEditor(assetKey) whenNotPaused {
-        require(mediaType.length == media.length, "Media Type and Media not same length");
-        for(uint m=0; m<media.length; m++) {
-            global.media[assetKey][mediaType[m]] = media[m];
-            global.mediaList[assetKey].push(mediaType[m]);
+    function addMediaBatch(string calldata assetKey, string[] calldata mediaTypes, string[] calldata mediaItems) public isEditor(assetKey) whenNotPaused {
+        require(mediaTypes.length == mediaItems.length, "Media Type and Media not same length");
+        for(uint m=0; m<mediaItems.length; m++) {
+            global.media[assetKey][mediaTypes[m]] = mediaItems[m];
+            global.mediaList[assetKey].push(mediaTypes[m]);
         }
     }
     

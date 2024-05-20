@@ -126,7 +126,7 @@ abstract contract ICreatorData {
 }
 
 interface IMediaRegistry {
-    function addMediaBatch(string calldata assetKey, string[] calldata mediaType, string[] calldata media) external;
+    function addMediaBatch(string calldata assetKey, string[] calldata mediaTypes, string[] calldata mediaItems) external;
 }
 
 interface IAssetRegistry {

@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0x4999e6132F9dddB104753a2ACd20522bF692803d",
+    "testnet": "0xb18f75797Fa9510DFc6e3Ff3C8462BB6cB8ed6c6",
     "mainnet": "",
     "abi": [
       {
@@ -1572,7 +1572,7 @@
     ]
   },
   "mediaRegistry": {
-    "testnet": "0xb314F56Cca3DDD2a72886f204E754CEe026E7b06",
+    "testnet": "0x3D510022EC5FEbE6dc7542c909FDb298831bf461",
     "mainnet": "",
     "abi": [
       {
@@ -1846,7 +1846,7 @@
           },
           {
             "type": "string",
-            "name": "media"
+            "name": "mediaItem"
           }
         ],
         "outputs": []
@@ -1863,11 +1863,11 @@
           },
           {
             "type": "string[]",
-            "name": "mediaType"
+            "name": "mediaTypes"
           },
           {
             "type": "string[]",
-            "name": "media"
+            "name": "mediaItems"
           }
         ],
         "outputs": []
@@ -2205,7 +2205,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x494F2B016fe1EA4ebD605BAD361485107Fb810C0",
+    "testnet": "0x0De2c665d21E0D8F7CCC563f81F5BCA502bB988b",
     "mainnet": "",
     "abi": [
       {
@@ -3457,7 +3457,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0x6Cc715489a4C12aC81D525c609a0B8Bbb02f0B9F",
+    "testnet": "0x609671A30ED564b0ABB284aCFc84454b1328FfFc",
     "mainnet": "",
     "abi": [
       {
@@ -4405,7 +4405,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x3f96a2152B1Fe0a3C25bb343D92f891B5D222eEb",
+    "testnet": "0x18DFFB11a2D00F6de4ae931eA5f99619B71e19e3",
     "mainnet": "",
     "abi": [
       {

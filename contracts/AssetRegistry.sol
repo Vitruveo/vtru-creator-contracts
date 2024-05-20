@@ -88,7 +88,7 @@ contract AssetRegistry is
         asset.creator = creator;
         asset.editor = msg.sender;
 
-        IMediaRegistry(global.mediaRegistryContract).addMediaBatch(assetKey, core.mediaTypes, core.mediaItems);
+        //IMediaRegistry(global.mediaRegistryContract).addMediaBatch(assetKey, core.mediaTypes, core.mediaItems);
 
         asset.originator = Source.OTHER;
         if (hasRole(STUDIO_ROLE, msg.sender)) {
