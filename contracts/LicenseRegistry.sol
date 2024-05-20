@@ -97,7 +97,7 @@ contract LicenseRegistry is
         global.licenseTypes[licenseTypeId].isActive = active;
     }
 
-    function issueLicenseUsingCreditsDebug(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public  whenNotPaused returns(uint, uint, bool) {
+    function issueLicenseUsingCreditsDebug(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public view whenNotPaused returns(uint, uint, bool) {
         require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
 
