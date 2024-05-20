@@ -62,6 +62,7 @@ async function main() {
     await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount); // STUDIO_ROLE
     await assetRegistry.grantRole('0x0000000000000000000000000000000000000000000000000000000000000005', licenseRegistryAddress); // LICENSOR_ROLE
     await mediaRegistry.setAssetRegistryContract(assetRegistryAddress);
+    await assetRegistry.setMediaRegistryContract(mediaRegistryAddress);
     await licenseRegistry.setStudioAccount(studioAccount);
     await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
     await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);
