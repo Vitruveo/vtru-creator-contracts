@@ -16,38 +16,28 @@ const mediaRegistryContract = new Contract(config.mediaRegistry[network], config
 const creatorVaultFactory = new Contract(config.creatorVaultFactory[network], config.creatorVaultFactory.abi, signer);
 const creatorVault = (address) => new Contract(address, config.creatorVault.abi, signer);
 
-const header = { 
+const core = { 
                     title: 'Nik Kalyani', // Title from metadata
                     description: 'Hello world', // Long description from auxiliary view
-                    metadataRefId: 9876543, // ID of metadata – currently not implemented
-                    metadataXRefId: 'X1234',
                     tokenUri: 'https://www.vitruveo.xyz',
+                    mediaTypes: [],
+                    mediaItems: [],            
                     status: 2
 };
 
 const creator =     {
-    username: 'user6000',
-    refId: 1234, // Unique ID of creator in database
-    xRefId: 'ABCDEFG',
     vault: '', // Creator contract address
     split: 9000 // Split percentage in basis points
 }
 
 const emptyCollaborator = {
-    username: '',
     vault: ethers.ZeroAddress, // Creator contract address
-    xRefId: '',
-    refId: 0, 
     split: 0
 }
 
 const collaborators = [
 
                 {
-                    username: 'user7891',
-                    displayName: 'User 7891',
-                    refId: 9876, 
-                    xRefId: 'WXYZ',
                     vault: '', // Creator contract address
                     split: 1000
                 },
@@ -173,9 +163,16 @@ const assetMedia = {
         const assetKey = String(Math.floor(Date.now() / 1000));
         try {
 
+
+        // Add the asset media
+        Object.keys(assetMedia).forEach((m) => {
+            core.mediaTypes.push(m);
+            core.mediaItems.push(assetMedia[m]);
+        })
+
             const receipt1 = await assetRegistryContract.consign(
                                                                     assetKey,
-                                                                    header,
+                                                                    core,
                                                                     creator,
                                                                     collaborators[0],
                                                                     collaborators[1],
@@ -191,17 +188,6 @@ const assetMedia = {
         //console.log(receipt1);
         await sleep(6000); // Allow time for the previous transaction to complete;
         console.log('ASSET', await assetRegistryContract.getAsset(assetKey));
-
-        // Add the asset media
-        const mediaType = [];
-        const media = [];
-        Object.keys(assetMedia).forEach((m) => {
-            mediaType.push(m);
-            media.push(assetMedia[m]);
-        })
-        console.log(mediaType, media);
-        const receipt2 = await mediaRegistryContract.addMediaBatch(assetKey, mediaType, media);
-        await sleep(6000);
 
         console.log(await mediaRegistryContract.getMedia(assetKey));
 

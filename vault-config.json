@@ -1,10 +1,10 @@
 {
-  "assetRegistry": { 
-    "testnet": "0xc62C1A563E454Da9fD0B7D49e5BA62E5a2bB1114",
+  "assetRegistry": {
+    "testnet": "0x0A88fE330c60106a414836785181177F9936A467",
     "mainnet": "",
     "abi": [
       {
-        "type": "event", 
+        "type": "event",
         "anonymous": false,
         "name": "AdminChanged",
         "inputs": [
@@ -407,14 +407,6 @@
             "name": "collaborator",
             "components": [
               {
-                "type": "uint256",
-                "name": "refId"
-              },
-              {
-                "type": "string",
-                "name": "xRefId"
-              },
-              {
                 "type": "address",
                 "name": "vault"
               },
@@ -472,6 +464,10 @@
               {
                 "type": "uint64",
                 "name": "available"
+              },
+              {
+                "type": "string",
+                "name": "code"
               },
               {
                 "type": "address[]",
@@ -555,7 +551,7 @@
           },
           {
             "type": "tuple",
-            "name": "header",
+            "name": "core",
             "components": [
               {
                 "type": "string",
@@ -566,16 +562,16 @@
                 "name": "description"
               },
               {
-                "type": "uint256",
-                "name": "metadataRefId"
-              },
-              {
-                "type": "string",
-                "name": "metadataXRefId"
-              },
-              {
                 "type": "string",
                 "name": "tokenUri"
+              },
+              {
+                "type": "string[]",
+                "name": "mediaTypes"
+              },
+              {
+                "type": "string[]",
+                "name": "mediaItems"
               },
               {
                 "type": "uint8",
@@ -587,14 +583,6 @@
             "type": "tuple",
             "name": "creator",
             "components": [
-              {
-                "type": "uint256",
-                "name": "refId"
-              },
-              {
-                "type": "string",
-                "name": "xRefId"
-              },
               {
                 "type": "address",
                 "name": "vault"
@@ -610,14 +598,6 @@
             "name": "collaborator1",
             "components": [
               {
-                "type": "uint256",
-                "name": "refId"
-              },
-              {
-                "type": "string",
-                "name": "xRefId"
-              },
-              {
                 "type": "address",
                 "name": "vault"
               },
@@ -631,14 +611,6 @@
             "type": "tuple",
             "name": "collaborator2",
             "components": [
-              {
-                "type": "uint256",
-                "name": "refId"
-              },
-              {
-                "type": "string",
-                "name": "xRefId"
-              },
               {
                 "type": "address",
                 "name": "vault"
@@ -686,6 +658,10 @@
                 "name": "available"
               },
               {
+                "type": "string",
+                "name": "code"
+              },
+              {
                 "type": "address[]",
                 "name": "licensees"
               }
@@ -726,6 +702,10 @@
               {
                 "type": "uint64",
                 "name": "available"
+              },
+              {
+                "type": "string",
+                "name": "code"
               },
               {
                 "type": "address[]",
@@ -770,6 +750,10 @@
                 "name": "available"
               },
               {
+                "type": "string",
+                "name": "code"
+              },
+              {
                 "type": "address[]",
                 "name": "licensees"
               }
@@ -812,6 +796,10 @@
                 "name": "available"
               },
               {
+                "type": "string",
+                "name": "code"
+              },
+              {
                 "type": "address[]",
                 "name": "licensees"
               }
@@ -843,7 +831,7 @@
               },
               {
                 "type": "tuple",
-                "name": "header",
+                "name": "core",
                 "components": [
                   {
                     "type": "string",
@@ -854,16 +842,16 @@
                     "name": "description"
                   },
                   {
-                    "type": "uint256",
-                    "name": "metadataRefId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "metadataXRefId"
-                  },
-                  {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaTypes"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaItems"
                   },
                   {
                     "type": "uint8",
@@ -875,14 +863,6 @@
                 "type": "tuple",
                 "name": "creator",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -897,14 +877,6 @@
                 "type": "tuple[]",
                 "name": "collaborators",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -962,7 +934,7 @@
               },
               {
                 "type": "tuple",
-                "name": "header",
+                "name": "core",
                 "components": [
                   {
                     "type": "string",
@@ -973,16 +945,16 @@
                     "name": "description"
                   },
                   {
-                    "type": "uint256",
-                    "name": "metadataRefId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "metadataXRefId"
-                  },
-                  {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaTypes"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaItems"
                   },
                   {
                     "type": "uint8",
@@ -994,14 +966,6 @@
                 "type": "tuple",
                 "name": "creator",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -1016,14 +980,6 @@
                 "type": "tuple[]",
                 "name": "collaborators",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -1085,7 +1041,7 @@
               },
               {
                 "type": "tuple",
-                "name": "header",
+                "name": "core",
                 "components": [
                   {
                     "type": "string",
@@ -1096,16 +1052,16 @@
                     "name": "description"
                   },
                   {
-                    "type": "uint256",
-                    "name": "metadataRefId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "metadataXRefId"
-                  },
-                  {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaTypes"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaItems"
                   },
                   {
                     "type": "uint8",
@@ -1117,14 +1073,6 @@
                 "type": "tuple",
                 "name": "creator",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -1139,14 +1087,6 @@
                 "type": "tuple[]",
                 "name": "collaborators",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -1245,6 +1185,10 @@
                 "name": "available"
               },
               {
+                "type": "string",
+                "name": "code"
+              },
+              {
                 "type": "address[]",
                 "name": "licensees"
               }
@@ -1302,10 +1246,28 @@
                 "name": "available"
               },
               {
+                "type": "string",
+                "name": "code"
+              },
+              {
                 "type": "address[]",
                 "name": "licensees"
               }
             ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getMediaRegistryContract",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "address",
+            "name": ""
           }
         ]
       },
@@ -1347,6 +1309,10 @@
           {
             "type": "uint256",
             "name": "creatorCreditsRequired"
+          },
+          {
+            "type": "address",
+            "name": "mediaRegistryContract"
           }
         ]
       },
@@ -1516,6 +1482,19 @@
       },
       {
         "type": "function",
+        "name": "setMediaRegistryContract",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "supportsInterface",
         "constant": true,
         "stateMutability": "view",
@@ -1593,7 +1572,7 @@
     ]
   },
   "mediaRegistry": {
-    "testnet": "0x7F6bA408DD68Bb2Af9D7162e38EA8a48b964Ef55",
+    "testnet": "0x09623e8C16e81D1b84F4723882712df0ae84E2F1",
     "mainnet": "",
     "abi": [
       {
@@ -2226,7 +2205,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x8a3294c8e714092BCB51A1CCECD96109977cd828",
+    "testnet": "0x5dA0312c166Bf94fe2a0447Fb207d5896941eA0E",
     "mainnet": "",
     "abi": [
       {
@@ -2621,7 +2600,7 @@
               },
               {
                 "type": "tuple",
-                "name": "header",
+                "name": "core",
                 "components": [
                   {
                     "type": "string",
@@ -2632,16 +2611,16 @@
                     "name": "description"
                   },
                   {
-                    "type": "uint256",
-                    "name": "metadataRefId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "metadataXRefId"
-                  },
-                  {
                     "type": "string",
                     "name": "tokenUri"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaTypes"
+                  },
+                  {
+                    "type": "string[]",
+                    "name": "mediaItems"
                   },
                   {
                     "type": "uint8",
@@ -2653,14 +2632,6 @@
                 "type": "tuple",
                 "name": "creator",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -2675,14 +2646,6 @@
                 "type": "tuple[]",
                 "name": "collaborators",
                 "components": [
-                  {
-                    "type": "uint256",
-                    "name": "refId"
-                  },
-                  {
-                    "type": "string",
-                    "name": "xRefId"
-                  },
                   {
                     "type": "address",
                     "name": "vault"
@@ -2767,6 +2730,10 @@
                 "name": "available"
               },
               {
+                "type": "string",
+                "name": "code"
+              },
+              {
                 "type": "address[]",
                 "name": "licensees"
               }
@@ -2822,6 +2789,10 @@
               {
                 "type": "uint64",
                 "name": "available"
+              },
+              {
+                "type": "string",
+                "name": "code"
               },
               {
                 "type": "address[]",
@@ -2928,6 +2899,10 @@
               {
                 "type": "uint64",
                 "name": "available"
+              },
+              {
+                "type": "string",
+                "name": "code"
               },
               {
                 "type": "address[]",
@@ -3482,7 +3457,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0x9827a6f266e95d9CF51415D4DF2e9aa80afA14A2",
+    "testnet": "0xFb0686fA7A689df416DcA01C5bf9DBE842F7CB62",
     "mainnet": "",
     "abi": [
       {
@@ -4430,7 +4405,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0xa99807718F73F4F8AFb16F38a85e4feDa03578D6",
+    "testnet": "0xd44A34B3388e10A1E10362c731B04B0591C7010D",
     "mainnet": "",
     "abi": [
       {

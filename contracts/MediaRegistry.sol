@@ -57,7 +57,7 @@ contract MediaRegistry is
             global.mediaList[assetKey].push(mediaType[m]);
         }
     }
-
+    
     function getMedia(string calldata assetKey) public view returns(MediaInfo[] memory) {
         MediaInfo[] memory result = new MediaInfo[](global.mediaList[assetKey].length);
 
