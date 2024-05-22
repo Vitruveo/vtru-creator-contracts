@@ -10,11 +10,23 @@ const network = isTestNet ? 'testnet' : 'mainnet';
 const rpc = isTestNet ? process.env.TESTNET_RPC : process.env.MAINNET_RPC;
 const provider = new JsonRpcProvider(rpc);
 const signer = new Wallet(process.env.STUDIO_PRIVATE_KEY, provider);
+const collector = new Wallet(process.env.USER1_PRIVATE_KEY, provider);
+const corenft = new Wallet(process.env.CORE_PRIVATE_KEY, provider);
 
 const assetRegistryContract = new Contract(config.assetRegistry[network], config.assetRegistry.abi, signer);
 const mediaRegistryContract = new Contract(config.mediaRegistry[network], config.mediaRegistry.abi, signer);
+const licenseRegistryContract = new Contract(config.licenseRegistry[network], config.licenseRegistry.abi, collector);
 const creatorVaultFactory = new Contract(config.creatorVaultFactory[network], config.creatorVaultFactory.abi, signer);
 const creatorVault = (address) => new Contract(address, config.creatorVault.abi, signer);
+const collectorCreditCollector = new Contract(config.collectorCredit[network], config.collectorCredit.abi, collector);
+const collectorCreditCore = new Contract(config.collectorCredit[network], config.collectorCredit.abi, corenft);
+
+const STUDIO_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000001';
+const UPGRADER_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000002';
+const REEDEEMER_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000003';
+const KEEPER_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000004';
+const LICENSOR_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000005';
+
 
 const core = { 
                     title: 'Nik Kalyani', // Title from metadata
@@ -135,36 +147,39 @@ const assetMedia = {
                 { nonce }
             );
         } catch(e) {
+            console.log(e);
             console.log("\n\nError creating creator vault. Probably because it already exists");
         }     
         
-        await sleep(5000); // Allow time for the previous transaction to complete;
+        await sleep(8000); // Allow time for the previous transaction to complete;
         creator.vault = await creatorVaultFactory.getVault(vaultKey);
         console.log('\n\nCreator Vault', creator.vault);
 
-        nonce = await signer.getNonce(); 
 
         // Create Collaborator vault
-        vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);;
-        try {
-            await creatorVaultFactory.createVault(
-                vaultKey,
-                `${vaultKey}'s Vault`, 
-                vaultKey, 
-                [ethers.Wallet.createRandom().address],
-                { nonce }
-            );
-        } catch(e) {
-            console.log("\n\nError creating coolaborator vault. Probably because it already exists");
-        }              
+            nonce = await signer.getNonce(); 
+            vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);;
+            try {
+                await creatorVaultFactory.createVault(
+                    vaultKey,
+                    `${vaultKey}'s Vault`, 
+                    vaultKey, 
+                    [ethers.Wallet.createRandom().address],
+                    { nonce }
+                );
+            } catch(e) {
+                console.log(e);
+                console.log("\n\nError creating coolaborator vault. Probably because it already exists");
+            }              
 
-        await sleep(6000); // Allow time for the previous transaction to complete;                              
-        collaborators[0].vault = await creatorVaultFactory.getVault(vaultKey);
-        console.log('\n\nCollaborators[0] Vault', collaborators[0].vault);
+            await sleep(8000); // Allow time for the previous transaction to complete;                             
+            collaborators[0].vault = await creatorVaultFactory.getVault(vaultKey);
+            console.log('\n\nCollaborators[0] Vault', collaborators[0].vault);
 
         nonce = await signer.getNonce(); 
 
-        const assetKey = String(Math.floor(Date.now() / 1000));
+        const assetKey = `X${String(Math.floor(Date.now() / 1000))}`;
+        console.log('ASSET KEY', assetKey);
         try {
 
 
@@ -191,17 +206,24 @@ const assetMedia = {
         }
         //console.log(receipt1);
         await sleep(6000); // Allow time for the previous transaction to complete;
-        console.log('ASSET', await assetRegistryContract.getAsset(assetKey));
+        //console.log('ASSET', await assetRegistryContract.getAsset(assetKey));
+        //console.log(await mediaRegistryContract.getMedia(assetKey));
 
-        console.log(await mediaRegistryContract.getMedia(assetKey));
+       // console.log('Media added!');
 
-        console.log('Media added!');
+        console.log('CREDIT', await collectorCreditCollector.getAvailableCredits(collector.address));
 
-        let assetId = -1;
-        let hexAssetId = '';
+        console.table({assetKey, account: collector.address, vault: creator.vault , vtru: 100000000000000000000});
+        console.log('BALANCE BEFORE', await provider.getBalance(creator.vault));
+        console.log('Calling issueLicenseUsingCredits');
+        await licenseRegistryContract.issueLicenseUsingCredits(assetKey, 1, 1);
+        await sleep(6000);
+        console.log('BALANCE AFTER', await provider.getBalance(creator.vault));
+        //let assetId = -1;
+        //let hexAssetId = '';
         // Get the event that was logged 
-        const assetLog = assetRegistryContract.filters.AssetConsigned(null, creator.vault, null);    
-        console.log(assetLog)    
+        //const assetLog = assetRegistryContract.filters.AssetConsigned(null, creator.vault, null);    
+        //console.log(assetLog)    
 
         
         // if (assetLog) {

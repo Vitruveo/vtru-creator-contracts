@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0x97BB92609e2EF00F498b3cdB617249Ee6aE198FE",
+    "testnet": "0x5b21D8C455283d7AB039dE551d0D5b7C9F692649",
     "mainnet": "",
     "abi": [
       {
@@ -1572,7 +1572,7 @@
     ]
   },
   "mediaRegistry": {
-    "testnet": "0x0E0AA4c4C4a289D8206E7d4D54AbB645a45a90D9",
+    "testnet": "0xB319Ec0608F747DD43731CE26E06fEC10c25E1ed",
     "mainnet": "",
     "abi": [
       {
@@ -2205,7 +2205,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x3B9255d3764aD7207b695c5B77Cc3a01C66e5A56",
+    "testnet": "0x60398D7AEc5B737340bBa7B5eB0Def956eb0A55b",
     "mainnet": "",
     "abi": [
       {
@@ -2252,29 +2252,17 @@
       {
         "type": "event",
         "anonymous": false,
-        "name": "LicenseDebug",
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "amount",
-            "indexed": false
-          },
-          {
-            "type": "address",
-            "name": "vault",
-            "indexed": false
-          }
-        ]
-      },
-      {
-        "type": "event",
-        "anonymous": false,
         "name": "LicenseIssued",
         "inputs": [
           {
             "type": "string",
             "name": "assetKey",
             "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "licensee",
+            "indexed": false
           },
           {
             "type": "uint256",
@@ -2287,14 +2275,8 @@
             "indexed": true
           },
           {
-            "type": "address",
-            "name": "licensee",
-            "indexed": false
-          },
-          {
-            "type": "uint256",
-            "name": "tokenId",
-            "indexed": false
+            "type": "uint256[]",
+            "name": "tokenIds"
           }
         ]
       },
@@ -2554,6 +2536,19 @@
       },
       {
         "type": "function",
+        "name": "addToAllowList",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "allow"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "changeAssetStatus",
         "constant": false,
         "payable": false,
@@ -2593,6 +2588,20 @@
           }
         ],
         "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "getAllowBlockNumber",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
       },
       {
         "type": "function",
@@ -2987,8 +2996,8 @@
                 "name": "licenseId"
               },
               {
-                "type": "uint256",
-                "name": "tokenId"
+                "type": "uint256[]",
+                "name": "tokenIds"
               },
               {
                 "type": "uint256",
@@ -2999,8 +3008,8 @@
                 "name": "amountPaidCents"
               },
               {
-                "type": "address",
-                "name": "licensee"
+                "type": "address[]",
+                "name": "licensees"
               },
               {
                 "type": "uint64",
@@ -3056,8 +3065,8 @@
                 "name": "licenseId"
               },
               {
-                "type": "uint256",
-                "name": "tokenId"
+                "type": "uint256[]",
+                "name": "tokenIds"
               },
               {
                 "type": "uint256",
@@ -3068,8 +3077,8 @@
                 "name": "amountPaidCents"
               },
               {
-                "type": "address",
-                "name": "licensee"
+                "type": "address[]",
+                "name": "licensees"
               },
               {
                 "type": "uint64",
@@ -3169,6 +3178,10 @@
           {
             "type": "address",
             "name": "studioAccount"
+          },
+          {
+            "type": "uint256",
+            "name": "allowBlockNumber"
           }
         ]
       },
@@ -3312,6 +3325,19 @@
       },
       {
         "type": "function",
+        "name": "removeFromAllowList",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "allow"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "renounceRole",
         "constant": false,
         "payable": false,
@@ -3340,6 +3366,19 @@
           {
             "type": "address",
             "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "setAllowBlockNumber",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "blockNumber"
           }
         ],
         "outputs": []
@@ -3474,7 +3513,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xaAa3e9b21Bfc2544851A0ac6be2A3e149a47AF1D",
+    "testnet": "0xc98e737cdedE48155AE53FD14AbD65A2C6bd5907",
     "mainnet": "",
     "abi": [
       {
@@ -3517,6 +3556,23 @@
           {
             "type": "bool",
             "name": "approved",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "FundsReceived",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "vault",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "amount",
             "indexed": false
           }
         ]
@@ -4016,7 +4072,7 @@
       },
       {
         "type": "function",
-        "name": "licensedMint",
+        "name": "mintLicensedAssets",
         "constant": false,
         "payable": false,
         "inputs": [
@@ -4037,8 +4093,8 @@
                 "name": "licenseId"
               },
               {
-                "type": "uint256",
-                "name": "tokenId"
+                "type": "uint256[]",
+                "name": "tokenIds"
               },
               {
                 "type": "uint256",
@@ -4049,8 +4105,8 @@
                 "name": "amountPaidCents"
               },
               {
-                "type": "address",
-                "name": "licensee"
+                "type": "address[]",
+                "name": "licensees"
               },
               {
                 "type": "uint64",
@@ -4081,7 +4137,7 @@
         ],
         "outputs": [
           {
-            "type": "uint256",
+            "type": "uint256[]",
             "name": ""
           }
         ]
@@ -4422,7 +4478,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x88833190b9391507E566e14F24BD76e73c2660Bd",
+    "testnet": "0x07E9443a39A151F8Cc5a41adf4E67312d20DC87f",
     "mainnet": "",
     "abi": [
       {
@@ -4757,6 +4813,1209 @@
           }
         ],
         "outputs": []
+      }
+    ]
+  },
+  "collectorCredit": {
+    "testnet": "0x2921f3c02f4c6b1BbD35c5B8deA666F78A9D5919",
+    "mainnet": "",
+    "abi": [
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "AdminChanged",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "previousAdmin",
+            "indexed": false
+          },
+          {
+            "type": "address",
+            "name": "newAdmin",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Approval",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "approved",
+            "indexed": true
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "ApprovalForAll",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "operator",
+            "indexed": true
+          },
+          {
+            "type": "bool",
+            "name": "approved",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "BeaconUpgraded",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "beacon",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "CollectorCreditGranted",
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": true
+          },
+          {
+            "type": "bool",
+            "name": "isUSD",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "value",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "CollectorCreditRedeemed",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": true
+          },
+          {
+            "type": "uint64",
+            "name": "amountCents",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "licenseInstanceId",
+            "indexed": false
+          },
+          {
+            "type": "uint64",
+            "name": "redeemedCents",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "vtru",
+            "indexed": false
+          },
+          {
+            "type": "address",
+            "name": "vault",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Initialized",
+        "inputs": [
+          {
+            "type": "uint8",
+            "name": "version",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Paused",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "RoleAdminChanged",
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role",
+            "indexed": true
+          },
+          {
+            "type": "bytes32",
+            "name": "previousAdminRole",
+            "indexed": true
+          },
+          {
+            "type": "bytes32",
+            "name": "newAdminRole",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "RoleGranted",
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "sender",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "RoleRevoked",
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "sender",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Transfer",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from",
+            "indexed": true
+          },
+          {
+            "type": "address",
+            "name": "to",
+            "indexed": true
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Unpaused",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "Upgraded",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "implementation",
+            "indexed": true
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "DECIMALS",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "DEFAULT_ADMIN_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "GRANTER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "REEDEEMER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "UPGRADER_ROLE",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "approve",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "balanceOf",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "currentSupply",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getAccountTokens",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "classId"
+              },
+              {
+                "type": "bool",
+                "name": "isUSD"
+              },
+              {
+                "type": "uint256",
+                "name": "value"
+              },
+              {
+                "type": "uint256",
+                "name": "activeBlock"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getActiveAccountTokens",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "classId"
+              },
+              {
+                "type": "bool",
+                "name": "isUSD"
+              },
+              {
+                "type": "uint256",
+                "name": "value"
+              },
+              {
+                "type": "uint256",
+                "name": "activeBlock"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getApproved",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getAvailableCreditTokens",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "creditNFTs",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "classId"
+              },
+              {
+                "type": "bool",
+                "name": "isUSD"
+              },
+              {
+                "type": "uint256",
+                "name": "value"
+              },
+              {
+                "type": "uint256",
+                "name": "activeBlock"
+              }
+            ]
+          },
+          {
+            "type": "uint256",
+            "name": "creditCents"
+          },
+          {
+            "type": "uint256",
+            "name": "creditOther"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getAvailableCredits",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": "tokens"
+          },
+          {
+            "type": "uint256",
+            "name": "creditCents"
+          },
+          {
+            "type": "uint256",
+            "name": "creditOther"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getCreditClassInfo",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "id"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "string",
+                "name": "name"
+              },
+              {
+                "type": "bool",
+                "name": "isUSD"
+              },
+              {
+                "type": "uint256",
+                "name": "value"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getCreditTokenInfo",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "id"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "uint256",
+                "name": "classId"
+              },
+              {
+                "type": "bool",
+                "name": "isUSD"
+              },
+              {
+                "type": "uint256",
+                "name": "value"
+              },
+              {
+                "type": "uint256",
+                "name": "activeBlock"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getRoleAdmin",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "global",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": "classImageURI"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "grantCreditNFT",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "classId"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          },
+          {
+            "type": "uint256",
+            "name": "activeBlock"
+          },
+          {
+            "type": "uint256",
+            "name": "quantity"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "grantRole",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "hasRole",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "initialize",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "isApprovedForAll",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          },
+          {
+            "type": "address",
+            "name": "operator"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "name",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "ownerOf",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "address",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "pause",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "paused",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "proxiableUUID",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "recoverVTRU",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "redeemUsd",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          },
+          {
+            "type": "uint256",
+            "name": "licenseInstanceId"
+          },
+          {
+            "type": "uint64",
+            "name": "amountCents"
+          },
+          {
+            "type": "uint256",
+            "name": "usdVtruExchangeRate"
+          },
+          {
+            "type": "address",
+            "name": "vault"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "uint64",
+            "name": "redeemedCents"
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "registerCreditClass",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "id"
+          },
+          {
+            "type": "string",
+            "name": "name"
+          },
+          {
+            "type": "bool",
+            "name": "isUSD"
+          },
+          {
+            "type": "uint256",
+            "name": "value"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple",
+            "name": "",
+            "components": [
+              {
+                "type": "uint256",
+                "name": "id"
+              },
+              {
+                "type": "string",
+                "name": "name"
+              },
+              {
+                "type": "bool",
+                "name": "isUSD"
+              },
+              {
+                "type": "uint256",
+                "name": "value"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "renounceRole",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "revokeRole",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes32",
+            "name": "role"
+          },
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "safeTransferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "safeTransferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          },
+          {
+            "type": "bytes",
+            "name": "data"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "setApprovalForAll",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "operator"
+          },
+          {
+            "type": "bool",
+            "name": "approved"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "setClassImageURI",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "string",
+            "name": "uri"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "supportsInterface",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "bytes4",
+            "name": "interfaceId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "bool",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "symbol",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "tokenURI",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "transferFrom",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "unpause",
+        "constant": false,
+        "payable": false,
+        "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "updateTransfers",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          },
+          {
+            "type": "uint256",
+            "name": "tokenId"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "upgradeTo",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "newImplementation"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "upgradeToAndCall",
+        "constant": false,
+        "stateMutability": "payable",
+        "payable": true,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "newImplementation"
+          },
+          {
+            "type": "bytes",
+            "name": "data"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "usdRedeemed",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "receive",
+        "stateMutability": "payable"
       }
     ]
   }

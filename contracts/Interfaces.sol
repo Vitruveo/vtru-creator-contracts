@@ -21,13 +21,14 @@ interface ILicenseRegistry {
     function getUsdVtruExchangeRate() external view returns(uint);
     function getStudioAccount() external view returns(address);
     function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
+    function getAvailableCredits(address account) external view returns(uint tokens, uint creditCents, uint creditOther);
 }
 
 interface ICreatorVault {
     function getCreatorCredits() external view returns(uint);
     function useCreatorCredits(uint) external;
     function isVaultWallet(address) external returns(bool);
-    function licensedMint(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) external returns(uint);
+    function mintLicensedAssets(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) external returns(uint[] memory);
 }
 
 interface ICreatorVaultFactory {
@@ -35,8 +36,8 @@ interface ICreatorVaultFactory {
 }
 
 interface ICollectorCredit {
+    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents, uint256 usdVtruExchangeRate, address vault) external returns(uint64 redeemedCents);
     function getAvailableCredits(address account) external view returns(uint tokens, uint creditCents, uint creditOther);
-    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents) external returns(uint64 redeemedCents);
 }
 
 abstract contract ICreatorData {
@@ -98,10 +99,10 @@ abstract contract ICreatorData {
         uint256 id;
         string assetKey;
         uint licenseId;
-        uint tokenId;
+        uint[] tokenIds;
         uint licenseFeeCents;
         uint amountPaidCents;
-        address licensee;
+        address[] licensees;
         uint64 licenseQuantity;
         uint16 platformBasisPoints;
         uint16 curatorBasisPoints;

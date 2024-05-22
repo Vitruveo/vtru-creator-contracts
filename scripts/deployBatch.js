@@ -39,7 +39,6 @@ async function main() {
     const creatorVaultAbi = CreatorVault.interface.formatJson();
     console.log("\nCreatorVault deployed to:", creatorVaultAddress)
 
-
     const CreatorVaultFactory = await hre.ethers.getContractFactory("CreatorVaultFactory");
     const creatorVaultFactory = await CreatorVaultFactory.deploy(creatorVaultAddress, licenseRegistryAddress); // CreatorVault, LicenseRegistry
     const creatorVaultFactoryAddress = await creatorVaultFactory.getAddress();
@@ -48,17 +47,15 @@ async function main() {
 
     const CollectorCredit = await hre.ethers.getContractFactory("CollectorCredit");
     const collectorCreditAddress = isMainNet ? '0x5c7421fcCA16C685cEC5aaFf745a9a6BDf75Ba06' : '0x2921f3c02f4c6b1BbD35c5B8deA666F78A9D5919';
-    const collectorCredit = new hre.ethers.Contract(collectorCreditAddress, CollectorCredit.interface.formatJson());
-
+    const collectorCredit =    CollectorCredit.attach(collectorCreditAddress);
+    const collectorCreditAbi = CollectorCredit.interface.formatJson();
+   // console.log('Collector Credit ABI', collectorCreditAbi);
 /*
 
     Collector Credit:
     redeemUSD requires REEDEMER_ROLE => grant to LicenseRegistry
     updateTransfers requires DEFAULT_ADMIN_ROLE 
     authorizeUprade requires UPGRADER_ROLE
-
-
-
 
 */
 
@@ -73,18 +70,16 @@ async function main() {
 
     await assetRegistry.grantRole(STUDIO_ROLE, studioAccount); // STUDIO_ROLE
     await assetRegistry.grantRole(LICENSOR_ROLE, licenseRegistryAddress); // LICENSOR_ROLE
+    await collectorCredit.grantRole(REEDEEMER_ROLE, licenseRegistryAddress); 
+
     await mediaRegistry.setAssetRegistryContract(assetRegistryAddress);
     await assetRegistry.setMediaRegistryContract(mediaRegistryAddress);
+
     await licenseRegistry.setStudioAccount(studioAccount);
     await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
     await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);
-    await licenseRegistry.setUsdVtruExchangeRate(150);
     await licenseRegistry.setCollectorCreditContract(collectorCreditAddress);
-
-    // TODO : Manually add redeemer role for LP on collector credit contract
-   // await collectorCredit.grantRole(REEDEEMER_ROLE, licenseRegistryAddress);
-
-   // Add upgrader role for deployer to all contracts
+    await licenseRegistry.setUsdVtruExchangeRate(150);
 
     const vaultConfig = {
         assetRegistry: {
@@ -111,6 +106,11 @@ async function main() {
             testnet: !isMainNet ? creatorVaultFactoryAddress : '',
             mainnet: isMainNet ? creatorVaultFactoryAddress : '',
             abi: JSON.parse(creatorVaultFactoryAbi)
+        },
+        collectorCredit: {
+            testnet: !isMainNet ? collectorCreditAddress : '',
+            mainnet: isMainNet ? collectorCreditAddress : '',
+            abi: JSON.parse(collectorCreditAbi)
         }
     }
 
@@ -134,6 +134,7 @@ async function main() {
             vaultConfig.licenseRegisty.testnet = existing.licenseRegisty.testnet;
             vaultConfig.creatorVault.testnet = existing.creatorVault.testnet;
             vaultConfig.creatorVaultFactory.testnet = existing.creatorVaultFactory.testnet;
+            vaultConfig.collectorCredit.testnet = existing.collectorCredit.testnet;
         }
     }
     fse.writeJSONSync(jsonPath, vaultConfig, { spaces: 2 });

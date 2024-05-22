@@ -1,17 +1,23 @@
 const hre = require("hardhat");
+const config = require("../../vault-config.json");
+
+// npx hardhat run --network testnet scripts/factory/upgrade.js 
 
 async function main() {
+  const network = hre.network.name.toLowerCase(); 
   const Vault = await hre.ethers.getContractFactory("CreatorVault");
   const vaultTargetV1 = await Vault.deploy();
-  console.log(`target address: ${await vaultTargetV1.getAddress()}`)
+  const vaultTargetAddress = await vaultTargetV1.getAddress();
+  console.log(`target address: ${vaultTargetAddress}`)
 
   const VaultFactory = await hre.ethers.getContractFactory("CreatorVaultFactory");
-  const factory = await VaultFactory.attach('0x4548874059283eC891e2c70f9D313835175D8915');
+  const contract = config.creatorVaultFactory[network];
+  const factory = await VaultFactory.attach(contract);
 
   const VaultBeacon = await hre.ethers.getContractFactory("CreatorVaultBeacon");
   const vaultBeacon = VaultBeacon.attach(await factory.getBeacon());
   const before = await vaultBeacon.implementation();
-  await vaultBeacon.update(await vaultTargetV1.getAddress());
+  await vaultBeacon.update(vaultTargetAddress);
   console.log('\n\nBEFORE/AFTER', before, await vaultBeacon.implementation(),'\n\n');
 }
 

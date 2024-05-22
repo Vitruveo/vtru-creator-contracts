@@ -17,12 +17,14 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./Interfaces.sol";
 
 contract MediaRegistry is
     Initializable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
     AccessControlUpgradeable,
     UUPSUpgradeable,
     ICreatorData
@@ -41,8 +43,10 @@ contract MediaRegistry is
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
+        __ReentrancyGuard_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
     }
 
     function addMedia(string calldata assetKey, string calldata mediaType, string calldata mediaItem) public isEditor(assetKey) whenNotPaused {
@@ -50,7 +54,7 @@ contract MediaRegistry is
         global.mediaList[assetKey].push(mediaType);
     }
 
-    function addMediaBatch(string calldata assetKey, string[] calldata mediaTypes, string[] calldata mediaItems) public isEditor(assetKey) whenNotPaused {
+    function addMediaBatch(string calldata assetKey, string[] calldata mediaTypes, string[] calldata mediaItems) public isEditor(assetKey) whenNotPaused nonReentrant {
         require(mediaTypes.length == mediaItems.length, "Media Type and Media not same length");
         for(uint m=0; m<mediaItems.length; m++) {
             global.media[assetKey][mediaTypes[m]] = mediaItems[m];

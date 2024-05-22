@@ -18,6 +18,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/Base64Upgradeable.sol";
 import "./Interfaces.sol";
@@ -25,6 +26,7 @@ import "./Interfaces.sol";
 contract LicenseRegistry is
     Initializable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
     AccessControlUpgradeable,
     UUPSUpgradeable,
     ICreatorData
@@ -35,8 +37,7 @@ contract LicenseRegistry is
     CountersUpgradeable.Counter public _licenseTypeId;
 
     event UsdVtruExchangeRateChanged(uint256 centsPerVtru);
-    event LicenseIssued(string indexed assetKey, uint indexed licenseId, uint indexed licenseInstanceId, address licensee, uint256 tokenId);
-    event LicenseDebug(uint amount, address vault);
+    event LicenseIssued(string indexed assetKey, address licensee, uint indexed licenseId, uint indexed licenseInstanceId, uint256[] tokenIds);
 
     struct LicenseTypeInfo {
         uint256 id;
@@ -57,6 +58,9 @@ contract LicenseRegistry is
         mapping(uint => LicenseTypeInfo) licenseTypes;
         mapping(uint => LicenseInstanceInfo) licenseInstances;
         mapping(address => uint[]) licenseInstancesByOwner;
+
+        uint allowBlockNumber;
+        mapping(address => bool) allowList;
     }
 
     GlobalInfo public global;
@@ -66,14 +70,17 @@ contract LicenseRegistry is
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
+        __ReentrancyGuard_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
 
         registerLicenseType("NFT-ART-1", "NFT", true, true);
         registerLicenseType("STREAM-ART-1", "Stream", false, false);
         registerLicenseType("REMIX-ART-1", "Remix", false, false);
         registerLicenseType("PRINT-ART-1", "Print", false, false);
 
+        setAllowBlockNumber(block.number);
     }
 
     function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  whenNotPaused {
@@ -97,26 +104,23 @@ contract LicenseRegistry is
         global.licenseTypes[licenseTypeId].isActive = active;
     }
 
-    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public  whenNotPaused {
+    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed {
         require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
 
         address licensee = msg.sender;
 
-        // 1) Get buyer credits
-        (, uint creditCents,) = ICollectorCredit(global.collectorCreditContract).getAvailableCredits(msg.sender);
-
-        // 2) Check if asset license is available and get price
+        // 1) Check if asset license is available and get price
         ICreatorData.LicenseInfo memory licenseInfo = getAvailableLicense(assetKey, licenseTypeId, quantity);
         uint64 totalCents = licenseInfo.editionCents * quantity;
 
-        // 3) Check if buyer has enough credits
-        require(creditCents >= uint(totalCents), "Insufficient credit");
+        // 2) Redeem credits and send VTRU to vault
+        uint amountPaidCents = ICollectorCredit(global.collectorCreditContract).redeemUsd(licensee, _licenseInstanceId.current(), totalCents, global.usdVtruExchangeRate, asset.creator.vault);
 
-        // 4) Update the license available amount
+        // 3) Update the license available amount
         IAssetRegistry(global.assetRegistryContract).acquireLicense(licenseInfo.id, quantity, licensee);
 
-        // 5) Generate a license instance
+        // 4) Generate a license instance
         _licenseInstanceId.increment();
         global.licenseInstancesByOwner[msg.sender].push(_licenseInstanceId.current());
         ICreatorData.LicenseInstanceInfo storage licenseInstanceInfo = global.licenseInstances[_licenseInstanceId.current()];
@@ -124,37 +128,25 @@ contract LicenseRegistry is
         licenseInstanceInfo.assetKey = assetKey;
         licenseInstanceInfo.licenseId = licenseInfo.id;
         licenseInstanceInfo.licenseFeeCents = totalCents;
-        licenseInstanceInfo.licensee = licensee;
-        // licenseInstanceInfo.licenseQuantity;
+        licenseInstanceInfo.amountPaidCents = amountPaidCents;
+        licenseInstanceInfo.licenseQuantity = quantity;
+        licenseInstanceInfo.licensees.push(licensee);
         // licenseInstanceInfo.platformBasisPoints;
         // licenseInstanceInfo.curatorBasisPoints;
         // licenseInstanceInfo.sellerBasisPoints;
         // licenseInstanceInfo.creatorRoyaltyBasisPoints;
 
-        // 6) Redeem credits
-        licenseInstanceInfo.amountPaidCents = ICollectorCredit(global.collectorCreditContract).redeemUsd(licensee, _licenseInstanceId.current(), totalCents);
 
-        // 7) Credit Creator vault
-//        uint256 vtruToTransfer = (licenseInstanceInfo.amountPaidCents * DECIMALS) / global.usdVtruExchangeRate; 
-        uint256 vtruToTransfer = 100000000000000000000; 
-        emit LicenseDebug(vtruToTransfer, asset.creator.vault);
-
-        // require(address(this).balance >= vtruToTransfer, "Insufficient escrow balance");
-        // (bool credited, ) = payable(asset.creator.vault).call{value: vtruToTransfer}("");
-        // require(credited, "Asset payment failed");
-
-        // License instance properties
-
-        // 8) Mint assets
-        // if (global.licenseTypes[licenseTypeId].isMintable) {
-        //     licenseInstanceInfo.tokenId = ICreatorVault(asset.creator.vault).licensedMint(licenseInstanceInfo, licensee);
-        //     require(licenseInstanceInfo.tokenId > 0, "Asset mint failed");
-        // }
+        // 5) Mint assets
+        if (global.licenseTypes[licenseTypeId].isMintable) {
+            licenseInstanceInfo.tokenIds = ICreatorVault(asset.creator.vault).mintLicensedAssets(licenseInstanceInfo, licensee);
+            require(licenseInstanceInfo.tokenIds.length > 0, "Asset minting failed");
+        }
        
-        // 9) Credit fee splitter contract
+        // TODO: Credit fee splitter contract
 
-        // 10) Emit event regarding license instance
-        //emit LicenseIssued(assetKey, licenseInfo.id, _licenseInstanceId.current(), licensee, licenseInstanceInfo.tokenId);    
+        // 6) Emit event regarding license instance
+        emit LicenseIssued(assetKey, licensee, licenseInfo.id,  licenseInstanceInfo.id, licenseInstanceInfo.tokenIds);    
     }
 
 
@@ -254,6 +246,23 @@ contract LicenseRegistry is
 
     function getStudioAccount() public view returns(address) {
         return(global.studioAccount);
+    
+    }
+
+    function addToAllowList(address allow) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        global.allowList[allow] = true;
+    }
+
+    function removeFromAllowList(address allow) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        delete global.allowList[allow];
+    }
+
+    function setAllowBlockNumber(uint blockNumber) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        global.allowBlockNumber = blockNumber;
+    }
+
+    function getAllowBlockNumber() public view returns(uint) {
+        return(global.allowBlockNumber);
     }
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -262,6 +271,11 @@ contract LicenseRegistry is
 
     function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
+    }
+
+    modifier isAllowed() {
+        require(block.number >= global.allowBlockNumber || global.allowList[msg.sender] == true, "Licensing not permitted");
+        _;
     }
 
     function recoverVTRU() external onlyRole(DEFAULT_ADMIN_ROLE) {

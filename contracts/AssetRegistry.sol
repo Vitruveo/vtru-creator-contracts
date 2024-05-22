@@ -18,6 +18,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./UnorderedStringKeySet.sol";
 import "./Interfaces.sol";
@@ -25,6 +26,7 @@ import "./Interfaces.sol";
 contract AssetRegistry is
     Initializable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
     AccessControlUpgradeable,
     UUPSUpgradeable,
     ICreatorData
@@ -58,6 +60,7 @@ contract AssetRegistry is
         __Pausable_init();
         __AccessControl_init();
         __UUPSUpgradeable_init();
+        __ReentrancyGuard_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
@@ -76,7 +79,7 @@ contract AssetRegistry is
                             LicenseInfo calldata license2,
                             LicenseInfo calldata license3,
                             LicenseInfo calldata license4
-                    ) public payable whenNotPaused {
+                    ) public payable whenNotPaused nonReentrant {
 
         require(core.mediaTypes.length > 0, "Media missing");
         require(isContract(creator.vault), "Vault does not exist");
@@ -163,10 +166,8 @@ contract AssetRegistry is
         } else {
             require(hasRole(STUDIO_ROLE, msg.sender) || hasRole(LICENSOR_ROLE, msg.sender) || msg.sender == global.assets[assetKey].editor, UNAUTHORIZED_USER);
         }
-        //require(editor != global.assets[key].editor && editor != address(0), "Invalid editor address");
 
         global.assets[assetKey].core.status = status;
-        //global.assets[key].editor = editor;
 
         emit AssetStatusChanged(assetKey, status);
     }

@@ -76,8 +76,13 @@ contract CollectorCredit is
     GlobalData public global;
     uint256 public usdRedeemed;
 
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+
+    uint256 private _status;
+
     event CollectorCreditGranted(uint256 indexed tokenId, address indexed account, bool isUSD, uint256 value);
-    event CollectorCreditRedeemed(address indexed account, uint64 amountCents, uint256 licenseInstanceId, uint64 redeemedCents);
+    event CollectorCreditRedeemed(address indexed account, uint64 amountCents, uint256 licenseInstanceId, uint64 redeemedCents, uint256 vtru, address vault);
 
     function initialize() public initializer {
         __ERC721_init("Vitruveo Collector Credit", "VCOLC");
@@ -130,18 +135,19 @@ contract CollectorCredit is
         }
     }
 
-    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents) onlyRole(REEDEEMER_ROLE) public whenNotPaused returns(uint64 redeemedCents) {
+    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents, uint256 usdVtruExchangeRate, address vault) onlyRole(REEDEEMER_ROLE) public whenNotPaused nonReentrant returns(uint64 redeemedCents) {
 
-        for(uint f=0; f<global.CreditNFTsByOwner[account].length; f++) {
-            uint tokenId = global.CreditNFTsByOwner[account][f];
-            CreditNFT memory creditNFT = global.CreditNFTs[tokenId];
-            if (creditNFT.activeBlock <= block.number && creditNFT.isUSD) {
-                redeemedCents += uint64(creditNFT.value) * 100;
-                removeTokenFromOwner(tokenId, account);
-                delete global.CreditNFTs[tokenId];
-                global.TotalNFTsByClass[creditNFT.classId]--;
-                _burn(tokenId);      
-            }
+        (CreditNFT[] memory creditNFTs, uint creditCents,) = getAvailableCreditTokens(account);
+        require(creditCents >= amountCents, "Insufficient credit");
+
+        for(uint f=0; f<creditNFTs.length; f++) {
+            uint tokenId = creditNFTs[f].id;
+            redeemedCents += uint64(creditNFTs[f].value) * 100;
+            removeTokenFromOwner(tokenId, account);
+            delete global.CreditNFTs[tokenId];
+            global.TotalNFTsByClass[creditNFTs[f].classId]--;
+            _burn(tokenId);      
+            
             if (redeemedCents >= amountCents) {
                 break;
             }
@@ -149,7 +155,13 @@ contract CollectorCredit is
 
         require(redeemedCents >= amountCents, "Failed to redeem credits");
 
-        emit CollectorCreditRedeemed(account, amountCents, licenseInstanceId, redeemedCents);
+        uint256 vtru = (redeemedCents * DECIMALS) / usdVtruExchangeRate; 
+        require(address(this).balance >= vtru, "Insufficient Collector Credit VTRU balance");
+
+        (bool payout, ) = payable(vault).call{value: vtru}("");
+        require(payout, "Asset payout failed");  
+
+        emit CollectorCreditRedeemed(account, amountCents, licenseInstanceId, redeemedCents, vtru, vault);
     }
 
 
@@ -188,6 +200,19 @@ contract CollectorCredit is
         }
         return creditNFTs;
     }
+
+    function getAvailableCreditTokens(address account) public view returns(CreditNFT[] memory creditNFTs, uint creditCents, uint creditOther) {
+
+        creditNFTs = getActiveAccountTokens(account);
+        for(uint256 n=0;n<creditNFTs.length;n++) {
+            if (creditNFTs[n].isUSD) {
+                creditCents += creditNFTs[n].value * 100;
+            } else {
+                creditOther +=  creditNFTs[n].value;
+            }
+        }     
+    }
+
 
     function getAvailableCredits(address account) public view returns(uint tokens, uint creditCents, uint creditOther) {
 
@@ -300,6 +325,35 @@ contract CollectorCredit is
     {
         return super.supportsInterface(interfaceId);
     }
+
+        modifier nonReentrant() {
+        _nonReentrantBefore();
+        _;
+        _nonReentrantAfter();
+    }
+
+    function _nonReentrantBefore() private {
+        // On the first call to nonReentrant, _status will be _NOT_ENTERED
+        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+
+        // Any calls to nonReentrant after this point will fail
+        _status = _ENTERED;
+    }
+
+    function _nonReentrantAfter() private {
+        // By storing the original value once again, a refund is triggered (see
+        // https://eips.ethereum.org/EIPS/eip-2200)
+        _status = _NOT_ENTERED;
+    }
+
+    /**
+     * @dev Returns true if the reentrancy guard is currently set to "entered", which indicates there is a
+     * `nonReentrant` function in the call stack.
+     */
+    function _reentrancyGuardEntered() internal view returns (bool) {
+        return _status == _ENTERED;
+    }
+
 
 }
 

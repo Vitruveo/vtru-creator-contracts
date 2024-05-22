@@ -48,6 +48,8 @@ contract CreatorVault is
 
     mapping(uint => TokenInfo) private tokens; // tokenId => assetKey
 
+    event FundsReceived(address vault, uint amount);
+
     function initialize(
                             string calldata vaultName,
                             string calldata vaultSymbol,
@@ -60,6 +62,7 @@ contract CreatorVault is
         __AccessControl_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPGRADER_ROLE, msg.sender);
 
         global.creatorCredits = 1;
         global.wallets = wallets;
@@ -102,8 +105,7 @@ contract CreatorVault is
         require(
             msg.sender == ILicenseRegistry(global.licenseRegistry).getAssetRegistryContract() ||
             msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount() ||
-            hasRole(DEFAULT_ADMIN_ROLE, msg.sender)
-            , "Unauthorized user");
+            hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Unauthorized user");
         require(global.creatorCredits >= credits, "Insufficient Creator Credits");
         global.creatorCredits -= credits;
     }
@@ -117,13 +119,17 @@ contract CreatorVault is
         return assetInfo.core.tokenUri;
     }
 
-    function licensedMint(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) public returns(uint) {
+    function mintLicensedAssets(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) public returns(uint[] memory) {
         require(msg.sender == global.licenseRegistry, ICreatorData.UNAUTHORIZED_USER);
-
-        _tokenId.increment();
-        _mint(licensee, _tokenId.current());
-        tokens[_tokenId.current()] = TokenInfo(licenseInstance.assetKey, licenseInstance.id);        
-        return _tokenId.current();
+        
+        uint[] memory tokenIds = new uint[](licenseInstance.licenseQuantity);
+        for(uint q=0; q<licenseInstance.licenseQuantity; q++) {
+            _tokenId.increment();
+            _mint(licensee, _tokenId.current());
+            tokens[_tokenId.current()] = TokenInfo(licenseInstance.assetKey, licenseInstance.id);     
+            tokenIds[q] = _tokenId.current();   
+        }
+        return tokenIds;
     }
 
     function isVaultWallet(address wallet) public view returns(bool) {
@@ -151,6 +157,7 @@ contract CreatorVault is
     }
 
     receive() external payable {
+        emit FundsReceived(address(this), msg.value);
     }
 
     function supportsInterface(

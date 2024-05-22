@@ -46,7 +46,7 @@ module.exports = {
     local: {
       url: "http://localhost:8545",
       accounts: [
-                  process.env.CREATOR_PRIVATE_KEY,                  
+                  process.env.CORE_PRIVATE_KEY,                  
                   process.env.REGISTRY_PRIVATE_KEY,
                   process.env.COLLECTOR_PRIVATE_KEY,                  
                   process.env.USER1_PRIVATE_KEY,
@@ -58,7 +58,7 @@ module.exports = {
     testnet: {
       url: "https://test-rpc.vitruveo.xyz",
       accounts: [
-                  process.env.CREATOR_PRIVATE_KEY,
+                  process.env.CORE_PRIVATE_KEY,
                   process.env.REGISTRY_PRIVATE_KEY,
                   process.env.COLLECTOR_PRIVATE_KEY,                  
                   process.env.USER1_PRIVATE_KEY,
@@ -70,7 +70,7 @@ module.exports = {
     mainnet: {
       url: "https://rpc.vitruveo.xyz",
       accounts: [
-                  process.env.CREATOR_PRIVATE_KEY,
+                  process.env.CORE_PRIVATE_KEY,
                   process.env.REGISTRY_PRIVATE_KEY,
                   process.env.COLLECTOR_PRIVATE_KEY,                  
                   process.env.USER1_PRIVATE_KEY,
