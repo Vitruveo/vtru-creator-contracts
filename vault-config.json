@@ -1,6 +1,6 @@
 {
   "assetRegistry": {
-    "testnet": "0x5b21D8C455283d7AB039dE551d0D5b7C9F692649",
+    "testnet": "0xb064953c886F0D575A166c01C6e0b1C9E1698A53",
     "mainnet": "",
     "abi": [
       {
@@ -1572,7 +1572,7 @@
     ]
   },
   "mediaRegistry": {
-    "testnet": "0xB319Ec0608F747DD43731CE26E06fEC10c25E1ed",
+    "testnet": "0x52347a382B14d7e0Df9DA475E7223B6f61e402E9",
     "mainnet": "",
     "abi": [
       {
@@ -2205,7 +2205,7 @@
     ]
   },
   "licenseRegistry": {
-    "testnet": "0x60398D7AEc5B737340bBa7B5eB0Def956eb0A55b",
+    "testnet": "0xeE774cCCA6bEB1aFB697eb6bD67B32a367Ca9828",
     "mainnet": "",
     "abi": [
       {
@@ -3256,6 +3256,31 @@
       },
       {
         "type": "function",
+        "name": "issueLicenseUsingCreditsStudio",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "licensee"
+          },
+          {
+            "type": "string",
+            "name": "assetKey"
+          },
+          {
+            "type": "uint256",
+            "name": "licenseTypeId"
+          },
+          {
+            "type": "uint64",
+            "name": "quantity"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "pause",
         "constant": false,
         "payable": false,
@@ -3513,7 +3538,7 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xc98e737cdedE48155AE53FD14AbD65A2C6bd5907",
+    "testnet": "0x8705C66D623045257B0ecB851Fe6B35B258D0bAA",
     "mainnet": "",
     "abi": [
       {
@@ -3895,6 +3920,19 @@
         "constant": false,
         "payable": false,
         "inputs": [],
+        "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "claimStudio",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "account"
+          }
+        ],
         "outputs": []
       },
       {
@@ -4478,7 +4516,7 @@
     ]
   },
   "creatorVaultFactory": {
-    "testnet": "0x07E9443a39A151F8Cc5a41adf4E67312d20DC87f",
+    "testnet": "0x85e601f2e27ecdd9fEBa02F7C92f6E8830D4C8Ee",
     "mainnet": "",
     "abi": [
       {
@@ -4679,25 +4717,6 @@
       },
       {
         "type": "function",
-        "name": "getVaultByWallet",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": "wallet"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "address",
-            "name": ""
-          }
-        ]
-      },
-      {
-        "type": "function",
         "name": "getVaultCount",
         "constant": true,
         "stateMutability": "view",
@@ -4707,29 +4726,6 @@
           {
             "type": "uint256",
             "name": "count"
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "getVaultPage",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "page"
-          },
-          {
-            "type": "uint256",
-            "name": "count"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "address[]",
-            "name": ""
           }
         ]
       },

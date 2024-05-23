@@ -267,7 +267,7 @@ contract AssetRegistry is
     }
 
     modifier onlyEditor(string calldata assetKey) {
-        require(msg.sender == global.assets[assetKey].editor, UNAUTHORIZED_USER);
+        require(hasRole(STUDIO_ROLE, msg.sender) || msg.sender == global.assets[assetKey].editor, UNAUTHORIZED_USER);
         _;
     }
 

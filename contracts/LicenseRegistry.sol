@@ -105,10 +105,16 @@ contract LicenseRegistry is
     }
 
     function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed {
+        _issueLicenseUsingCredits(msg.sender, assetKey, licenseTypeId, quantity);
+    }
+    function issueLicenseUsingCreditsStudio(address licensee, string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed {
+        require(msg.sender == global.studioAccount, UNAUTHORIZED_USER);
+        _issueLicenseUsingCredits(licensee, assetKey, licenseTypeId, quantity);
+    }
+
+    function _issueLicenseUsingCredits(address licensee, string calldata assetKey, uint256 licenseTypeId, uint64 quantity) internal {
         require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
-
-        address licensee = msg.sender;
 
         // 1) Check if asset license is available and get price
         ICreatorData.LicenseInfo memory licenseInfo = getAvailableLicense(assetKey, licenseTypeId, quantity);

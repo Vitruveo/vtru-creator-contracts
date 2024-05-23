@@ -27,7 +27,6 @@ contract CreatorVaultFactory is Ownable {
 
     address public licenseRegistryContract;
     mapping(string => address) private vaults;
-    mapping(address => address) private vaultWallets;
     CreatorVaultBeacon immutable beacon;
 
     event VaultCreated(string indexed vaultKey, address indexed vault);
@@ -41,20 +40,12 @@ contract CreatorVaultFactory is Ownable {
         require(licenseRegistryContract != address(0), "License Registry contract address not set");
         require(vaults[vaultKey] == address(0), "Vault already exists");
 
-        for(uint i=0; i<wallets.length; i++) {
-            require(vaultWallets[wallets[i]] == address(0), "Wallet already belongs to another Vault");            
-        }
-
         BeaconProxy vault = new BeaconProxy(
             address(beacon),
             abi.encodeWithSelector(CreatorVault(payable(address(0))).initialize.selector, vaultName, vaultSymbol, wallets)
         );
         vaults[vaultKey] = address(vault);
         vaultList.insert(vaultKey);
-
-        for(uint i=0; i<wallets.length; i++) {
-            vaultWallets[wallets[i]] = address(vault);           
-        }
 
         emit VaultCreated(vaultKey, address(vault));
     }
@@ -74,20 +65,6 @@ contract CreatorVaultFactory is Ownable {
 
     function getImplementation() public view returns (address) {
         return beacon.implementation();
-    }
-
-    function getVaultByWallet(address wallet) public view returns(address) {
-        return vaultWallets[wallet];
-    }
-    
-    function getVaultPage(uint256 page, uint256 count) public view returns(address[] memory) {
-        uint start = page * count;
-        address[] memory result = new address[](count);
-
-        for(uint i=start; i<start+count; i++) {
-           result[i - start] = getVaultAtIndex(i);
-        }
-        return(result);
     }
 
     function getVaultBatch(uint256 start, uint256 count) public view returns(address[] memory) {

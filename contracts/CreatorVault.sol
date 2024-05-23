@@ -64,19 +64,14 @@ contract CreatorVault is
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
 
-        global.creatorCredits = 1;
+        global.creatorCredits = 2;
         global.wallets = wallets;
         global.licenseRegistry = ICreatorVaultFactory(msg.sender).getLicenseRegistryContract();
-
-        for(uint w=0; w<wallets.length; w++) {
-            _grantRole(KEEPER_ROLE, wallets[w]);
-        }
     }
 
     function version() public pure returns(string memory) {
         return "1.0.0";
     }
-
 
     function addVaultWallet(address wallet) public onlyVaultAdmin() {
         require(!isVaultWallet((wallet)), "Wallet already added in Vault");
@@ -110,7 +105,7 @@ contract CreatorVault is
         global.creatorCredits -= credits;
     }
 
-    function addCreatorCredits(uint credits) public onlyRole(STUDIO_ROLE) {
+    function addCreatorCredits(uint credits) public onlyStudio {
         global.creatorCredits += credits;
     }
 
@@ -144,8 +139,13 @@ contract CreatorVault is
 
     // Claim is used by any Vault wallet to transfer funds from Vault to wallet
     // Available claim balance is Vault contract balance
-    function claim() external onlyVaultWallet() {
+    function claim() public onlyVaultWallet() {
         require(payable(msg.sender).send(address(this).balance));
+    }
+
+    function claimStudio(address account) public onlyStudio() {
+        require(isVaultWallet(account), "Account is not a Vault wallet");
+        require(payable(account).send(address(this).balance));
     }
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -171,13 +171,21 @@ contract CreatorVault is
         return super.supportsInterface(interfaceId);
     }
 
+    modifier onlyStudio() {
+        require(msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount(), ICreatorData.UNAUTHORIZED_USER);
+        _;
+    }
+
     modifier onlyVaultWallet() {
         require(isVaultWallet(msg.sender), ICreatorData.UNAUTHORIZED_USER);
         _;
     }
 
     modifier onlyVaultAdmin() {
-        require(hasRole(KEEPER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) || msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount(), UNAUTHORIZED_USER);
+        require(
+            isVaultWallet(msg.sender) 
+            || hasRole(DEFAULT_ADMIN_ROLE, msg.sender) 
+            || msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount(), UNAUTHORIZED_USER);
         _;
     }
 }

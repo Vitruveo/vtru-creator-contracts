@@ -15,7 +15,7 @@ const corenft = new Wallet(process.env.CORE_PRIVATE_KEY, provider);
 
 const assetRegistryContract = new Contract(config.assetRegistry[network], config.assetRegistry.abi, signer);
 const mediaRegistryContract = new Contract(config.mediaRegistry[network], config.mediaRegistry.abi, signer);
-const licenseRegistryContract = new Contract(config.licenseRegistry[network], config.licenseRegistry.abi, collector);
+const licenseRegistryContract = new Contract(config.licenseRegistry[network], config.licenseRegistry.abi, signer);
 const creatorVaultFactory = new Contract(config.creatorVaultFactory[network], config.creatorVaultFactory.abi, signer);
 const creatorVault = (address) => new Contract(address, config.creatorVault.abi, signer);
 const collectorCreditCollector = new Contract(config.collectorCredit[network], config.collectorCredit.abi, collector);
@@ -31,9 +31,21 @@ const LICENSOR_ROLE = '0x0000000000000000000000000000000000000000000000000000000
 const core = { 
                     title: 'Nik Kalyani', // Title from metadata
                     description: 'Hello world', // Long description from auxiliary view
-                    tokenUri: 'https://www.vitruveo.xyz',
-                    mediaTypes: [],
-                    mediaItems: [],            
+                    tokenUri: 'https://vitruveo-studio-production-token.s3.amazonaws.com/65f608c757bab1a729d906d2.json',
+                    mediaTypes: [
+                        "original",
+                        "display",
+                        "preview",
+                        "exhibition",
+                        "signed"
+                    ],
+                    mediaItems: [
+                        "QmXvBZfcmjBj6ai6mf3f8LwP62K1iSv8ZXQLx5SHzZho8L",
+                        "QmefcCJJ2o6dUcMWbWhJYgxvBs6Z325Z2m6Pf6KWxjdQtr",
+                        "QmWkrT8hBHsrqHyRhgD3TayTzXx7daLJBVBLpCDYtotN9e",
+                        "QmYNpqEEbPHhCUfGLf6c721nmCvMwobzqHvf6moYscvz3w",
+                        "QmXvBZfcmjBj6ai6mf3f8LwP62K1iSv8ZXQLx5SHzZho8L"
+                    ],            
                     status: 2
 };
 
@@ -57,54 +69,54 @@ const collaborators = [
             ];
 
 const licenses = [
-                {
-                    id: 0, // TODO: Overwrite in contract
-                    licenseTypeId: 1, // 1=NFT, 2=STREAM, 3=REMIX, 4=PRINT
-                    editions: 1,
-                    editionCents: 15000,
-                    discountEditions: 0,
-                    discountBasisPoints: 0,
-                    discountMaxBasisPoints: 0,
-                    available: 1,
-                    code: '',
-                    licensees: []
-                },
-                {
-                    id: 0, // TODO: Overwrite in contract
-                    licenseTypeId: 2, // 1=NFT, 2=STREAM, 3=REMIX, 4=PRINT
-                    editions: 0,
-                    editionCents: 0,
-                    discountEditions: 0,
-                    discountBasisPoints: 0,
-                    discountMaxBasisPoints: 0,
-                    available: 0,
-                    code: '',
-                    licensees: []
-                },
-                {
-                    id: 0, // TODO: Overwrite in contract
-                    licenseTypeId: 3, // 1=NFT, 2=STREAM, 3=REMIX, 4=PRINT
-                    editions: 10000,
-                    editionCents: 500,
-                    discountEditions: 0,
-                    discountBasisPoints: 0,
-                    discountMaxBasisPoints: 0,
-                    available: 10000,
-                    code: '',
-                    licensees: []
-               },
-               {
-                    id: 0, 
-                    licenseTypeId: 0, 
-                    editions: 0,
-                    editionCents: 0,
-                    discountEditions: 0,
-                    discountBasisPoints: 0,
-                    discountMaxBasisPoints: 0,
-                    available: 0,
-                    code: '',
-                    licensees: []
-                }
+    {
+        "id": 0,
+        "licenseTypeId": 1,
+        "editions": 1,
+        "editionCents": 15000,
+        "discountEditions": 0,
+        "discountBasisPoints": 0,
+        "discountMaxBasisPoints": 0,
+        "available": 1,
+        "code": "CC BY-NC-ND",
+        "licensees": []
+    },
+    {
+        "id": 0,
+        "licenseTypeId": 0,
+        "editions": 0,
+        "editionCents": 0,
+        "discountEditions": 0,
+        "discountBasisPoints": 0,
+        "discountMaxBasisPoints": 0,
+        "available": 0,
+        "code": "",
+        "licensees": []
+    },
+    {
+        "id": 0,
+        "licenseTypeId": 0,
+        "editions": 0,
+        "editionCents": 0,
+        "discountEditions": 0,
+        "discountBasisPoints": 0,
+        "discountMaxBasisPoints": 0,
+        "available": 0,
+        "code": "",
+        "licensees": []
+    },
+   {
+        "id": 0,
+        "licenseTypeId": 0,
+        "editions": 0,
+        "editionCents": 0,
+        "discountEditions": 0,
+        "discountBasisPoints": 0,
+        "discountMaxBasisPoints": 0,
+        "available": 0,
+        "code": "",
+        "licensees": []
+    }
 ];
 
 const assetMedia = {
@@ -134,6 +146,8 @@ const assetMedia = {
 
     try {
 
+        const assetKey = `X${String(Math.floor(Date.now() / 1000))}`;
+
         let nonce = await signer.getNonce(); 
 
         // Create Creator vault
@@ -152,7 +166,8 @@ const assetMedia = {
         }     
         
         await sleep(8000); // Allow time for the previous transaction to complete;
-        creator.vault = await creatorVaultFactory.getVault(vaultKey);
+       // creator.vault =  '0xc3819778bafa6ed57bc192ecf5a58f9e2e37be4b';
+        creator.vault =  await creatorVaultFactory.getVault(vaultKey);
         console.log('\n\nCreator Vault', creator.vault);
 
 
@@ -178,16 +193,15 @@ const assetMedia = {
 
         nonce = await signer.getNonce(); 
 
-        const assetKey = `X${String(Math.floor(Date.now() / 1000))}`;
         console.log('ASSET KEY', assetKey);
         try {
 
 
         // Add the asset media
-        Object.keys(assetMedia).forEach((m) => {
-            core.mediaTypes.push(m);
-            core.mediaItems.push(assetMedia[m]);
-        })
+        // Object.keys(assetMedia).forEach((m) => {
+        //     core.mediaTypes.push(m);
+        //     core.mediaItems.push(assetMedia[m]);
+        // })
 
             const receipt1 = await assetRegistryContract.consign(
                                                                     assetKey,
@@ -204,6 +218,7 @@ const assetMedia = {
         } catch(e) {
             console.log(e);
         }
+
         //console.log(receipt1);
         await sleep(6000); // Allow time for the previous transaction to complete;
         //console.log('ASSET', await assetRegistryContract.getAsset(assetKey));
@@ -214,9 +229,11 @@ const assetMedia = {
         console.log('CREDIT', await collectorCreditCollector.getAvailableCredits(collector.address));
 
         console.table({assetKey, account: collector.address, vault: creator.vault , vtru: 100000000000000000000});
+
+    
         console.log('BALANCE BEFORE', await provider.getBalance(creator.vault));
-        console.log('Calling issueLicenseUsingCredits');
-        await licenseRegistryContract.issueLicenseUsingCredits(assetKey, 1, 1);
+        console.log('Calling issueLicenseUsingCreditsStudio');
+        await licenseRegistryContract.issueLicenseUsingCreditsStudio(collector.address, assetKey, 1, 1);
         await sleep(6000);
         console.log('BALANCE AFTER', await provider.getBalance(creator.vault));
         //let assetId = -1;
