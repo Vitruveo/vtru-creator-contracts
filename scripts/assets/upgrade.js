@@ -3,7 +3,7 @@ const hre = require("hardhat");
 const config = require("../../vault-config.json");
 
 // npx hardhat run --network testnet scripts/assets/upgrade.js
-// npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet 0x3925b92Ef881A9B0465Ef1ebDEE5D6C0ED4d464b
+// npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet 0x5b21D8C455283d7AB039dE551d0D5b7C9F692649
 // npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network mainnet 0x7eF4199309B0C80227e439Af25A4C1bb1caB61dB
 
 async function main() {
