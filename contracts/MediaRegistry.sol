@@ -12,6 +12,7 @@
 
 // SPDX-License-Identifier: MIT
 // Author: Nik Kalyani @techbubble
+
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -47,6 +48,10 @@ contract MediaRegistry is
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
+    }
+
+    function version() public pure returns(string memory) {
+        return "0.5.0";
     }
 
     function addMedia(string calldata assetKey, string calldata mediaType, string calldata mediaItem) public isEditor(assetKey) whenNotPaused {
@@ -123,7 +128,8 @@ contract MediaRegistry is
     }
 
     function recoverVTRU() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(payable(msg.sender).send(address(this).balance));
+        (bool recovered, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(recovered, "Recovery failed"); 
     }
 
     receive() external payable {

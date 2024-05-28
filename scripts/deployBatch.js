@@ -129,9 +129,9 @@ async function main() {
         const existing = fse.readJSONSync(jsonPath);
         if (isMainNet) {
             // Copy over testnet values
-            vaultConfig.assetRegisty.testnet = existing.assetRegistry.testnet;
-            vaultConfig.mediaRegisty.testnet = existing.mediaRegisty.testnet;
-            vaultConfig.licenseRegisty.testnet = existing.licenseRegisty.testnet;
+            vaultConfig.assetRegistry.testnet = existing.assetRegistry.testnet;
+            vaultConfig.mediaRegistry.testnet = existing.mediaRegistry.testnet;
+            vaultConfig.licenseRegisty.testnet = existing.licenseRegistry.testnet;
             vaultConfig.creatorVault.testnet = existing.creatorVault.testnet;
             vaultConfig.creatorVaultFactory.testnet = existing.creatorVaultFactory.testnet;
             vaultConfig.collectorCredit.testnet = existing.collectorCredit.testnet;
@@ -141,27 +141,27 @@ async function main() {
 
     console.log(`\nConfig written to ${jsonPath}\n`);
 
-    subProcess.exec(`npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network testnet ${assetRegistryAddress}`, (err, stdout, stderr) => {
+    subProcess.exec(`npx hardhat verify --contract contracts/AssetRegistry.sol:AssetRegistry --network ${hre.network.name} ${vaultConfig.assetRegistry[hre.network.name]}`, (err, stdout, stderr) => {
         console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
         console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
     });
 
-    subProcess.exec(`npx hardhat verify --contract contracts/MediaRegistry.sol:MediaRegistry --network testnet ${mediaRegistryAddress}`, (err, stdout, stderr) => {
+    subProcess.exec(`npx hardhat verify --contract contracts/MediaRegistry.sol:MediaRegistry --network ${hre.network.name} ${vaultConfig.mediaRegistry[hre.network.name]}`, (err, stdout, stderr) => {
         console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
         console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
     });
 
-    subProcess.exec(`npx hardhat verify --contract contracts/CreatorVaultFactory.sol:CreatorVaultFactory --network testnet --constructor-args scripts/factory/arguments.js ${creatorVaultFactoryAddress}`, (err, stdout, stderr) => {
+    subProcess.exec(`npx hardhat verify --contract contracts/CreatorVaultFactory.sol:CreatorVaultFactory --network ${hre.network.name} --constructor-args scripts/factory/arguments.js ${vaultConfig.creatorVaultFactory[hre.network.name]}`, (err, stdout, stderr) => {
         console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
         console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
     });
 
-    subProcess.exec(`npx hardhat verify --contract contracts/LicenseRegistry.sol:LicenseRegistry --network testnet ${licenseRegistryAddress}`, (err, stdout, stderr) => {
+    subProcess.exec(`npx hardhat verify --contract contracts/LicenseRegistry.sol:LicenseRegistry --network ${hre.network.name} ${vaultConfig.licenseRegistry[hre.network.name]}`, (err, stdout, stderr) => {
         console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
         console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
     });
 
-    subProcess.exec(`npx hardhat verify --contract contracts/CreatorVault.sol:CreatorVault --network testnet ${creatorVaultAddress}`, (err, stdout, stderr) => {
+    subProcess.exec(`npx hardhat verify --contract contracts/CreatorVault.sol:CreatorVault --network ${hre.network.name} ${vaultConfig.creatorVault[hre.network.name]}`, (err, stdout, stderr) => {
         console.log(`The stdout Buffer from shell: ${stdout.toString()}`)
         console.log(`The stderr Buffer from shell: ${stderr.toString()}`)
     });

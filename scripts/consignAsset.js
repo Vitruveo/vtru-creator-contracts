@@ -9,17 +9,19 @@ const network = isTestNet ? 'testnet' : 'mainnet';
 
 const rpc = isTestNet ? process.env.TESTNET_RPC : process.env.MAINNET_RPC;
 const provider = new JsonRpcProvider(rpc);
-const signer = new Wallet(process.env.STUDIO_PRIVATE_KEY, provider);
-const collector = new Wallet(process.env.USER1_PRIVATE_KEY, provider);
+const studio = new Wallet(process.env.STUDIO_PRIVATE_KEY, provider);
+const user1 = new Wallet(process.env.USER1_PRIVATE_KEY, provider);
 const corenft = new Wallet(process.env.CORE_PRIVATE_KEY, provider);
+const user2 = new Wallet(process.env.USER2_PRIVATE_KEY, provider);
 
-const assetRegistryContract = new Contract(config.assetRegistry[network], config.assetRegistry.abi, signer);
-const mediaRegistryContract = new Contract(config.mediaRegistry[network], config.mediaRegistry.abi, signer);
-const licenseRegistryContract = new Contract(config.licenseRegistry[network], config.licenseRegistry.abi, signer);
-const creatorVaultFactory = new Contract(config.creatorVaultFactory[network], config.creatorVaultFactory.abi, signer);
-const creatorVault = (address) => new Contract(address, config.creatorVault.abi, signer);
-const collectorCreditCollector = new Contract(config.collectorCredit[network], config.collectorCredit.abi, collector);
-const collectorCreditCore = new Contract(config.collectorCredit[network], config.collectorCredit.abi, corenft);
+const assetRegistryContract = new Contract(config.assetRegistry[network], config.assetRegistry.abi, studio);
+const mediaRegistryContract = new Contract(config.mediaRegistry[network], config.mediaRegistry.abi, studio);
+const licenseRegistryContract = new Contract(config.licenseRegistry[network], config.licenseRegistry.abi, studio);
+const creatorVaultFactory = new Contract(config.creatorVaultFactory[network], config.creatorVaultFactory.abi, studio);
+const creatorVault = (address) => new Contract(address, config.creatorVault.abi, studio);
+const user1CollectorContract = new Contract(config.collectorCredit[network], config.collectorCredit.abi, user1);
+const user2CollectorContract = new Contract(config.collectorCredit[network], config.collectorCredit.abi, user2);
+const coreCollectorContract = new Contract(config.collectorCredit[network], config.collectorCredit.abi, corenft);
 
 const STUDIO_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000001';
 const UPGRADER_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000002';
@@ -148,7 +150,7 @@ const assetMedia = {
 
         const assetKey = `X${String(Math.floor(Date.now() / 1000))}`;
 
-        let nonce = await signer.getNonce(); 
+        let nonce = await studio.getNonce(); 
 
         // Create Creator vault
         let vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);
@@ -172,7 +174,7 @@ const assetMedia = {
 
 
         // Create Collaborator vault
-            nonce = await signer.getNonce(); 
+            nonce = await studio.getNonce(); 
             vaultKey = ethers.Wallet.createRandom().address.substring(4, 10);;
             try {
                 await creatorVaultFactory.createVault(
@@ -191,7 +193,7 @@ const assetMedia = {
             collaborators[0].vault = await creatorVaultFactory.getVault(vaultKey);
             console.log('\n\nCollaborators[0] Vault', collaborators[0].vault);
 
-        nonce = await signer.getNonce(); 
+        nonce = await studio.getNonce(); 
 
         console.log('ASSET KEY', assetKey);
         try {
@@ -226,16 +228,17 @@ const assetMedia = {
 
        // console.log('Media added!');
 
-        console.log('CREDIT', await collectorCreditCollector.getAvailableCredits(collector.address));
 
-        console.table({assetKey, account: collector.address, vault: creator.vault , vtru: 100000000000000000000});
-
+        console.table({assetKey, account: user2.address, vault: creator.vault});
     
+        console.log('CREDIT BEFORE', await coreCollectorContract.getAvailableCredits(user2.address));
         console.log('BALANCE BEFORE', await provider.getBalance(creator.vault));
-        console.log('Calling issueLicenseUsingCreditsStudio');
-        await licenseRegistryContract.issueLicenseUsingCreditsStudio(collector.address, assetKey, 1, 1);
+        console.log('\nCalling issueLicenseUsingCreditsStudio\n');
+        await licenseRegistryContract.issueLicenseUsingCreditsStudio(user2.address, assetKey, 1, 1);
         await sleep(6000);
         console.log('BALANCE AFTER', await provider.getBalance(creator.vault));
+        console.log('CREDIT AFTER', await coreCollectorContract.getAvailableCredits(user2.address));
+
         //let assetId = -1;
         //let hexAssetId = '';
         // Get the event that was logged 
@@ -262,7 +265,7 @@ const assetMedia = {
     }
 
 
-    // const userVault = new Contract('0x0FF6c4Cb16993CefD40b250683eDacA29FFe74C5', config.creatorVault.abi, signer);
+    // const userVault = new Contract('0x0FF6c4Cb16993CefD40b250683eDacA29FFe74C5', config.creatorVault.abi, studio);
     // await userVault.addCreatorCredits(10);
 
     async function sleep(millis) {

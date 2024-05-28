@@ -12,6 +12,7 @@
 
 // SPDX-License-Identifier: MIT
 // Author: Nik Kalyani @techbubble
+
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -31,7 +32,6 @@ contract AssetRegistry is
     UUPSUpgradeable,
     ICreatorData
 {
-
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _licenseId;
 
@@ -48,6 +48,7 @@ contract AssetRegistry is
     }
 
     GlobalInfo public global;
+
 
     event AssetConsigned(string indexed assetKey, address indexed creatorVault, uint[] licenses);
     event CollaboratorAdded(string indexed assetKey, address indexed collaboratorVault);
@@ -69,6 +70,10 @@ contract AssetRegistry is
         global.creatorCreditsRequired = 1;
     }
 
+    function version() public pure returns(string memory) {
+        return "0.5.0";
+    }
+
     function consign(
                             string calldata assetKey,
                             CoreInfo calldata core, 
@@ -83,6 +88,7 @@ contract AssetRegistry is
 
         require(core.mediaTypes.length > 0, "Media missing");
         require(isContract(creator.vault), "Vault does not exist");
+
         // Check if vault is in factory
         ICreatorVault(creator.vault).useCreatorCredits(global.creatorCreditsRequired);
 
@@ -157,6 +163,7 @@ contract AssetRegistry is
         require(global.licenses[licenseId].available >= quantity, "Insufficient license availability");
         global.licenses[licenseId].available -= quantity;
         global.licenses[licenseId].licensees.push(licensee);  
+
         emit LicenseAcquired(licensee, licenseId, quantity);      
     }
 
@@ -217,7 +224,8 @@ contract AssetRegistry is
     }
 
     function recoverVTRU() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(payable(msg.sender).send(address(this).balance));
+        (bool recovered, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(recovered, "Recovery failed"); 
     }
 
     receive() external payable {

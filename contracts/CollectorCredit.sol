@@ -97,6 +97,10 @@ contract CollectorCredit is
         initClasses();
     }
 
+    function version() public pure returns(string memory) {
+        return "0.5.0";
+    }
+
     function initClasses() internal {
         global.classImageURI = "https://nftstorage.link/ipfs/bafybeicjca46w5djtghbdbjuv2up4diftcu4abm52kv2my3mmtslzmnnju/";
         registerCreditClass(1, "USD10", true, 10);
@@ -303,7 +307,8 @@ contract CollectorCredit is
     }
 
     function recoverVTRU() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(payable(msg.sender).send(address(this).balance));
+        (bool recovered, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(recovered, "Recovery failed"); 
     }
 
     receive() external payable {

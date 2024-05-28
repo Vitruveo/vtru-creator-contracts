@@ -12,6 +12,7 @@
 
 // SPDX-License-Identifier: MIT
 // Author: Nik Kalyani @techbubble
+
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -31,7 +32,6 @@ contract LicenseRegistry is
     UUPSUpgradeable,
     ICreatorData
 {
-
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _licenseInstanceId;
     CountersUpgradeable.Counter public _licenseTypeId;
@@ -81,6 +81,10 @@ contract LicenseRegistry is
         registerLicenseType("PRINT-ART-1", "Print", false, false);
 
         setAllowBlockNumber(block.number);
+    }
+
+    function version() public pure returns(string memory) {
+        return "0.5.0";
     }
 
     function registerLicenseType(string memory name, string memory info, bool isMintable, bool isElastic) public onlyRole(DEFAULT_ADMIN_ROLE)  whenNotPaused {
@@ -285,7 +289,8 @@ contract LicenseRegistry is
     }
 
     function recoverVTRU() external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(payable(msg.sender).send(address(this).balance));
+        (bool recovered, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(recovered, "Recovery failed"); 
     }
 
     receive() external payable {

@@ -1566,6 +1566,20 @@
         "outputs": []
       },
       {
+        "type": "function",
+        "name": "version",
+        "constant": true,
+        "stateMutability": "pure",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
         "type": "receive",
         "stateMutability": "payable"
       }
@@ -2197,6 +2211,20 @@
           }
         ],
         "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "version",
+        "constant": true,
+        "stateMutability": "pure",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
       },
       {
         "type": "receive",
@@ -3532,13 +3560,27 @@
         "outputs": []
       },
       {
+        "type": "function",
+        "name": "version",
+        "constant": true,
+        "stateMutability": "pure",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
+            "name": ""
+          }
+        ]
+      },
+      {
         "type": "receive",
         "stateMutability": "payable"
       }
     ]
   },
   "creatorVault": {
-    "testnet": "0x8705C66D623045257B0ecB851Fe6B35B258D0bAA",
+    "testnet": "0x7ef636ae6b959CAE284510d0B22c382557d8Ac46",
     "mainnet": "",
     "abi": [
       {
@@ -3581,6 +3623,23 @@
           {
             "type": "bool",
             "name": "approved",
+            "indexed": false
+          }
+        ]
+      },
+      {
+        "type": "event",
+        "anonymous": false,
+        "name": "FundsClaimed",
+        "inputs": [
+          {
+            "type": "address",
+            "name": "vault",
+            "indexed": false
+          },
+          {
+            "type": "uint256",
+            "name": "amount",
             "indexed": false
           }
         ]
@@ -3983,6 +4042,20 @@
         "outputs": [
           {
             "type": "bytes32",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "getVaultWallets",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "address[]",
             "name": ""
           }
         ]
@@ -6005,6 +6078,20 @@
         "outputs": [
           {
             "type": "uint256",
+            "name": ""
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "name": "version",
+        "constant": true,
+        "stateMutability": "pure",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "string",
             "name": ""
           }
         ]

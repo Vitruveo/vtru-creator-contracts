@@ -25,6 +25,7 @@ module.exports = {
       {
         network: "testnet",
         chainId: 14333,
+        ensAddress: null,
         urls: {
           apiURL: "https://test-explorer.vitruveo.xyz/api",
           browserURL: "https://www.vitruveo.xyz",

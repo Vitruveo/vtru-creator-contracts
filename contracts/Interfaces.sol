@@ -12,6 +12,7 @@
 
 // SPDX-License-Identifier: MIT
 // Author: Nik Kalyani @techbubble
+
 pragma solidity 0.8.17;
 
 interface ILicenseRegistry {

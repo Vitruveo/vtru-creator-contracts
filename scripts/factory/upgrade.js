@@ -18,7 +18,13 @@ async function main() {
   const vaultBeacon = VaultBeacon.attach(await factory.getBeacon());
   const before = await vaultBeacon.implementation();
   await vaultBeacon.update(vaultTargetAddress);
+  await sleep(7000);
+
   console.log('\n\nBEFORE/AFTER', before, await vaultBeacon.implementation(),'\n\n');
+
+  async function sleep(millis) {
+    return new Promise(resolve => setTimeout(resolve, millis));
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

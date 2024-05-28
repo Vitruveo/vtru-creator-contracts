@@ -12,6 +12,7 @@
 
 // SPDX-License-Identifier: MIT
 // Author: Nik Kalyani @techbubble
+
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -28,8 +29,7 @@ contract CreatorVault is
     PausableUpgradeable,
     AccessControlUpgradeable,
     ICreatorData
-{
-   
+{   
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _tokenId;
 
@@ -49,6 +49,7 @@ contract CreatorVault is
     mapping(uint => TokenInfo) private tokens; // tokenId => assetKey
 
     event FundsReceived(address vault, uint amount);
+    event FundsClaimed(address vault, uint amount);
 
     function initialize(
                             string calldata vaultName,
@@ -70,7 +71,11 @@ contract CreatorVault is
     }
 
     function version() public pure returns(string memory) {
-        return "1.0.0";
+        return "0.5.0";
+    }
+
+    function getVaultWallets() public view returns(address[] memory) {
+        return global.wallets;
     }
 
     function addVaultWallet(address wallet) public onlyVaultAdmin() {
@@ -140,12 +145,22 @@ contract CreatorVault is
     // Claim is used by any Vault wallet to transfer funds from Vault to wallet
     // Available claim balance is Vault contract balance
     function claim() public onlyVaultWallet() {
-        require(payable(msg.sender).send(address(this).balance));
+        _claim(msg.sender);
     }
 
     function claimStudio(address account) public onlyStudio() {
         require(isVaultWallet(account), "Account is not a Vault wallet");
-        require(payable(account).send(address(this).balance));
+        _claim(account);
+    }
+
+    function _claim(address account) internal {
+        uint vtru = address(this).balance;
+        require(vtru > 0, "No funds available to claim");
+
+        (bool claimed, ) = payable(account).call{value: vtru}("");
+        require(claimed, "Vault claim failed"); 
+
+        emit FundsClaimed(account, vtru);
     }
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
