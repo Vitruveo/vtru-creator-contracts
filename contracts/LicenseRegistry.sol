@@ -65,6 +65,13 @@ contract LicenseRegistry is
 
     GlobalInfo public global;
 
+    struct OwnedTokenInfo {
+        address vault;
+        uint tokenId;
+    }
+
+    mapping(address => OwnedTokenInfo[]) mintRegistry;
+
     function initialize() public initializer {
 
         __Pausable_init();
@@ -151,6 +158,7 @@ contract LicenseRegistry is
         if (global.licenseTypes[licenseTypeId].isMintable) {
             licenseInstanceInfo.tokenIds = ICreatorVault(asset.creator.vault).mintLicensedAssets(licenseInstanceInfo, licensee);
             require(licenseInstanceInfo.tokenIds.length > 0, "Asset minting failed");
+            registerTokens(asset.creator.vault, licenseInstanceInfo.tokenIds, licensee);
         }
        
         // TODO: Credit fee splitter contract
@@ -159,6 +167,29 @@ contract LicenseRegistry is
         emit LicenseIssued(assetKey, licensee, licenseInfo.id,  licenseInstanceInfo.id, licenseInstanceInfo.tokenIds);    
     }
 
+    function registerTokens(address vault, uint256[] memory tokenIds, address owner) internal {
+        for(uint t=0; t<tokenIds.length; t++) {
+            mintRegistry[owner].push(OwnedTokenInfo(vault, tokenIds[t]));
+        }
+    }
+
+    function transferTokens(address vault, uint256[] memory tokenIds, address from, address to) public {
+        require(msg.sender == vault, UNAUTHORIZED_USER);
+        for(uint f=0; f<mintRegistry[from].length; f++) {
+            if (mintRegistry[from][f].vault == vault) {
+                for(uint t=0; t<tokenIds.length; t++) {
+                    if (mintRegistry[from][f].tokenId == tokenIds[t]) {
+                        mintRegistry[from][f] = OwnedTokenInfo(address(0), 0); // Zero out. Batch process and free up in future
+                    }
+                }
+            }
+        }
+        registerTokens(vault, tokenIds, to);
+    }   
+
+    function getTokens(address owner) public view returns(OwnedTokenInfo[] memory) {
+        return mintRegistry[owner];
+    }
 
     function changeAssetStatus(string calldata assetKey, Status status) public whenNotPaused {
         return IAssetRegistry(global.assetRegistryContract).changeAssetStatus(assetKey, status);

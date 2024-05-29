@@ -157,10 +157,35 @@ contract CreatorVault is
         uint vtru = address(this).balance;
         require(vtru > 0, "No funds available to claim");
 
-        (bool claimed, ) = payable(account).call{value: vtru}("");
-        require(claimed, "Vault claim failed"); 
+        payable(account).transfer(vtru);
 
         emit FundsClaimed(account, vtru);
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721Upgradeable,IERC721Upgradeable) {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
+        
+        uint[] memory tokenIds = new uint[](1);
+        tokenIds[0] = tokenId;
+        ILicenseRegistry(global.licenseRegistry).transferTokens(address(this), tokenIds, from, to);
+        _transfer(from, to, tokenId);
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId) public override(ERC721Upgradeable,IERC721Upgradeable) {
+        safeTransferFrom(from, to, tokenId, "");
+    }
+
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public override(ERC721Upgradeable,IERC721Upgradeable) {
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
+
+        uint[] memory tokenIds = new uint[](1);
+        tokenIds[0] = tokenId;
+        ILicenseRegistry(global.licenseRegistry).transferTokens(address(this), tokenIds, from, to);
+        _safeTransfer(from, to, tokenId, data);
+    }
+
+    function currentSupply() public view returns (uint256) {
+        return _tokenId.current();
     }
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {

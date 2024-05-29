@@ -1,7 +1,7 @@
 {
   "assetRegistry": {
     "testnet": "0xeC84C281396C4E971586E0707FA39585073E6403",
-    "mainnet": "",
+    "mainnet": "0xeBF19B6f5c3f99BC5F75137D1113F506C7f6799E",
     "abi": [
       {
         "type": "event",
@@ -1587,7 +1587,7 @@
   },
   "mediaRegistry": {
     "testnet": "0x8e6A921744335994283046449522b914d0B06E7d",
-    "mainnet": "",
+    "mainnet": "0x3925b92Ef881A9B0465Ef1ebDEE5D6C0ED4d464b",
     "abi": [
       {
         "type": "event",
@@ -2234,7 +2234,7 @@
   },
   "licenseRegistry": {
     "testnet": "0x1e8F9510e9A599204Db4dA3f352a7e73111f050C",
-    "mainnet": "",
+    "mainnet": "0x79AfA7Dd7AE14F9C5255f1AC9c8A2b8bEb2CcCD1",
     "abi": [
       {
         "type": "event",
@@ -3167,6 +3167,35 @@
       },
       {
         "type": "function",
+        "name": "getTokens",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "owner"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "tuple[]",
+            "name": "",
+            "components": [
+              {
+                "type": "address",
+                "name": "vault"
+              },
+              {
+                "type": "uint256",
+                "name": "tokenId"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "function",
         "name": "getUsdVtruExchangeRate",
         "constant": true,
         "stateMutability": "view",
@@ -3522,6 +3551,31 @@
       },
       {
         "type": "function",
+        "name": "transferTokens",
+        "constant": false,
+        "payable": false,
+        "inputs": [
+          {
+            "type": "address",
+            "name": "vault"
+          },
+          {
+            "type": "uint256[]",
+            "name": "tokenIds"
+          },
+          {
+            "type": "address",
+            "name": "from"
+          },
+          {
+            "type": "address",
+            "name": "to"
+          }
+        ],
+        "outputs": []
+      },
+      {
+        "type": "function",
         "name": "unpause",
         "constant": false,
         "payable": false,
@@ -3580,8 +3634,8 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xCFcE65A2791557CB66CDf350CC16DD31bD5bF715",
-    "mainnet": "",
+    "testnet": "0xBa8B73999f7c8Aff0f21B0B68531F7faCe08C8a9",
+    "mainnet": "0x51129c0424f979e7f18251eD31BEa156b2Bc1772",
     "abi": [
       {
         "type": "event",
@@ -3993,6 +4047,20 @@
           }
         ],
         "outputs": []
+      },
+      {
+        "type": "function",
+        "name": "currentSupply",
+        "constant": true,
+        "stateMutability": "view",
+        "payable": false,
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "uint256",
+            "name": ""
+          }
+        ]
       },
       {
         "type": "function",
@@ -4590,7 +4658,7 @@
   },
   "creatorVaultFactory": {
     "testnet": "0xB507bc726f9Fdb29527667A1e39D0F3E05D37C4d",
-    "mainnet": "",
+    "mainnet": "0xDFda76C704515d19C737C54cFf523E45ab01d90A",
     "abi": [
       {
         "type": "constructor",
@@ -4887,7 +4955,7 @@
   },
   "collectorCredit": {
     "testnet": "0x2921f3c02f4c6b1BbD35c5B8deA666F78A9D5919",
-    "mainnet": "",
+    "mainnet": "0x5c7421fcCA16C685cEC5aaFf745a9a6BDf75Ba06",
     "abi": [
       {
         "type": "event",

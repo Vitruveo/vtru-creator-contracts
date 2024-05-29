@@ -23,6 +23,8 @@ interface ILicenseRegistry {
     function getStudioAccount() external view returns(address);
     function getAsset(string calldata assetKey) external view returns(ICreatorData.AssetInfo memory);
     function getAvailableCredits(address account) external view returns(uint tokens, uint creditCents, uint creditOther);
+    function registerTokens(address vault, uint256[] memory tokenIds, address owner) external; 
+    function transferTokens(address vault, uint256[] memory tokenIds, address from, address to) external;     
 }
 
 interface ICreatorVault {

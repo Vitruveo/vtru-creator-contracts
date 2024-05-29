@@ -13,34 +13,34 @@ async function main() {
     const studioAccount = isMainNet ? '0xe48de38701116b127e688701fc7752bd5032e3eb' : '0x88Eb3738dc7B13773F570458cbC932521431FeA7';
 
     const AssetRegistry = await ethers.getContractFactory("AssetRegistry");
-    const assetRegistry = await upgrades.deployProxy(AssetRegistry, { initializer: 'initialize' });
-    await assetRegistry.waitForDeployment();
+    //const assetRegistry = await upgrades.deployProxy(AssetRegistry, { initializer: 'initialize' });
+    //await assetRegistry.waitForDeployment();
     const assetRegistryAddress = await assetRegistry.getAddress();
     const assetRegistryAbi = AssetRegistry.interface.formatJson();
     console.log("\nAssetRegistry deployed to:", assetRegistryAddress);
 
     const MediaRegistry = await ethers.getContractFactory("MediaRegistry");
-    const mediaRegistry = await upgrades.deployProxy(MediaRegistry, { initializer: 'initialize' });
-    await mediaRegistry.waitForDeployment();
+    //const mediaRegistry = await upgrades.deployProxy(MediaRegistry, { initializer: 'initialize' });
+    //await mediaRegistry.waitForDeployment();
     const mediaRegistryAddress = await mediaRegistry.getAddress();
     const mediaRegistryAbi = MediaRegistry.interface.formatJson();
     console.log("\nMediaRegistry deployed to:", mediaRegistryAddress);
 
     const LicenseRegistry = await ethers.getContractFactory("LicenseRegistry");
-    const licenseRegistry = await upgrades.deployProxy(LicenseRegistry, { initializer: 'initialize' });
-    await licenseRegistry.waitForDeployment();
+    //const licenseRegistry = await upgrades.deployProxy(LicenseRegistry, { initializer: 'initialize' });
+    //await licenseRegistry.waitForDeployment();
     const licenseRegistryAddress = await licenseRegistry.getAddress();
     const licenseRegistryAbi = LicenseRegistry.interface.formatJson();
     console.log("\nLicenseRegistry deployed to:", licenseRegistryAddress);
 
     const CreatorVault = await ethers.getContractFactory("CreatorVault");
-    const creatorVault = await CreatorVault.deploy();
+//    const creatorVault = await CreatorVault.deploy();
     const creatorVaultAddress = await creatorVault.getAddress();
     const creatorVaultAbi = CreatorVault.interface.formatJson();
     console.log("\nCreatorVault deployed to:", creatorVaultAddress)
 
     const CreatorVaultFactory = await hre.ethers.getContractFactory("CreatorVaultFactory");
-    const creatorVaultFactory = await CreatorVaultFactory.deploy(creatorVaultAddress, licenseRegistryAddress); // CreatorVault, LicenseRegistry
+   // const creatorVaultFactory = await CreatorVaultFactory.deploy(creatorVaultAddress, licenseRegistryAddress); // CreatorVault, LicenseRegistry
     const creatorVaultFactoryAddress = await creatorVaultFactory.getAddress();
     const creatorVaultFactoryAbi = CreatorVaultFactory.interface.formatJson();
     console.log("\nCreatorVaultFactory deployed to:", creatorVaultFactoryAddress);
@@ -50,14 +50,6 @@ async function main() {
     const collectorCredit =    CollectorCredit.attach(collectorCreditAddress);
     const collectorCreditAbi = CollectorCredit.interface.formatJson();
    // console.log('Collector Credit ABI', collectorCreditAbi);
-/*
-
-    Collector Credit:
-    redeemUSD requires REEDEMER_ROLE => grant to LicenseRegistry
-    updateTransfers requires DEFAULT_ADMIN_ROLE 
-    authorizeUprade requires UPGRADER_ROLE
-
-*/
 
     //await creatorVault.grantRole('0x0000000000000000000000000000000000000000000000000000000000000001', studioAccount);
 
@@ -68,18 +60,18 @@ async function main() {
     const LICENSOR_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000005';
 
 
-    await assetRegistry.grantRole(STUDIO_ROLE, studioAccount); // STUDIO_ROLE
-    await assetRegistry.grantRole(LICENSOR_ROLE, licenseRegistryAddress); // LICENSOR_ROLE
-    await collectorCredit.grantRole(REEDEEMER_ROLE, licenseRegistryAddress); 
+    // await assetRegistry.grantRole(STUDIO_ROLE, studioAccount); // STUDIO_ROLE
+    // await assetRegistry.grantRole(LICENSOR_ROLE, licenseRegistryAddress); // LICENSOR_ROLE
+    // await collectorCredit.grantRole(REEDEEMER_ROLE, licenseRegistryAddress); 
 
-    await mediaRegistry.setAssetRegistryContract(assetRegistryAddress);
-    await assetRegistry.setMediaRegistryContract(mediaRegistryAddress);
+    // await mediaRegistry.setAssetRegistryContract(assetRegistryAddress);
+    // await assetRegistry.setMediaRegistryContract(mediaRegistryAddress);
 
-    await licenseRegistry.setStudioAccount(studioAccount);
-    await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
-    await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);
-    await licenseRegistry.setCollectorCreditContract(collectorCreditAddress);
-    await licenseRegistry.setUsdVtruExchangeRate(150);
+    // await licenseRegistry.setStudioAccount(studioAccount);
+    // await licenseRegistry.setAssetRegistryContract(assetRegistryAddress);
+    // await licenseRegistry.setCreatorVaultFactoryContract(creatorVaultFactoryAddress);
+    // await licenseRegistry.setCollectorCreditContract(collectorCreditAddress);
+    // await licenseRegistry.setUsdVtruExchangeRate(150);
 
     const vaultConfig = {
         assetRegistry: {
