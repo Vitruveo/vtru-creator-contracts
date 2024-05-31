@@ -9,11 +9,14 @@ async function main() {
   const vaultTargetV1 = await Vault.deploy();
   const vaultTargetAddress = await vaultTargetV1.getAddress();
   console.log(`target address: ${vaultTargetAddress}`)
+  await sleep(7000);
 
   const VaultFactory = await hre.ethers.getContractFactory("CreatorVaultFactory");
   const contract = config.creatorVaultFactory[network];
   const factory = await VaultFactory.attach(contract);
-
+  const factoryAddress = await factory.getAddress();
+  console.log(`factory address: ${factoryAddress}`)
+  
   const VaultBeacon = await hre.ethers.getContractFactory("CreatorVaultBeacon");
   const vaultBeacon = VaultBeacon.attach(await factory.getBeacon());
   const before = await vaultBeacon.implementation();

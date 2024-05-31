@@ -32793,7 +32793,7 @@
             "label": "_licenseInstanceId",
             "offset": 0,
             "slot": "351",
-            "type": "t_struct(Counter)2842_storage",
+            "type": "t_struct(Counter)1728_storage",
             "contract": "LicenseRegistry",
             "src": "contracts/LicenseRegistry.sol:54"
           },
@@ -32801,7 +32801,7 @@
             "label": "_licenseTypeId",
             "offset": 0,
             "slot": "352",
-            "type": "t_struct(Counter)2842_storage",
+            "type": "t_struct(Counter)1728_storage",
             "contract": "LicenseRegistry",
             "src": "contracts/LicenseRegistry.sol:55"
           },
@@ -32809,7 +32809,7 @@
             "label": "global",
             "offset": 0,
             "slot": "353",
-            "type": "t_struct(GlobalInfo)5950_storage",
+            "type": "t_struct(GlobalInfo)3617_storage",
             "contract": "LicenseRegistry",
             "src": "contracts/LicenseRegistry.sol:87"
           },
@@ -32817,7 +32817,7 @@
             "label": "mintRegistry",
             "offset": 0,
             "slot": "363",
-            "type": "t_mapping(t_address,t_array(t_struct(OwnedTokenInfo)5958_storage)dyn_storage)",
+            "type": "t_mapping(t_address,t_array(t_struct(OwnedTokenInfo)3625_storage)dyn_storage)",
             "contract": "LicenseRegistry",
             "src": "contracts/LicenseRegistry.sol:88"
           }
@@ -32831,7 +32831,7 @@
             "label": "address[]",
             "numberOfBytes": "32"
           },
-          "t_array(t_struct(OwnedTokenInfo)5958_storage)dyn_storage": {
+          "t_array(t_struct(OwnedTokenInfo)3625_storage)dyn_storage": {
             "label": "struct LicenseRegistry.OwnedTokenInfo[]",
             "numberOfBytes": "32"
           },
@@ -32855,7 +32855,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_address,t_array(t_struct(OwnedTokenInfo)5958_storage)dyn_storage)": {
+          "t_mapping(t_address,t_array(t_struct(OwnedTokenInfo)3625_storage)dyn_storage)": {
             "label": "mapping(address => struct LicenseRegistry.OwnedTokenInfo[])",
             "numberOfBytes": "32"
           },
@@ -32871,11 +32871,11 @@
             "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(LicenseInstanceInfo)5781_storage)": {
+          "t_mapping(t_uint256,t_struct(LicenseInstanceInfo)3448_storage)": {
             "label": "mapping(uint256 => struct ICreatorData.LicenseInstanceInfo)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_struct(LicenseTypeInfo)5918_storage)": {
+          "t_mapping(t_uint256,t_struct(LicenseTypeInfo)3585_storage)": {
             "label": "mapping(uint256 => struct LicenseRegistry.LicenseTypeInfo)",
             "numberOfBytes": "32"
           },
@@ -32883,7 +32883,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(Counter)2842_storage": {
+          "t_struct(Counter)1728_storage": {
             "label": "struct CountersUpgradeable.Counter",
             "members": [
               {
@@ -32895,7 +32895,7 @@
             ],
             "numberOfBytes": "32"
           },
-          "t_struct(GlobalInfo)5950_storage": {
+          "t_struct(GlobalInfo)3617_storage": {
             "label": "struct LicenseRegistry.GlobalInfo",
             "members": [
               {
@@ -32930,13 +32930,13 @@
               },
               {
                 "label": "licenseTypes",
-                "type": "t_mapping(t_uint256,t_struct(LicenseTypeInfo)5918_storage)",
+                "type": "t_mapping(t_uint256,t_struct(LicenseTypeInfo)3585_storage)",
                 "offset": 0,
                 "slot": "5"
               },
               {
                 "label": "licenseInstances",
-                "type": "t_mapping(t_uint256,t_struct(LicenseInstanceInfo)5781_storage)",
+                "type": "t_mapping(t_uint256,t_struct(LicenseInstanceInfo)3448_storage)",
                 "offset": 0,
                 "slot": "6"
               },
@@ -32961,7 +32961,7 @@
             ],
             "numberOfBytes": "320"
           },
-          "t_struct(LicenseInstanceInfo)5781_storage": {
+          "t_struct(LicenseInstanceInfo)3448_storage": {
             "label": "struct ICreatorData.LicenseInstanceInfo",
             "members": [
               {
@@ -33039,7 +33039,7 @@
             ],
             "numberOfBytes": "256"
           },
-          "t_struct(LicenseTypeInfo)5918_storage": {
+          "t_struct(LicenseTypeInfo)3585_storage": {
             "label": "struct LicenseRegistry.LicenseTypeInfo",
             "members": [
               {
@@ -33087,7 +33087,7 @@
             ],
             "numberOfBytes": "128"
           },
-          "t_struct(OwnedTokenInfo)5958_storage": {
+          "t_struct(OwnedTokenInfo)3625_storage": {
             "label": "struct LicenseRegistry.OwnedTokenInfo",
             "members": [
               {

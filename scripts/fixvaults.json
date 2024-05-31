@@ -1,0 +1,576 @@
+[
+  {
+    "vault": "0x9F17a6A21745c559763C71037850AF55356AE410",
+    "buyer": "0x4830de42068B5bDbE558f7ed032FD7A4Ad12c381",
+    "assetKey": "65eb6e2b3fb79934ec457e2e",
+    "licenseInstanceId": 11,
+    "licenseId": 20
+  },
+  {
+    "vault": "0x83203c11ab37cD2D5a9f4D796DaC3b1b68f94091",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65eb7cdc3fb79934ec457e3c",
+    "licenseInstanceId": 14,
+    "licenseId": 22
+  },
+  {
+    "vault": "0x3dcf3Af11e8718AD8407C325fD1e32d8b6e79099",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65eb868a3fb79934ec457e41",
+    "licenseInstanceId": 41,
+    "licenseId": 26
+  },
+  {
+    "vault": "0xD169401ff542cfb1D5c4d200CF59D00398525202",
+    "buyer": "0xC6F60Deb5C488fD06F76823C8dEfcB82E2974015",
+    "assetKey": "65eb8cbc3fb79934ec457e44",
+    "licenseInstanceId": 7,
+    "licenseId": 27
+  },
+  {
+    "vault": "0xedd63aD483B32868b42BC0cAB912967E2A1Ee09c",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65eba1ef3fb79934ec457e45",
+    "licenseInstanceId": 65,
+    "licenseId": 31
+  },
+  {
+    "vault": "0xa3547893274D02906f5aaD847F5B4aD86D6fa191",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65ec694c3fb79934ec457e4c",
+    "licenseInstanceId": 68,
+    "licenseId": 37
+  },
+  {
+    "vault": "0x8E9f9CB6455bdDCE3c89bD7172E6A97842F23DC5",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65ef9c0407fb7c9bc19c4594",
+    "licenseInstanceId": 80,
+    "licenseId": 46
+  },
+  {
+    "vault": "0x940a31FA74122A5C55426e5B3484CC381c983702",
+    "buyer": "0xBe022b7854aBBbfF4f9e0112499d38D431212aa0",
+    "assetKey": "65ef9c3b07fb7c9bc19c4595",
+    "licenseInstanceId": 29,
+    "licenseId": 50
+  },
+  {
+    "vault": "0xfB9e9706265C242AF47d7BD903FE3eE2b6eb6dfD",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65ef9d7207fb7c9bc19c4596",
+    "licenseInstanceId": 50,
+    "licenseId": 52
+  },
+  {
+    "vault": "0xD805b998EFf4A7863d4f654E7e7592d0367CeB17",
+    "buyer": "0xBe022b7854aBBbfF4f9e0112499d38D431212aa0",
+    "assetKey": "65efa3c807fb7c9bc19c4599",
+    "licenseInstanceId": 33,
+    "licenseId": 55
+  },
+  {
+    "vault": "0x6cb643D62AE5C0e56AA19aa762c1d4854F1E72bF",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f05c1907fb7c9bc19c45b0",
+    "licenseInstanceId": 40,
+    "licenseId": 60
+  },
+  {
+    "vault": "0x8EA62AA342BBB9acf853D7C5b1D4F8f18B059cFf",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f0a6fe07fb7c9bc19c45ba",
+    "licenseInstanceId": 18,
+    "licenseId": 63
+  },
+  {
+    "vault": "0x0C7B875816cade7867fdbd6077462782f6294B8C",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "65f1849607fb7c9bc19c45c3",
+    "licenseInstanceId": 27,
+    "licenseId": 67
+  },
+  {
+    "vault": "0x5dCaeEe2031b13B249242635e2db40e3dA81005c",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f1da4007fb7c9bc19c45c9",
+    "licenseInstanceId": 75,
+    "licenseId": 75
+  },
+  {
+    "vault": "0x3A80a9d9Be425E74727627B65BbcCa83B466139b",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f2d633f44c703f83221f8f",
+    "licenseInstanceId": 49,
+    "licenseId": 76
+  },
+  {
+    "vault": "0xe8fACA5681558e194700EaD20D0E85d664211a31",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f2ef63f44c703f83221f92",
+    "licenseInstanceId": 64,
+    "licenseId": 84
+  },
+  {
+    "vault": "0xD43aF6a9726cBD91B4Ea67951613755B8F0a9354",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f33d22f44c703f83222305",
+    "licenseInstanceId": 15,
+    "licenseId": 87
+  },
+  {
+    "vault": "0x580971EC7Bb2D06bBf9a978B75b5158eB724488c",
+    "buyer": "0xC6F60Deb5C488fD06F76823C8dEfcB82E2974015",
+    "assetKey": "65f34cc5f44c703f83222307",
+    "licenseInstanceId": 6,
+    "licenseId": 90
+  },
+  {
+    "vault": "0x5F546Dc6f5EaFB8e3682188c012C49Ec7Fef22c1",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f4841357bab1a729d90609",
+    "licenseInstanceId": 63,
+    "licenseId": 98
+  },
+  {
+    "vault": "0x30a42D6F92EEFd5e35FD2B1a6D0a788a7660148f",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f484a557bab1a729d9060b",
+    "licenseInstanceId": 39,
+    "licenseId": 101
+  },
+  {
+    "vault": "0xa89ACA95d7c1D166754E2ab0d1C47a6470BcC01e",
+    "buyer": "0x279bc70bC870f55546639924A00e1B1E02f3b61d",
+    "assetKey": "65f488cf57bab1a729d90619",
+    "licenseInstanceId": 12,
+    "licenseId": 109
+  },
+  {
+    "vault": "0x159a2AC1e407dA7e1963D5779Dc6181325ffb6c5",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "65f4890d57bab1a729d9061c",
+    "licenseInstanceId": 30,
+    "licenseId": 112
+  },
+  {
+    "vault": "0xd56f758f5F80242F618A86f84c1e7A8760230F19",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f48c9f57bab1a729d90621",
+    "licenseInstanceId": 67,
+    "licenseId": 115
+  },
+  {
+    "vault": "0xBFe54f9dD8ca330546F76B00C1a00E031bE7a522",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f490a557bab1a729d90626",
+    "licenseInstanceId": 74,
+    "licenseId": 119
+  },
+  {
+    "vault": "0xf18ABdD5B86D4d9390f1A641F9947A2D8173c1DC",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f497a957bab1a729d9062b",
+    "licenseInstanceId": 38,
+    "licenseId": 124
+  },
+  {
+    "vault": "0x8316C0e475C994B4E00a3C312B174a838fED77e6",
+    "buyer": "0x3f97b22AC09Adc699D2727d0Fe15b2C28126f04d",
+    "assetKey": "65f4993257bab1a729d9062e",
+    "licenseInstanceId": 85,
+    "licenseId": 127
+  },
+  {
+    "vault": "0x934a9a6876939331A24861C8D8e005694660e58f",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f49eb257bab1a729d90636",
+    "licenseInstanceId": 62,
+    "licenseId": 129
+  },
+  {
+    "vault": "0xdeF91c87c3647cDD5D98D996805e1A85bEfbCA23",
+    "buyer": "0xC6F60Deb5C488fD06F76823C8dEfcB82E2974015",
+    "assetKey": "65f4b44957bab1a729d90649",
+    "licenseInstanceId": 9,
+    "licenseId": 142
+  },
+  {
+    "vault": "0xE8066A96555135cd877Aa998934EC387073b3C18",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f4c80b57bab1a729d90653",
+    "licenseInstanceId": 70,
+    "licenseId": 152
+  },
+  {
+    "vault": "0x4FeFCfE714789e8f1688E4Be36cE468063e851BD",
+    "buyer": "0x4DD28221a7E48f47E508e8e5C217Fa3CDB36fF4D",
+    "assetKey": "65f4e29757bab1a729d90664",
+    "licenseInstanceId": 5,
+    "licenseId": 161
+  },
+  {
+    "vault": "0x17C65b3d6aFEf0b0A817DA531E495d71fC327DD4",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f4f01657bab1a729d90668",
+    "licenseInstanceId": 37,
+    "licenseId": 162
+  },
+  {
+    "vault": "0xA1e933F082Cb813d2535728cA61Ed77A9a6F286c",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f53baa57bab1a729d90671",
+    "licenseInstanceId": 28,
+    "licenseId": 168
+  },
+  {
+    "vault": "0x7F1A9AcC9a046bC243c08AE11dAfECD23e7FE31b",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f54f7257bab1a729d9067c",
+    "licenseInstanceId": 44,
+    "licenseId": 172
+  },
+  {
+    "vault": "0x69b670b05091f3901C1B387316D2be47BD4Bd465",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f552c357bab1a729d9067d",
+    "licenseInstanceId": 73,
+    "licenseId": 173
+  },
+  {
+    "vault": "0x1dB1f0E98DEB3920dDF6e19c70699e359a466adc",
+    "buyer": "0x279bc70bC870f55546639924A00e1B1E02f3b61d",
+    "assetKey": "65f581ab57bab1a729d9068f",
+    "licenseInstanceId": 13,
+    "licenseId": 175
+  },
+  {
+    "vault": "0x957843d52227cc848fFBEb6BCa33E56402FD8c28",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "65f59f5b57bab1a729d90693",
+    "licenseInstanceId": 36,
+    "licenseId": 179
+  },
+  {
+    "vault": "0xdd19b9B1203cDA970621E06DDe10Ac3AFC2AB2a3",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f5ad1b57bab1a729d9069e",
+    "licenseInstanceId": 43,
+    "licenseId": 187
+  },
+  {
+    "vault": "0xad637cF77bE43B2aCA1e839c79246d97ed92C526",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f5b50e57bab1a729d906a4",
+    "licenseInstanceId": 16,
+    "licenseId": 191
+  },
+  {
+    "vault": "0xe36F15694E7073C0C6220188a3cdB805C700CB10",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "65f5e60d57bab1a729d906ca",
+    "licenseInstanceId": 35,
+    "licenseId": 201
+  },
+  {
+    "vault": "0xd423a5E8C5e1d698fcF0DA56fbad8C837A0fBCb6",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f5e6b657bab1a729d906cb",
+    "licenseInstanceId": 26,
+    "licenseId": 202
+  },
+  {
+    "vault": "0xCf97472b0C178d904b31aB7b571557799F4D7439",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f608c757bab1a729d906d2",
+    "licenseInstanceId": 61,
+    "licenseId": 206
+  },
+  {
+    "vault": "0x3B9df677Bb923B2B3e2e5cd987b76F99b31e5CF2",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f60aa157bab1a729d906d4",
+    "licenseInstanceId": 42,
+    "licenseId": 207
+  },
+  {
+    "vault": "0xA1358E2DB6aA6d5800512702de5F31834eEFeDAb",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f6180a57bab1a729d906dc",
+    "licenseInstanceId": 17,
+    "licenseId": 214
+  },
+  {
+    "vault": "0x02E4a81c3c333Ba265A052b373506Df71929D5e9",
+    "buyer": "0xBe022b7854aBBbfF4f9e0112499d38D431212aa0",
+    "assetKey": "65f61d0757bab1a729d906e0",
+    "licenseInstanceId": 46,
+    "licenseId": 218
+  },
+  {
+    "vault": "0xD89E16D427eF5eF3c2D677628794830C088B72b2",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f627b157bab1a729d906e3",
+    "licenseInstanceId": 19,
+    "licenseId": 220
+  },
+  {
+    "vault": "0xcD3eF39820531aeA7ceA615FF86A271477d55b75",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f67c8b57bab1a729d906f0",
+    "licenseInstanceId": 59,
+    "licenseId": 230
+  },
+  {
+    "vault": "0x6344947167b5e46DA046c2D3212766be2C962A8B",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f68ff957bab1a729d906f4",
+    "licenseInstanceId": 48,
+    "licenseId": 232
+  },
+  {
+    "vault": "0x001EC74c817EB9a460F10A4fDc2D7A07E4073c3D",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f6acec57bab1a729d90700",
+    "licenseInstanceId": 25,
+    "licenseId": 240
+  },
+  {
+    "vault": "0xEe7F69C31AF1d13211114C18908c2e1537c2eb24",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f6c15357bab1a729d90702",
+    "licenseInstanceId": 58,
+    "licenseId": 245
+  },
+  {
+    "vault": "0x7561f595179BA40C36Ee2c2739222054bA8AEAb3",
+    "buyer": "0xC6F60Deb5C488fD06F76823C8dEfcB82E2974015",
+    "assetKey": "65f6e56557bab1a729d9070d",
+    "licenseInstanceId": 8,
+    "licenseId": 247
+  },
+  {
+    "vault": "0xBCc4De26f99DA2d64Bdb2CcAB37eFb868eF4742B",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f6eda257bab1a729d90711",
+    "licenseInstanceId": 57,
+    "licenseId": 251
+  },
+  {
+    "vault": "0x0f525E0dac7895d44254261c9Fc69e1e37aEFfF3",
+    "buyer": "0x0612BA65Ea9074FB4d064b192038D823fD057f46",
+    "assetKey": "65f6fd1957bab1a729d9071b",
+    "licenseInstanceId": 10,
+    "licenseId": 252
+  },
+  {
+    "vault": "0x6F20128da546A59cC5D6D2F1c2Aae72412d9DBE4",
+    "buyer": "0x0612BA65Ea9074FB4d064b192038D823fD057f46",
+    "assetKey": "65f7032957bab1a729d90720",
+    "licenseInstanceId": 60,
+    "licenseId": 255
+  },
+  {
+    "vault": "0x4873e11a7C8a7C17A6Ee9f508eb06DF32fb3a628",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f76fd457bab1a729d90736",
+    "licenseInstanceId": 47,
+    "licenseId": 265
+  },
+  {
+    "vault": "0x2dBbC9a9D137f7026887228981E79E022bb3E271",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f7924b57bab1a729d90740",
+    "licenseInstanceId": 56,
+    "licenseId": 267
+  },
+  {
+    "vault": "0xC44F68d99fEa348638dfd9f5D53b98ad4A088908",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f7a2e057bab1a729d90744",
+    "licenseInstanceId": 81,
+    "licenseId": 270
+  },
+  {
+    "vault": "0xE8bC2aa693fA6B3BfC645Af123442d2f871BEC7b",
+    "buyer": "0x3f97b22AC09Adc699D2727d0Fe15b2C28126f04d",
+    "assetKey": "65f7ae1157bab1a729d90747",
+    "licenseInstanceId": 87,
+    "licenseId": 272
+  },
+  {
+    "vault": "0xA95448C62CDBd6e8049257e66Aa2cFe4BB33b106",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "65f7c27b57bab1a729d9074a",
+    "licenseInstanceId": 34,
+    "licenseId": 274
+  },
+  {
+    "vault": "0x619Cf145aaBc747f8Adc2Da535cCAAb71340274C",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f7c81357bab1a729d9074c",
+    "licenseInstanceId": 23,
+    "licenseId": 277
+  },
+  {
+    "vault": "0xfBB7AC0b8E89e91C036F0Deb26571ACac630DADb",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f7cc8b57bab1a729d9074e",
+    "licenseInstanceId": 55,
+    "licenseId": 280
+  },
+  {
+    "vault": "0x37e9308011870dC275c801a24Af10E2E629dc264",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f7f39157bab1a729d90755",
+    "licenseInstanceId": 78,
+    "licenseId": 284
+  },
+  {
+    "vault": "0x466d1714e10b74fB9aEDEdBe44C6aD6E3522D508",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f82f0557bab1a729d9075d",
+    "licenseInstanceId": 72,
+    "licenseId": 285
+  },
+  {
+    "vault": "0xb6168047079D2Eac3f28B7BCE7de23A977aBDD76",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "65f83a0057bab1a729d90761",
+    "licenseInstanceId": 32,
+    "licenseId": 289
+  },
+  {
+    "vault": "0x505768E611b9E1dE2D685286256D7Dcd11b7b051",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f8449957bab1a729d90767",
+    "licenseInstanceId": 22,
+    "licenseId": 293
+  },
+  {
+    "vault": "0x70929129285447263485362E5d2BADC3EeBE5CBb",
+    "buyer": "0x3f97b22AC09Adc699D2727d0Fe15b2C28126f04d",
+    "assetKey": "65f86e6057bab1a729d90775",
+    "licenseInstanceId": 82,
+    "licenseId": 301
+  },
+  {
+    "vault": "0x9e7FD0c877eB19365a8D57f76F91F931823bB3eD",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f87a1957bab1a729d90777",
+    "licenseInstanceId": 24,
+    "licenseId": 302
+  },
+  {
+    "vault": "0xFaaFCCfCf98154708923A016AB46a745A53aEd9F",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f87de057bab1a729d90779",
+    "licenseInstanceId": 53,
+    "licenseId": 305
+  },
+  {
+    "vault": "0x315389aA2011E4820f6b8bEDd92A410916f71623",
+    "buyer": "0x325af93Cf0941fd73E2aBC36a20c8178e9d87FD1",
+    "assetKey": "6658403f40123deccdc9354e",
+    "licenseInstanceId": 31,
+    "licenseId": 309
+  },
+  {
+    "vault": "0x5995b40baFe9643621cc54E28Eaef70b13a0d9D0",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65f93bf157bab1a729d9079c",
+    "licenseInstanceId": 52,
+    "licenseId": 320
+  },
+  {
+    "vault": "0xe10cc7a65FBD6BA3C74ACc0D0fA1bEF3BC76b78E",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f9622657bab1a729d9079f",
+    "licenseInstanceId": 69,
+    "licenseId": 322
+  },
+  {
+    "vault": "0x328172c1d28B38d74eE470303ffD4B81865184CA",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f9782f57bab1a729d907a1",
+    "licenseInstanceId": 71,
+    "licenseId": 326
+  },
+  {
+    "vault": "0x277560fcB63390B042eBF4701CF1b6326421C4FB",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f982e157bab1a729d907a4",
+    "licenseInstanceId": 21,
+    "licenseId": 330
+  },
+  {
+    "vault": "0x468BFe81a6fc649915887184673dB9c842b3AB08",
+    "buyer": "0x23fc63f385DbFDc59b93205CEB97e19D98B0dA9E",
+    "assetKey": "65f99f3c57bab1a729d907ab",
+    "licenseInstanceId": 20,
+    "licenseId": 335
+  },
+  {
+    "vault": "0xe12aC34Cd5FB38724f3933BF52863D34C76d40B7",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65fae8e957bab1a729d907c3",
+    "licenseInstanceId": 51,
+    "licenseId": 344
+  },
+  {
+    "vault": "0x0f46502CD40bF77CB2f2bc93E2B029F6fa8E93C1",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65fc998959e94e78747e1f52",
+    "licenseInstanceId": 84,
+    "licenseId": 346
+  },
+  {
+    "vault": "0x808d30908105760EA8aEA63e31e1C8E9eb93C8B9",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65fcab3f59e94e78747e1f55",
+    "licenseInstanceId": 66,
+    "licenseId": 350
+  },
+  {
+    "vault": "0x6eaDa36C39ab7ad04eEE02C25CDb9a13b58BB1ee",
+    "buyer": "0x05F00778e905FE62693f5c6A15DC0B310D603D1e",
+    "assetKey": "65fdcc1159e94e78747e1f68",
+    "licenseInstanceId": 77,
+    "licenseId": 354
+  },
+  {
+    "vault": "0x6951F9C8E83ca359B2B1FD6AE2Eba2516edfaA8b",
+    "buyer": "0x3f97b22AC09Adc699D2727d0Fe15b2C28126f04d",
+    "assetKey": "65fe12b359e94e78747e1f7a",
+    "licenseInstanceId": 79,
+    "licenseId": 358
+  },
+  {
+    "vault": "0x738A256F3Bc56346B030744c1570f9d46cb64ECE",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65fe1c0959e94e78747e1f7c",
+    "licenseInstanceId": 86,
+    "licenseId": 362
+  },
+  {
+    "vault": "0x84FC48DF30930A025D6bDd3D47EAA4d69d80a107",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65edb2f03fb79934ec457e54",
+    "licenseInstanceId": 54,
+    "licenseId": 366
+  },
+  {
+    "vault": "0x34afae2ef21FaFbF75C31d83E009ff4329CDb93d",
+    "buyer": "0xa1Ea38b4A23f7E7e3741c9613df980799f7711Ba",
+    "assetKey": "65f7014e57bab1a729d9071d",
+    "licenseInstanceId": 76,
+    "licenseId": 372
+  },
+  {
+    "vault": "0x175d6c472e2b877E4e4b76ae181f2808B466a408",
+    "buyer": "0xc242343d77d079eBDD39F2c213E021c115e40599",
+    "assetKey": "65f7788957bab1a729d90738",
+    "licenseInstanceId": 83,
+    "licenseId": 373
+  }
+]

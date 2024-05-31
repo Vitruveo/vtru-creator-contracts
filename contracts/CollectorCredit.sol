@@ -44,6 +44,7 @@ contract CollectorCredit is
     bytes32 public constant GRANTER_ROLE = bytes32(uint256(0x01));
     bytes32 public constant UPGRADER_ROLE = bytes32(uint256(0x02));
     bytes32 public constant REEDEEMER_ROLE = bytes32(uint256(0x03));
+    bytes32 public constant BLOCKER_ROLE = bytes32(uint256(0x04));
 
     /****************************************************************************/
     /*                                 TOKENS                                   */
@@ -80,6 +81,10 @@ contract CollectorCredit is
     uint256 private constant _ENTERED = 2;
 
     uint256 private _status;
+    bool private _blockTransfers;
+
+    mapping(address => bool) BlockedAccounts;
+    mapping(address => bool) BlockedVaults;
 
     event CollectorCreditGranted(uint256 indexed tokenId, address indexed account, bool isUSD, uint256 value);
     event CollectorCreditRedeemed(address indexed account, uint64 amountCents, uint256 licenseInstanceId, uint64 redeemedCents, uint256 vtru, address vault);
@@ -112,6 +117,8 @@ contract CollectorCredit is
         uint256 activeBlock,
         uint256 quantity
     ) public onlyRole(GRANTER_ROLE) whenNotPaused {
+        
+        require(BlockedAccounts[account] == false, "Account is blocked");
 
         CreditNFTClass memory creditNFTClass = global.CreditNFTClasses[classId];
 
@@ -128,7 +135,7 @@ contract CollectorCredit is
             newCreditNFT.classId = classId;
             newCreditNFT.isUSD = creditNFTClass.isUSD;
             newCreditNFT.value = creditNFTClass.value;
-            newCreditNFT.activeBlock = activeBlock;
+            newCreditNFT.activeBlock = activeBlock == 0 ? block.number : activeBlock;
 
             addTokenToOwner(newCreditNFT.id, account);
             global.TotalNFTsByClass[classId]++;
@@ -140,6 +147,9 @@ contract CollectorCredit is
     }
 
     function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents, uint256 usdVtruExchangeRate, address vault) onlyRole(REEDEEMER_ROLE) public whenNotPaused nonReentrant returns(uint64 redeemedCents) {
+
+        require(BlockedAccounts[account] == false, "Account is blocked");
+        require(BlockedVaults[account] == false, "Vault is blocked");
 
         (CreditNFT[] memory creditNFTs, uint creditCents,) = getAvailableCreditTokens(account);
         require(creditCents >= amountCents, "Insufficient credit");
@@ -159,7 +169,8 @@ contract CollectorCredit is
 
         require(redeemedCents >= amountCents, "Failed to redeem credits");
 
-        uint256 vtru = (redeemedCents * DECIMALS) / usdVtruExchangeRate; 
+        // Rebase calc
+        uint256 vtru = (redeemedCents * DECIMALS * 100109588) / (usdVtruExchangeRate * 10**8); 
         require(address(this).balance >= vtru, "Insufficient Collector Credit VTRU balance");
 
         (bool payout, ) = payable(vault).call{value: vtru}("");
@@ -183,6 +194,12 @@ contract CollectorCredit is
         global.CreditNFTsByOwner[account].push(tokenId); 
     }
 
+    function activateTokens(uint[] memory tokens) public onlyRole(GRANTER_ROLE) {
+        for(uint f=0; f<tokens.length; f++) {
+            global.CreditNFTs[tokens[f]].activeBlock = block.number;
+        }
+    }
+
     function getAccountTokens(address account) public view returns(CreditNFT[] memory){
 
         uint256[] memory nfts = global.CreditNFTsByOwner[account];
@@ -196,10 +213,18 @@ contract CollectorCredit is
     function getActiveAccountTokens(address account) public view returns(CreditNFT[] memory){
 
         uint256[] memory nfts = global.CreditNFTsByOwner[account];
-        CreditNFT[] memory creditNFTs = new CreditNFT[](nfts.length);
+        uint activeNfts = 0;
         for(uint f=0; f<nfts.length; f++) {
-            if (global.CreditNFTs[nfts[f]].activeBlock <= block.number) {
-                creditNFTs[f] = global.CreditNFTs[nfts[f]];
+            if ((global.CreditNFTs[nfts[f]].activeBlock > 0) && (global.CreditNFTs[nfts[f]].activeBlock <= block.number)) {
+                activeNfts++;
+            }
+        }
+
+        CreditNFT[] memory creditNFTs = new CreditNFT[](activeNfts);
+        uint index = 0;
+        for(uint f=0; f<nfts.length; f++) {
+            if ((global.CreditNFTs[nfts[f]].activeBlock > 0) && (global.CreditNFTs[nfts[f]].activeBlock <= block.number)) {
+                creditNFTs[index++] = global.CreditNFTs[nfts[f]];
             }
         }
         return creditNFTs;
@@ -216,7 +241,6 @@ contract CollectorCredit is
             }
         }     
     }
-
 
     function getAvailableCredits(address account) public view returns(uint tokens, uint creditCents, uint creditOther) {
 
@@ -259,6 +283,7 @@ contract CollectorCredit is
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public override {
+        require(!_blockTransfers, "Transfers not allowed");
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
         
         removeTokenFromOwner(tokenId, from);
@@ -271,6 +296,7 @@ contract CollectorCredit is
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public override {
+        require(!_blockTransfers, "Transfers not allowed");
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
         removeTokenFromOwner(tokenId, from);
         addTokenToOwner(tokenId, to);
@@ -304,6 +330,38 @@ contract CollectorCredit is
 
     function unpause() public onlyRole(DEFAULT_ADMIN_ROLE) {
         _unpause();
+    }
+
+    function blockAccount(address account) public  onlyBlocker() {
+        BlockedAccounts[account] = true;
+    }
+
+    function unblockAccount(address account) public onlyBlocker() {
+        delete BlockedAccounts[account];
+    }
+
+    function blockVault(address vault) public  onlyBlocker() {
+        BlockedVaults[vault] = true;
+    }
+
+    function unblockVault(address vault) public onlyBlocker() {
+        delete BlockedVaults[vault];
+    }
+
+    function blockTransfers(bool setting) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        _blockTransfers = setting;
+    }
+
+    function accountBlockStatus(address account) public view returns(bool) {
+        return BlockedAccounts[account] ;
+    }
+
+    function vaultBlockStatus(address vault) public view returns(bool) {
+        return BlockedVaults[vault] ;
+    }
+
+    function transferBlockStatus() public view returns(bool) {
+        return _blockTransfers;
     }
 
     function recoverVTRU() external onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -359,6 +417,9 @@ contract CollectorCredit is
         return _status == _ENTERED;
     }
 
-
+    modifier onlyBlocker() {
+        require(hasRole(BLOCKER_ROLE, msg.sender) || hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Unauthorized user");
+        _;
+    }
 }
 

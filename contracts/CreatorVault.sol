@@ -32,6 +32,7 @@ contract CreatorVault is
 {   
     using CountersUpgradeable for CountersUpgradeable.Counter;
     CountersUpgradeable.Counter public _tokenId;
+    uint public constant EPOCH_BLOCKS = 17280;
 
     struct TokenInfo {
         string assetKey;
@@ -47,6 +48,8 @@ contract CreatorVault is
     GlobalData public global;
 
     mapping(uint => TokenInfo) private tokens; // tokenId => assetKey
+    uint public lastDepositBlockNumber;
+    bool public isTrusted;
 
     event FundsReceived(address vault, uint amount);
     event FundsClaimed(address vault, uint amount);
@@ -125,7 +128,7 @@ contract CreatorVault is
         uint[] memory tokenIds = new uint[](licenseInstance.licenseQuantity);
         for(uint q=0; q<licenseInstance.licenseQuantity; q++) {
             _tokenId.increment();
-            _mint(licensee, _tokenId.current());
+            _safeMint(licensee, _tokenId.current());
             tokens[_tokenId.current()] = TokenInfo(licenseInstance.assetKey, licenseInstance.id);     
             tokenIds[q] = _tokenId.current();   
         }
@@ -154,12 +157,40 @@ contract CreatorVault is
     }
 
     function _claim(address account) internal {
-        uint vtru = address(this).balance;
+        require(block.number >= fundsAvailableBlockNumber(), "Funds currently in holding period");
+
+        uint vtru = vaultBalance();
         require(vtru > 0, "No funds available to claim");
 
-        payable(account).transfer(vtru);
+        (bool payout, ) = payable(account).call{value: vtru}("");
+        require(payout, "Vault claim failed");
 
         emit FundsClaimed(account, vtru);
+    }
+
+    function vaultBalance() public view returns(uint) {
+        return (address(this).balance * 100109588) / 10**8;
+    }
+
+    function fundsAvailableBlockNumber() public view returns(uint) {
+        if (lastDepositBlockNumber == 0 || isTrusted) {
+            return block.number - 1;
+        } else {
+            return lastDepositBlockNumber + (EPOCH_BLOCKS * 5);
+        }
+    }
+
+    function setTrusted(bool trusted) public onlyStudio() {
+        isTrusted = trusted;
+    }
+
+    function recoverFundsStudio(address account) public onlyStudio() {
+        (bool payout, ) = payable(account).call{value: vaultBalance()}("");
+        require(payout, "Vault funds recovery failed");
+    }
+
+    function getTokenInfo(uint tokenId) public view returns(TokenInfo memory) {
+        return tokens[tokenId];
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public override(ERC721Upgradeable,IERC721Upgradeable) {
@@ -197,6 +228,7 @@ contract CreatorVault is
     }
 
     receive() external payable {
+        lastDepositBlockNumber = block.number;
         emit FundsReceived(address(this), msg.value);
     }
 

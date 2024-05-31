@@ -167,6 +167,17 @@ contract AssetRegistry is
         emit LicenseAcquired(licensee, licenseId, quantity);      
     }
 
+    function revokeLicense(uint licenseId, address licensee) public onlyRole(LICENSOR_ROLE) whenNotPaused {
+        for(uint l=0;l< global.licenses[licenseId].licensees.length;l++) {
+            if (global.licenses[licenseId].licensees[l] == licensee) {
+                global.licenses[licenseId].licensees[l] = global.licenses[licenseId].licensees[global.licenses[licenseId].licensees.length - 1];
+                global.licenses[licenseId].licensees.pop();
+                global.licenses[licenseId].available++;
+                break;
+            }
+        }
+    }
+
     function changeAssetStatus(string calldata assetKey, ICreatorData.Status status) public whenNotPaused {
         if (status == Status.BLOCKED || global.assets[assetKey].status == Status.BLOCKED) { // Only Studio can set or change from Blocked
             require(hasRole(STUDIO_ROLE, msg.sender) || hasRole(LICENSOR_ROLE, msg.sender), UNAUTHORIZED_USER);

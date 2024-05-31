@@ -115,10 +115,10 @@ contract LicenseRegistry is
         global.licenseTypes[licenseTypeId].isActive = active;
     }
 
-    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed {
+    function issueLicenseUsingCredits(string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed(msg.sender) {
         _issueLicenseUsingCredits(msg.sender, assetKey, licenseTypeId, quantity);
     }
-    function issueLicenseUsingCreditsStudio(address licensee, string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed {
+    function issueLicenseUsingCreditsStudio(address licensee, string calldata assetKey, uint256 licenseTypeId, uint64 quantity) public whenNotPaused nonReentrant isAllowed(licensee) {
         require(msg.sender == global.studioAccount, UNAUTHORIZED_USER);
         _issueLicenseUsingCredits(licensee, assetKey, licenseTypeId, quantity);
     }
@@ -158,7 +158,7 @@ contract LicenseRegistry is
         if (global.licenseTypes[licenseTypeId].isMintable) {
             licenseInstanceInfo.tokenIds = ICreatorVault(asset.creator.vault).mintLicensedAssets(licenseInstanceInfo, licensee);
             require(licenseInstanceInfo.tokenIds.length > 0, "Asset minting failed");
-            registerTokens(asset.creator.vault, licenseInstanceInfo.tokenIds, licensee);
+            registerTokens(licensee, asset.creator.vault, licenseInstanceInfo.tokenIds);
         }
        
         // TODO: Credit fee splitter contract
@@ -167,24 +167,30 @@ contract LicenseRegistry is
         emit LicenseIssued(assetKey, licensee, licenseInfo.id,  licenseInstanceInfo.id, licenseInstanceInfo.tokenIds);    
     }
 
-    function registerTokens(address vault, uint256[] memory tokenIds, address owner) internal {
+    function registerTokens(address owner, address vault, uint256[] memory tokenIds) internal {
         for(uint t=0; t<tokenIds.length; t++) {
             mintRegistry[owner].push(OwnedTokenInfo(vault, tokenIds[t]));
         }
     }
 
-    function transferTokens(address vault, uint256[] memory tokenIds, address from, address to) public {
-        require(msg.sender == vault, UNAUTHORIZED_USER);
-        for(uint f=0; f<mintRegistry[from].length; f++) {
-            if (mintRegistry[from][f].vault == vault) {
-                for(uint t=0; t<tokenIds.length; t++) {
-                    if (mintRegistry[from][f].tokenId == tokenIds[t]) {
-                        mintRegistry[from][f] = OwnedTokenInfo(address(0), 0); // Zero out. Batch process and free up in future
-                    }
-                }
+    function unregisterTokens(address owner, uint256[] memory tokenIds) public {
+        for(uint t=0; t<tokenIds.length; t++) {
+            for(uint m=0; m<mintRegistry[owner].length; m++) {
+                if (mintRegistry[owner][m].tokenId == tokenIds[t]) {
+                    mintRegistry[owner][m] = mintRegistry[owner][mintRegistry[owner].length-1];
+                    mintRegistry[owner].pop();
+                    break;
+                }            
             }
         }
-        registerTokens(vault, tokenIds, to);
+    }
+
+    function transferTokens(address vault, uint256[] memory tokenIds, address from, address to) public {
+        require(msg.sender == vault, UNAUTHORIZED_USER);
+        unregisterTokens(from, tokenIds);
+        if (to != address(0)) {
+            registerTokens(to, vault, tokenIds);
+        }
     }   
 
     function getTokens(address owner) public view returns(OwnedTokenInfo[] memory) {
@@ -314,8 +320,8 @@ contract LicenseRegistry is
         _unpause();
     }
 
-    modifier isAllowed() {
-        require(block.number >= global.allowBlockNumber || global.allowList[msg.sender] == true, "Licensing not permitted");
+    modifier isAllowed(address licensee) {
+        require(block.number >= global.allowBlockNumber || global.allowList[licensee] == true, "Licensing not permitted");
         _;
     }
 
