@@ -170,7 +170,7 @@ contract CollectorCredit is
         require(redeemedCents >= amountCents, "Failed to redeem credits");
 
         // Rebase calc
-        uint256 vtru = (redeemedCents * DECIMALS * 100109588) / (usdVtruExchangeRate * 10**8); 
+        uint256 vtru = (redeemedCents * DECIMALS) / usdVtruExchangeRate; 
         require(address(this).balance >= vtru, "Insufficient Collector Credit VTRU balance");
 
         (bool payout, ) = payable(vault).call{value: vtru}("");

@@ -3944,8 +3944,8 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0xBa8B73999f7c8Aff0f21B0B68531F7faCe08C8a9",
-    "mainnet": "0x808433d59FDd504516b7388DCceEa068e3f22DEf",
+    "testnet": "0x247B6140C6F1B8a1B419f1FC743148c62F37Bccd",
+    "mainnet": "0x583B75b34513445564a1a73fcB8ce5DAb0FC6553",
     "abi":  [
       {
         "anonymous": false,
@@ -4175,6 +4175,19 @@
         "type": "event"
       },
       {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          }
+        ],
+        "name": "VaultBlocked",
+        "type": "event"
+      },
+      {
         "inputs": [],
         "name": "DECIMALS",
         "outputs": [
@@ -4365,6 +4378,32 @@
           }
         ],
         "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          }
+        ],
+        "name": "blockAndRecoverFundsStudio",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "burn",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -4605,6 +4644,19 @@
           }
         ],
         "name": "isApprovedForAll",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "isBlocked",
         "outputs": [
           {
             "internalType": "bool",
@@ -4933,6 +4985,19 @@
         "inputs": [
           {
             "internalType": "bool",
+            "name": "blocked",
+            "type": "bool"
+          }
+        ],
+        "name": "setBlocked",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bool",
             "name": "trusted",
             "type": "bool"
           }
@@ -5126,7 +5191,7 @@
   },
   "creatorVaultFactory": {
     "testnet": "0xB507bc726f9Fdb29527667A1e39D0F3E05D37C4d",
-    "mainnet": "0xDFda76C704515d19C737C54cFf523E45ab01d90A",
+    "mainnet": "0x7217388c10288D0E43751c48d3390Ea5ACDa31D5",
     "abi": [
       {
         "type": "constructor",

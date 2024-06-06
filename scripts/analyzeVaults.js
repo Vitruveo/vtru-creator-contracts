@@ -15,6 +15,9 @@ const rpc = isTestNet ? process.env.TESTNET_RPC : process.env.MAINNET_RPC;
 const provider = new JsonRpcProvider(rpc);
 const corenft = new Wallet(process.env.CORE_PRIVATE_KEY, provider);
 const studioProd = new Wallet(process.env.STUDIO_MAIN_PRIVATE_KEY, provider);
+const colnft = new Wallet(process.env.COLLECTOR_PRIVATE_KEY, provider);
+
+const col = new Contract(config.collectorCredit[network], config.collectorCredit.abi, colnft);
 
 const assetRegistryContract = new Contract(config.assetRegistry[network], config.assetRegistry.abi, studioProd);
 const licenseRegistryContract = new Contract(config.licenseRegistry[network], config.licenseRegistry.abi, studioProd);
@@ -67,9 +70,9 @@ const creatorVault = (address) => new Contract(address, config.creatorVault.abi,
             }
         */
             
-        const coreNft = '0xAC51c04Cb72A5D0F56D71Baf3E2F2B28e6426922';
-        const tokens = [1];         
-        //const vault = creatorVault('0x9F17a6A21745c559763C71037850AF55356AE410');
+        // const coreNft = '0xAC51c04Cb72A5D0F56D71Baf3E2F2B28e6426922';
+        // const tokens = [1];         
+        // //const vault = creatorVault('0x9F17a6A21745c559763C71037850AF55356AE410');
 
         //await vault.addVaultWallet(coreNft);
         //await sleep(5000);
@@ -88,9 +91,12 @@ const creatorVault = (address) => new Contract(address, config.creatorVault.abi,
         // data[i].licenseId = Number(instance[2]);
 
             let counter = 0;
+            let buyers = {};
         for(let i=0;i<data.length;i++) {
             const item = data[i];
             try {
+                await col.grantCreditNFT(1, item.buyer, 0, 15);
+                await sleep(4000);
         // const vault = creatorVault(item.vault);
         // const ti = await vault.ownerOf(1);
         //         console.log(ti)

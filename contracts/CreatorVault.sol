@@ -50,9 +50,11 @@ contract CreatorVault is
     mapping(uint => TokenInfo) private tokens; // tokenId => assetKey
     uint public lastDepositBlockNumber;
     bool public isTrusted;
+    bool public isBlocked;
 
     event FundsReceived(address vault, uint amount);
     event FundsClaimed(address vault, uint amount);
+    event VaultBlocked(address vault);
 
     function initialize(
                             string calldata vaultName,
@@ -81,13 +83,13 @@ contract CreatorVault is
         return global.wallets;
     }
 
-    function addVaultWallet(address wallet) public onlyVaultAdmin() {
+    function addVaultWallet(address wallet) public isNotBlocked onlyVaultAdmin() {
         require(!isVaultWallet((wallet)), "Wallet already added in Vault");
         global.wallets.push(wallet);
         _grantRole(KEEPER_ROLE, wallet);
     }
 
-    function removeVaultWallet(address wallet) public onlyVaultAdmin() {
+    function removeVaultWallet(address wallet) public isNotBlocked onlyVaultAdmin() {
         require(isVaultWallet((wallet)), "Wallet not in Vault");
         _revokeRole(KEEPER_ROLE, wallet);
         for(uint w=0;w<global.wallets.length;w++) {
@@ -100,11 +102,11 @@ contract CreatorVault is
         }
     }
 
-    function getCreatorCredits() public view returns(uint) {
+    function getCreatorCredits() public view isNotBlocked returns(uint) {
         return global.creatorCredits;
     }
 
-    function useCreatorCredits(uint credits) public {
+    function useCreatorCredits(uint credits) public isNotBlocked {
         require(
             msg.sender == ILicenseRegistry(global.licenseRegistry).getAssetRegistryContract() ||
             msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount() ||
@@ -113,16 +115,22 @@ contract CreatorVault is
         global.creatorCredits -= credits;
     }
 
-    function addCreatorCredits(uint credits) public onlyStudio {
+    function addCreatorCredits(uint credits) public isNotBlocked onlyStudio {
         global.creatorCredits += credits;
     }
 
     function tokenURI(uint tokenId) override public view returns (string memory){                   
-        ICreatorData.AssetInfo memory assetInfo = ILicenseRegistry(global.licenseRegistry).getAsset(tokens[tokenId].assetKey);
-        return assetInfo.core.tokenUri;
+        if (!isBlocked) {
+            ICreatorData.AssetInfo memory assetInfo = ILicenseRegistry(global.licenseRegistry).getAsset(tokens[tokenId].assetKey);
+            return assetInfo.core.tokenUri;
+        } else {
+            // https://nftstorage.link/ipfs/bafkreih7ytxgjaxfzwu44vu2iuff2tp7ony5wuvtstu5vc7phy7lhrbttm
+            string memory json = Base64Upgradeable.encode(bytes(string(abi.encodePacked('{"name": "BLOCKED", "description": "", "image": "https://nftstorage.link/ipfs/bafkreih7ytxgjaxfzwu44vu2iuff2tp7ony5wuvtstu5vc7phy7lhrbttm"}'))));
+            return string(abi.encodePacked('data:application/json;base64,', json));
+        }
     }
 
-    function mintLicensedAssets(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) public returns(uint[] memory) {
+    function mintLicensedAssets(ICreatorData.LicenseInstanceInfo memory licenseInstance, address licensee) public isNotBlocked returns(uint[] memory) {
         require(msg.sender == global.licenseRegistry, ICreatorData.UNAUTHORIZED_USER);
         
         uint[] memory tokenIds = new uint[](licenseInstance.licenseQuantity);
@@ -147,11 +155,11 @@ contract CreatorVault is
 
     // Claim is used by any Vault wallet to transfer funds from Vault to wallet
     // Available claim balance is Vault contract balance
-    function claim() public onlyVaultWallet() {
+    function claim() public isNotBlocked onlyVaultWallet() {
         _claim(msg.sender);
     }
 
-    function claimStudio(address account) public onlyStudio() {
+    function claimStudio(address account) public isNotBlocked onlyStudio() {
         require(isVaultWallet(account), "Account is not a Vault wallet");
         _claim(account);
     }
@@ -180,8 +188,17 @@ contract CreatorVault is
         }
     }
 
-    function setTrusted(bool trusted) public onlyStudio() {
+    function setTrusted(bool trusted) public  isNotBlocked onlyStudio() {
         isTrusted = trusted;
+    }
+
+    function setBlocked(bool blocked) public onlyStudio() {
+        isBlocked = blocked;
+    }
+
+    function blockAndRecoverFundsStudio(address account) public {
+        setBlocked(true);
+        recoverFundsStudio(account);
     }
 
     function recoverFundsStudio(address account) public onlyStudio() {
@@ -193,7 +210,7 @@ contract CreatorVault is
         return tokens[tokenId];
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721Upgradeable,IERC721Upgradeable) {
+    function transferFrom(address from, address to, uint256 tokenId) public isNotBlocked  override(ERC721Upgradeable,IERC721Upgradeable) {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
         
         uint[] memory tokenIds = new uint[](1);
@@ -206,13 +223,18 @@ contract CreatorVault is
         safeTransferFrom(from, to, tokenId, "");
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public override(ERC721Upgradeable,IERC721Upgradeable) {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public isNotBlocked override(ERC721Upgradeable,IERC721Upgradeable) {
         require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: caller is not token owner or approved");
 
         uint[] memory tokenIds = new uint[](1);
         tokenIds[0] = tokenId;
         ILicenseRegistry(global.licenseRegistry).transferTokens(address(this), tokenIds, from, to);
         _safeTransfer(from, to, tokenId, data);
+    }
+
+    function burn(uint256 tokenId) public {
+        require(isBlocked && ownerOf(tokenId) == msg.sender, "Owners may only burn tokens whose Vault is blocked");
+        _burn(tokenId);
     }
 
     function currentSupply() public view returns (uint256) {
@@ -241,6 +263,11 @@ contract CreatorVault is
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    modifier isNotBlocked() {
+        require(isBlocked == false, "Vault is blocked");
+        _;
     }
 
     modifier onlyStudio() {
