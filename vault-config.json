@@ -3945,7 +3945,7 @@
   },
   "creatorVault": {
     "testnet": "0x247B6140C6F1B8a1B419f1FC743148c62F37Bccd",
-    "mainnet": "0x583B75b34513445564a1a73fcB8ce5DAb0FC6553",
+    "mainnet": "0x7217388c10288D0E43751c48d3390Ea5ACDa31D5",
     "abi":  [
       {
         "anonymous": false,
@@ -5191,7 +5191,7 @@
   },
   "creatorVaultFactory": {
     "testnet": "0xB507bc726f9Fdb29527667A1e39D0F3E05D37C4d",
-    "mainnet": "0x7217388c10288D0E43751c48d3390Ea5ACDa31D5",
+    "mainnet": "0xDFda76C704515d19C737C54cFf523E45ab01d90A",
     "abi": [
       {
         "type": "constructor",
@@ -5488,7 +5488,7 @@
   },
   "collectorCredit": {
     "testnet": "0x2921f3c02f4c6b1BbD35c5B8deA666F78A9D5919",
-    "mainnet": "0xDFda76C704515d19C737C54cFf523E45ab01d90A",
+    "mainnet": "0x5c7421fcCA16C685cEC5aaFf745a9a6BDf75Ba06",
     "abi": [
       {
         "type": "event",
