@@ -76,11 +76,23 @@ contract CreatorVault is
     }
 
     function version() public pure returns(string memory) {
-        return "0.5.0";
+        return "0.5.5";
     }
 
     function getVaultWallets() public view returns(address[] memory) {
         return global.wallets;
+    }
+
+    function addVaultWallets(address[] calldata wallets) public isNotBlocked onlyVaultAdmin() {
+        for(uint w=0;w<wallets.length;w++) {
+            addVaultWallet(wallets[w]);
+        }
+    }
+
+    function removeVaultWallets(address[] calldata wallets) public isNotBlocked onlyVaultAdmin() {
+        for(uint w=0;w<wallets.length;w++) {
+            removeVaultWallet(wallets[w]);
+        }
     }
 
     function addVaultWallet(address wallet) public isNotBlocked onlyVaultAdmin() {
@@ -181,11 +193,11 @@ contract CreatorVault is
     }
 
     function fundsAvailableBlockNumber() public view returns(uint) {
-        if (lastDepositBlockNumber == 0 || isTrusted) {
-            return block.number - 1;
-        } else {
-            return lastDepositBlockNumber + (EPOCH_BLOCKS * 5);
-        }
+        // if (lastDepositBlockNumber == 0 || isTrusted) {
+        return block.number - 1;
+    //     } else {
+    //         return lastDepositBlockNumber + (EPOCH_BLOCKS * 5);
+    //     }
     }
 
     function setTrusted(bool trusted) public  isNotBlocked onlyStudio() {

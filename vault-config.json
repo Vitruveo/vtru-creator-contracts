@@ -3944,8 +3944,8 @@
     ]
   },
   "creatorVault": {
-    "testnet": "0x247B6140C6F1B8a1B419f1FC743148c62F37Bccd",
-    "mainnet": "0x7217388c10288D0E43751c48d3390Ea5ACDa31D5",
+    "testnet": "0xdF63310219d7422fb79893e2A5D369b1C44651e1",
+    "mainnet": "0x7aea4a32df743644474e62Bc38E7D6D0C00Af365",
     "abi":  [
       {
         "anonymous": false,
@@ -4339,6 +4339,19 @@
           }
         ],
         "name": "addVaultWallet",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "wallets",
+            "type": "address[]"
+          }
+        ],
+        "name": "addVaultWallets",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -4872,6 +4885,19 @@
           }
         ],
         "name": "removeVaultWallet",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address[]",
+            "name": "wallets",
+            "type": "address[]"
+          }
+        ],
+        "name": "removeVaultWallets",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
