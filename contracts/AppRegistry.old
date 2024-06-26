@@ -31,7 +31,7 @@ contract AppRegistry is
 
     struct AppInfo {
         string key;
-        address account;
+        address contractA;
         address owner;
     }
 
