@@ -146,13 +146,14 @@ contract CollectorCredit is
         }
     }
 
-    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents, uint256 usdVtruExchangeRate, address vault) onlyRole(REEDEEMER_ROLE) public whenNotPaused nonReentrant returns(uint64 redeemedCents) {
+    function redeemUsd(address account, uint256 licenseInstanceId, address[2] memory payees, uint64[2] memory paymentCents, uint256 usdVtruExchangeRate) onlyRole(REEDEEMER_ROLE) public whenNotPaused nonReentrant returns(uint64 redeemedCents) {
 
         require(BlockedAccounts[account] == false, "Account is blocked");
-        require(BlockedVaults[account] == false, "Vault is blocked");
+        require(BlockedVaults[payees[0]] == false, "Vault is blocked");
+        require(payees[0] != address(0) && payees[1] != address(0), "One or more payee addresses not set");
 
         (CreditNFT[] memory creditNFTs, uint creditCents,) = getAvailableCreditTokens(account);
-        require(creditCents >= amountCents, "Insufficient credit");
+        require(creditCents >= paymentCents[0] + paymentCents[1], "Insufficient credit");
 
         for(uint f=0; f<creditNFTs.length; f++) {
             uint tokenId = creditNFTs[f].id;
@@ -162,21 +163,27 @@ contract CollectorCredit is
             global.TotalNFTsByClass[creditNFTs[f].classId]--;
             _burn(tokenId);      
             
-            if (redeemedCents >= amountCents) {
+            if (redeemedCents >= paymentCents[0] + paymentCents[1]) {
                 break;
             }
         }
 
-        require(redeemedCents >= amountCents, "Failed to redeem credits");
+        require(redeemedCents >= paymentCents[0] + paymentCents[1], "Failed to redeem credits");
 
-        // Rebase calc
-        uint256 vtru = (redeemedCents * DECIMALS) / usdVtruExchangeRate; 
-        require(address(this).balance >= vtru, "Insufficient Collector Credit VTRU balance");
+        uint256[2] memory vtru = [
+            (paymentCents[1] * DECIMALS) / usdVtruExchangeRate, //platform fee vtru
+            ((redeemedCents - paymentCents[1]) * DECIMALS) / usdVtruExchangeRate  //balance vtru
+        ];
 
-        (bool payout, ) = payable(vault).call{value: vtru}("");
+        require(address(this).balance >= vtru[0] + vtru[1], "Insufficient Collector Credit VTRU balance");
+
+        (bool fees, ) = payable(payees[1]).call{value: vtru[1]}("");
+        require(fees, "Fee payout failed");
+
+        (bool payout, ) = payable(payees[0]).call{value: vtru[0]}(""); // Payout to creator (all remaining funds)
         require(payout, "Asset payout failed");  
 
-        emit CollectorCreditRedeemed(account, amountCents, licenseInstanceId, redeemedCents, vtru, vault);
+        emit CollectorCreditRedeemed(account, paymentCents[0] + paymentCents[1], licenseInstanceId, redeemedCents, vtru[0] + vtru[1], payees[0]);
     }
 
 

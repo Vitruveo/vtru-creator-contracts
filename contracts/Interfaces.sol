@@ -39,7 +39,7 @@ interface ICreatorVaultFactory {
 }
 
 interface ICollectorCredit {
-    function redeemUsd(address account, uint256 licenseInstanceId, uint64 amountCents, uint256 usdVtruExchangeRate, address vault) external returns(uint64 redeemedCents);
+    function redeemUsd(address account, uint256 licenseInstanceId, address[2] memory payees, uint64[2] memory paymentCents, uint256 usdVtruExchangeRate) external returns(uint64 redeemedCents);
     function getAvailableCredits(address account) external view returns(uint tokens, uint creditCents, uint creditOther);
 }
 
@@ -112,7 +112,6 @@ abstract contract ICreatorData {
         uint16 sellerBasisPoints;
         uint16 creatorRoyaltyBasisPoints;
     } 
-
 
     enum Status {
         DRAFT,

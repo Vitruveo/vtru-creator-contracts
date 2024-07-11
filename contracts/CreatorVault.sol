@@ -124,7 +124,7 @@ contract CreatorVault is
             msg.sender == ILicenseRegistry(global.licenseRegistry).getStudioAccount() ||
             hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "Unauthorized user");
         require(global.creatorCredits >= credits, "Insufficient Creator Credits");
-        global.creatorCredits -= credits;
+        //global.creatorCredits -= credits;
     }
 
     function addCreatorCredits(uint credits) public isNotBlocked onlyStudio {

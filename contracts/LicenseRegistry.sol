@@ -71,23 +71,24 @@ contract LicenseRegistry is
     }
 
     mapping(address => OwnedTokenInfo[]) mintRegistry;
+    uint64 public platformFeeBasisPoints;
+    address public vibeContract;
 
     function initialize() public initializer {
+        // __Pausable_init();
+        // __AccessControl_init();
+        // __UUPSUpgradeable_init();
+        // __ReentrancyGuard_init();
 
-        __Pausable_init();
-        __AccessControl_init();
-        __UUPSUpgradeable_init();
-        __ReentrancyGuard_init();
+        // _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        // _grantRole(UPGRADER_ROLE, msg.sender);
 
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(UPGRADER_ROLE, msg.sender);
+        // registerLicenseType("NFT-ART-1", "NFT", true, true);
+        // registerLicenseType("STREAM-ART-1", "Stream", false, false);
+        // registerLicenseType("REMIX-ART-1", "Remix", false, false);
+        // registerLicenseType("PRINT-ART-1", "Print", false, false);
 
-        registerLicenseType("NFT-ART-1", "NFT", true, true);
-        registerLicenseType("STREAM-ART-1", "Stream", false, false);
-        registerLicenseType("REMIX-ART-1", "Remix", false, false);
-        registerLicenseType("PRINT-ART-1", "Print", false, false);
-
-        setAllowBlockNumber(block.number);
+        // setAllowBlockNumber(block.number);
     }
 
     function version() public pure returns(string memory) {
@@ -124,17 +125,19 @@ contract LicenseRegistry is
     }
 
     function _issueLicenseUsingCredits(address licensee, string calldata assetKey, uint256 licenseTypeId, uint64 quantity) internal {
+        require(vibeContract != address(0), "VIBE contract address not set");
         require(IAssetRegistry(global.assetRegistryContract).isAsset(assetKey), "Asset not found");
         ICreatorData.AssetInfo memory asset = IAssetRegistry(global.assetRegistryContract).getAsset(assetKey);
 
         // 1) Check if asset license is available and get price
         ICreatorData.LicenseInfo memory licenseInfo = getAvailableLicense(assetKey, licenseTypeId, quantity);
-        uint64 totalCents = licenseInfo.editionCents * quantity;
-
+        uint64 editionCents = licenseInfo.editionCents * quantity;
+        uint64 platformFeeCents = uint64((editionCents * getPlatformFeeBasisPoints())/10000);
+ 
         // 2) Redeem credits and send VTRU to vault
-        uint amountPaidCents = ICollectorCredit(global.collectorCreditContract).redeemUsd(licensee, _licenseInstanceId.current(), totalCents, global.usdVtruExchangeRate, asset.creator.vault);
+        uint amountPaidCents = ICollectorCredit(global.collectorCreditContract).redeemUsd(licensee, _licenseInstanceId.current(), [asset.creator.vault, vibeContract], [editionCents, platformFeeCents], global.usdVtruExchangeRate);
 
-        // 3) Update the license available amount
+        // 3) Update the license available quantity
         IAssetRegistry(global.assetRegistryContract).acquireLicense(licenseInfo.id, quantity, licensee);
 
         // 4) Generate a license instance
@@ -144,7 +147,7 @@ contract LicenseRegistry is
         licenseInstanceInfo.id = _licenseInstanceId.current();
         licenseInstanceInfo.assetKey = assetKey;
         licenseInstanceInfo.licenseId = licenseInfo.id;
-        licenseInstanceInfo.licenseFeeCents = totalCents;
+        licenseInstanceInfo.licenseFeeCents = editionCents;
         licenseInstanceInfo.amountPaidCents = amountPaidCents;
         licenseInstanceInfo.licenseQuantity = quantity;
         licenseInstanceInfo.licensees.push(licensee);
@@ -304,12 +307,21 @@ contract LicenseRegistry is
         delete global.allowList[allow];
     }
 
-    function setAllowBlockNumber(uint blockNumber) public  onlyRole(DEFAULT_ADMIN_ROLE) {
-        global.allowBlockNumber = blockNumber;
+    function setPlatformFeeBasisPoints(uint64 basisPoints) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        platformFeeBasisPoints = basisPoints;
     }
 
-    function getAllowBlockNumber() public view returns(uint) {
-        return(global.allowBlockNumber);
+    function getPlatformFeeBasisPoints() public view returns(uint64) {
+        return(platformFeeBasisPoints);
+    }
+
+    function setVIBEContract(address account) public  onlyRole(DEFAULT_ADMIN_ROLE) {
+        require(account != address(0), "Invalid address");
+        vibeContract = account;
+    }
+
+    function getVIBEContract() public view returns(address) {
+        return(vibeContract);
     }
 
     function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -321,7 +333,7 @@ contract LicenseRegistry is
     }
 
     modifier isAllowed(address licensee) {
-        require(block.number >= global.allowBlockNumber || global.allowList[licensee] == true, "Licensing not permitted");
+        require(global.allowList[licensee] == true, "Licensing not permitted");
         _;
     }
 
